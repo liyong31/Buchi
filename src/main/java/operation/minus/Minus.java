@@ -13,7 +13,7 @@ public class Minus implements IMminus{
     
     public Minus(IBuchi fstOperand, IBuchi sndOperand) {
         if(fstOperand.getAlphabetSize() != sndOperand.getAlphabetSize()) {
-            throw new UnsupportedOperationException("Intersect: different alphabets");
+            throw new UnsupportedOperationException("Minus: different alphabets");
         }
         mFstOperand = fstOperand;
         mSndOperand = sndOperand;
