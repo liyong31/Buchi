@@ -11,7 +11,7 @@ import util.UtilISet;
 public class AsccExplore extends Explore {
 
     private final boolean mStopAfterNotEmpty;
-    private ISet mAcceptedSCC;
+    private ISet mAcceptedScc;
     
     public AsccExplore(IBuchi operand, boolean stopAfterNotEmpty) {
         super(operand);
@@ -25,6 +25,14 @@ public class AsccExplore extends Explore {
     @Override
     protected void explore() {
         new Ascc();
+    }
+    
+    private void addFinalStates(int state) {
+        assert mOperand.isFinal(state);
+        if(mAcceptedScc == null) {
+            mAcceptedScc = UtilISet.newISet();
+        }
+        mAcceptedScc.set(state);
     }
     
     private class Ascc {
@@ -50,7 +58,7 @@ public class AsccExplore extends Explore {
         }
         
         boolean terminate() {
-            return mStopAfterNotEmpty && mAcceptedSCC != null;
+            return mStopAfterNotEmpty && mAcceptedScc != null;
         }
         
         void strongConnect(int n) {
@@ -69,14 +77,12 @@ public class AsccExplore extends Explore {
                         if(terminate()) return ;
                     }else if(mCurrent.get(succ)) {
                         // we have already seen it before, there is a loop
-                        ISet scc = UtilISet.newISet();
                         while(true) {
                             //pop element u
                             int u = mRootsStack.pop();
-                            scc.set(u);
                             // found one accepting scc
                             if(mOperand.isFinal(u)) {
-                                mAcceptedSCC = scc;
+                                addFinalStates(u);
                             }
                             if(mDfsNum.get(u) <= mDfsNum.get(succ)) {
                                 mRootsStack.push(u); // push back
@@ -100,11 +106,10 @@ public class AsccExplore extends Explore {
                 }
             }
         }
-        
     }
     
     public ISet getAcceptedScc() {
-        return mAcceptedSCC;
+        return mAcceptedScc;
     }
     
 
