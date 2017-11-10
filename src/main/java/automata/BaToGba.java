@@ -21,6 +21,11 @@ public class BaToGba implements IGba {
     public int getAccSize() {
         return ONE;
     }
+    
+    @Override
+    public void setAccSize(int size) {
+    	throw new UnsupportedOperationException("Can't set accepting sets size for BAs");
+    }
 
     @Override
     public ISet getAccSet(int state) {
@@ -29,6 +34,11 @@ public class BaToGba implements IGba {
             acc.set(ZERO);
         }
         return acc;
+    }
+
+    @Override
+    public void setFinal(int state, int index) {
+    	throw new UnsupportedOperationException("Can't set accepting sets size for BAs");
     }
 
     @Override

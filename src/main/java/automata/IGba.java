@@ -15,6 +15,10 @@ public interface IGba extends IBuchi {
     }
     
     int getAccSize();
+
+    void setAccSize(int size);
+    
+    void setFinal(int state, int index);
     
     ISet getAccSet(int state);
 

@@ -96,11 +96,13 @@ public class Gba implements IGba {
         return mAccSize;
     }
     
+    @Override
     public void setFinal(int state, int index) {
         assertValidState(state);
         getState(state).setFinal(index);
     }
     
+    @Override
     public void setAccSize(int size) {
         mAccSize = size;
     }
