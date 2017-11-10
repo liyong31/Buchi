@@ -60,7 +60,7 @@ public class LassoRunExtractor extends UnaryOp<IBuchi, LassoRun> {
     }
 
     @Override
-    public String getOperantionName() {
+    public String getName() {
         return "LassoRunExtractor";
     }
     

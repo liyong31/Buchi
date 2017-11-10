@@ -16,7 +16,7 @@ class EnumeratorBitSet extends BitSet implements Comparable<EnumeratorBitSet>{
 	public EnumeratorBitSet(int size) {
 		super(size);
 		if(size <= 0) {
-			System.err.println("valuation size should be positive number");
+			System.err.println("Input size should be positive number");
 			System.exit(-1);
 		}
 		this.size = size;  // very important to know the size
@@ -30,7 +30,7 @@ class EnumeratorBitSet extends BitSet implements Comparable<EnumeratorBitSet>{
 	@Override
 	public boolean equals(Object obj) {
 		if(this == obj) return true;
-		if(! (obj instanceof EnumeratorBitSet)) {
+		if(obj == null || !(obj instanceof EnumeratorBitSet)) {
 			return false;
 		}
 		EnumeratorBitSet other = (EnumeratorBitSet)obj;

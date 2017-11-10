@@ -7,8 +7,7 @@ import main.Options;
 import util.ISet;
 import util.UtilISet;
 
-class StateNCSB extends State {
-
+public class StateNCSB extends State {
 
 	private final NCSB mNCSB;
 	

@@ -42,7 +42,7 @@ public class Complement extends Buchi implements IUnaryOp<IBuchi, IBuchi> {
         StateNCSB state = new StateNCSB(this, 0, ncsb);
         
         if(mStateIndices.containsKey(state)) {
-            return (StateNCSB) getState(mStateIndices.get(state));
+            return getStateNCSB(mStateIndices.get(state));
         }else {
             int index = getStateSize();
             StateNCSB newState = new StateNCSB(this, index, ncsb);
@@ -65,8 +65,12 @@ public class Complement extends Buchi implements IUnaryOp<IBuchi, IBuchi> {
     }
 
     @Override
-    public String getOperantionName() {
+    public String getName() {
         return "Complement";
+    }
+    
+    public StateNCSB getStateNCSB(int id) {
+        return (StateNCSB) getState(id);
     }
 
 }

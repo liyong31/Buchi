@@ -18,7 +18,8 @@ public class AsccExplore extends Explore {
         mStopAfterNotEmpty = stopAfterNotEmpty;
     }
     
-    protected String getName() {
+    @Override
+    public String getName() {
         return "Ascc";
     }
     
@@ -77,6 +78,7 @@ public class AsccExplore extends Explore {
                         if(terminate()) return ;
                     }else if(mCurrent.get(succ)) {
                         // we have already seen it before, there is a loop
+                        // probably there is one final state without self-loop
                         while(true) {
                             //pop element u
                             int u = mRootsStack.pop();

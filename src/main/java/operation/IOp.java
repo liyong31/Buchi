@@ -3,13 +3,13 @@ package operation;
 public interface IOp {
     
     default String startMessage() {
-        return "Start operation " + getOperantionName();
+        return "Start operation " + getName();
     }
 
     default String exitMessage() {
-        return "Finished operation " + getOperantionName();
+        return "Finished operation " + getName();
     }
     
-    String getOperantionName();
+    String getName();
 
 }

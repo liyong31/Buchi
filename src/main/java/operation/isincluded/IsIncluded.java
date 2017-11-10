@@ -1,29 +1,23 @@
-package operation.minus;
+package operation.isincluded;
 
 import automata.IBuchi;
 import operation.complement.Complement;
-import operation.intersect.Intersect;
+import operation.complement.StateNCSB;
 
-public class Minus implements IMminus{
-
-    private final IBuchi mFstOperand;
-    private final IBuchi mSndOperand;
-    private final IBuchi mSndComplement;
-    private final IBuchi mResult;
+public class IsIncluded implements IIsIncluded {
     
-    public Minus(IBuchi fstOperand, IBuchi sndOperand) {
+    protected final IBuchi mFstOperand;
+    protected final IBuchi mSndOperand;
+    protected final Complement mSndComplement;
+    protected Boolean mResult;
+    
+    public IsIncluded(IBuchi fstOperand, IBuchi sndOperand) {
         if(fstOperand.getAlphabetSize() != sndOperand.getAlphabetSize()) {
             throw new UnsupportedOperationException("Minus: different alphabets");
         }
         mFstOperand = fstOperand;
         mSndOperand = sndOperand;
         mSndComplement = new Complement(sndOperand);
-        mResult = new Intersect(mFstOperand, mSndComplement);
-    }
-
-    @Override
-    public String getName() {
-        return "Minus";
     }
 
     @Override
@@ -37,13 +31,19 @@ public class Minus implements IMminus{
     }
 
     @Override
-    public IBuchi getResult() {
+    public Boolean getResult() {
         return mResult;
     }
 
     @Override
-    public IBuchi getSecondComplement() {
+    public Complement getSecondComplement() {
         return mSndComplement;
+    }
+
+    @Override
+    public StateNCSB getComplementState(int state) {
+        assert state >= 0 && state < mSndComplement.getStateSize();
+        return (StateNCSB) mSndComplement.getState(state);
     }
 
 }

@@ -57,7 +57,7 @@ public class Explore implements IUnaryOp<IBuchi, IBuchi> {
     }
 
     @Override
-    public String getOperantionName() {
+    public String getName() {
         return "DFS explore";
     }
 

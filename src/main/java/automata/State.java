@@ -55,7 +55,7 @@ public class State implements IState, Comparable<State> {
     @Override
     public boolean equals(Object other) {
         if(this == other) return true;
-        if(!(other instanceof State)) {
+        if(other == null || !(other instanceof State)) {
             return false;
         }
         State otherState = (State)other;

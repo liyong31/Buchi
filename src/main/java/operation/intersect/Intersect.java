@@ -64,7 +64,7 @@ public class Intersect extends Buchi implements IBinaryOp<IBuchi, IBuchi>{
     }
 
     @Override
-    public String getOperantionName() {
+    public String getName() {
         return "Intersect";
     }
     

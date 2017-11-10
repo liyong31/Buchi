@@ -16,7 +16,7 @@ public class IsEmpty extends UnaryOp<IBuchi, Boolean>{
     }
 
     @Override
-    public String getOperantionName() {
+    public String getName() {
         return "IsEmpty";
     }
     

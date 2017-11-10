@@ -7,5 +7,7 @@ public class Options {
     public static boolean mLazyB = false;
     
     public static boolean mVerbose = false;
+    
+    public static boolean mAntichain = false;
 
 }

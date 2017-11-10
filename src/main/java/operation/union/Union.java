@@ -43,7 +43,7 @@ public class Union extends Buchi implements IBinaryOp<IBuchi, IBuchi> {
     }
 
     @Override
-    public String getOperantionName() {
+    public String getName() {
         return "Union";
     }
 
