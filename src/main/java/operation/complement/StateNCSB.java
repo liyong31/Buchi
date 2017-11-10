@@ -89,6 +89,7 @@ public class StateNCSB extends State {
 	 * If q in C\F or (B\F), then tr(q, a) should not be not empty
 	 * */
 	private boolean noTransitionAssertion_MinusF(int state, ISet succs) {
+//	    if(Options.mLazyS && Options.mAntichain) return true;
 		return !mOperand.isFinal(state) && succs.isEmpty();
 	}
 	

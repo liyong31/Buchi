@@ -59,7 +59,7 @@ public class AsccAntichain {
         ProductState prodS = mDifference.getProductState(s);
         for(int letter = 0; letter < mDifference.getAlphabetSize(); letter ++ ) {
             for(final int t : prodS.getSuccessors(letter)) {
-                ProductState prodT =  mDifference.getProductState(s);
+                ProductState prodT =  mDifference.getProductState(t);
                 if(mQPrime.get(t)) {
                     is_nemp = true;
                 }else if(mEmp.covers(prodT)) {
@@ -106,6 +106,10 @@ public class AsccAntichain {
         ElemPair(int state, ISet label) {
             mState = state;
             mLabel = label;
+        }
+        
+        public String toString() {
+            return "(" + mState + ", " + mLabel + ")";
         }
     }
 
