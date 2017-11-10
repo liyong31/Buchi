@@ -24,6 +24,7 @@ public class AsccAntichain {
         mAct = new Stack<>();
         mDfsNum = new TIntIntHashMap();
         mCnt = 0;
+        mEmp = new Antichain();
         mQPrime = UtilISet.newISet();
         
         boolean is_nemp = false;

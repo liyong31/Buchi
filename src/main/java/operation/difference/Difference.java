@@ -17,6 +17,7 @@ public class Difference extends Gba implements IMminus {
     private final IBuchi mSndOperand;
     private final Complement mSndComplement;
     private final TObjectIntMap<ProductState> mStateMap;
+    private Boolean mIsEmpty;
     
     public Difference(IGba fstOperand, IBuchi sndOperand) {
         super(fstOperand.getAlphabetSize());
@@ -30,7 +31,8 @@ public class Difference extends Gba implements IMminus {
     }
     
     public void explore() {
-        new AsccAntichain(this);
+        AsccAntichain ascc = new AsccAntichain(this);
+        mIsEmpty = ascc.mIsEmpty;
     }
 
     private void computeInitialStates() {
@@ -57,6 +59,10 @@ public class Difference extends Gba implements IMminus {
     @Override
     public IGba getResult() {
         return this;
+    }
+    
+    public Boolean isEmpty() {
+        return mIsEmpty;
     }
 
     @Override
