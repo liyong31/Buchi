@@ -72,6 +72,7 @@ public class Gba implements IGba {
 
     @Override
     public boolean isInitial(int id) {
+        assertValidState(id);
         return mInitialStates.get(id);
     }
 
@@ -96,6 +97,7 @@ public class Gba implements IGba {
     }
     
     public void setFinal(int state, int index) {
+        assertValidState(state);
         getState(state).setFinal(index);
     }
     
@@ -105,6 +107,7 @@ public class Gba implements IGba {
 
     @Override
     public ISet getAccSet(int state) {
+        assertValidState(state);
         return getState(state).getAccSet();
     }
 

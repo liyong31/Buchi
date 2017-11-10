@@ -68,11 +68,15 @@ public class Difference extends Gba implements IMminus {
     public Complement getSecondComplement() {
         return mSndComplement;
     }
+    
+    protected ProductState getProductState(int state) {
+        return (ProductState) getState(state);
+    }
 
     protected ProductState getOrAddState(int fst, int snd) {
         ProductState prod = new ProductState(this, fst, snd, 0);
         if(mStateMap.containsKey(prod)) {
-            return (ProductState) getState(mStateMap.get(prod));
+            return getProductState(mStateMap.get(prod));
         }
         // add new state
         ProductState newState = new ProductState(this, fst, snd, getStateSize());
