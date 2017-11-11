@@ -7,7 +7,7 @@ import gnu.trove.map.hash.TIntIntHashMap;
 import util.ISet;
 import util.UtilISet;
 
-public class AsccAntichain {
+class AsccAntichain {
     
     Stack<ElemPair> mSCCs;
     Stack<Integer> mAct;
@@ -39,9 +39,9 @@ public class AsccAntichain {
         for(int s = 0; s < mDifference.getStateSize(); s ++) {
             ProductState prodS = mDifference.getProductState(s);
             if(mQPrime.get(s)) {
-                assert !mEmp.covers(prodS) : "Wrong coverage in mQPrime " + prodS;
+                assert !mEmp.covers(prodS) : "Wrong coverage in mQPrime " + prodS + "\n";
             }else {
-                assert mEmp.covers(prodS) : "Wrong coverage in Antichain";
+                assert mEmp.covers(prodS) : "Wrong coverage in Antichain \n";
             }
         }
     }
@@ -87,7 +87,7 @@ public class AsccAntichain {
             mSCCs.pop();
             int u = 0;
             do {
-                assert ! mAct.isEmpty() : "mAct is empty";
+                assert ! mAct.isEmpty() : "mAct is empty\n";
                 u = mAct.pop();
                 if(is_nemp) {
                     mQPrime.set(u);
