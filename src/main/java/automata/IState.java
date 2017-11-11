@@ -17,7 +17,7 @@ public interface IState {
     String toString();
     
     void addSuccessor(int letter, int state);
-    
+        
     ISet getSuccessors(int letter);
     
     Set<Integer> getEnabledLetters();

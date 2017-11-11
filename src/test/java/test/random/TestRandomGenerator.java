@@ -17,6 +17,7 @@ import automata.IState;
 import automata.RandomBuchiGenerator;
 import main.Options;
 import operation.difference.Difference;
+import operation.explore.OndraExplore;
 import operation.isempty.IsEmpty;
 import operation.minus.Minus;
 
@@ -205,6 +206,47 @@ public class TestRandomGenerator {
         Difference difference = new Difference(program, ce);
         difference.explore();
         System.out.println("Difference is empty: " + difference.isEmpty());
+    }
+    
+    @Test
+    public void testOndraExploreSpecific() {
+        Gba program = new Gba(2);
+        program.setAccSize(2);
+        program.addState();
+        program.addState();
+        program.addState();
+        program.addState();
+        program.addState();
+        program.getState(0).addSuccessor(1, 2);
+        program.setInitial(1);
+        program.getState(1).addSuccessor(0, 0);
+        program.getState(1).addSuccessor(1, 0);
+        program.setFinal(2,0);
+        program.setFinal(2,1);
+        program.getState(3).addSuccessor(0, 2);
+        program.getState(3).addSuccessor(1, 0);
+        program.getState(4).addSuccessor(0, 0);
+        program.getState(4).addSuccessor(0, 4);
+        program.getState(4).addSuccessor(1, 2);
+        program.getState(4).addSuccessor(1, 3);
+        new OndraExplore(program);
+    }
+    
+    @Test
+    public void testOndraExplore() {
+        while (true) {
+            IGba program = RandomBuchiGenerator.getRandomGeneralizedBuchiAutomaton(6, 2, 2, 2, 2);
+            try {
+                new OndraExplore(program);
+            } catch (Throwable t) {
+                System.err.println(t.getMessage());
+                System.out.println("\nProgram automaton:\n\n" + program.toDot());
+                print(System.out, program, "program");
+                System.out.println();
+                System.exit(-1);
+            }
+
+        }
     }
 	@Test
 	public void testNCSB() {
