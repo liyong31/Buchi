@@ -2,6 +2,8 @@ package test.random;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.PrintStream;
+
 import org.junit.Test;
 import org.junit.Ignore;
 
@@ -10,6 +12,8 @@ import automata.Buchi;
 import automata.Gba;
 import automata.IBuchi;
 import automata.IGba;
+import automata.IGbaState;
+import automata.IState;
 import automata.RandomBuchiGenerator;
 import main.Options;
 import operation.difference.Difference;
@@ -215,25 +219,74 @@ public class TestRandomGenerator {
 				difference.explore();
 			} catch (Throwable t) {
 			    System.err.println(t.getMessage());
+				System.out.println("\nProgram automaton:\n\n" + program.toDot());
+				System.out.println("Program automaton as GBA:\n\n" + programGBA.toDot());
+				System.out.println("\n\nCE automaton:\n\n" + ce.toDot());
+                print(System.out, program, "program");
+                System.out.println();
+                print(System.out, ce, "ce");
+				System.exit(-1);
+			}
+			Minus minus = new Minus(program, ce);
+			Boolean diff_is_e = difference.isEmpty();
+			IsEmpty minus_is_e = new IsEmpty(minus.getResult());
+			if (!(diff_is_e.equals(minus_is_e.getResult()))) {
+				System.out.println("Found difference in behaviour");
 				System.out.println("Program automaton:\n\n" + program.toDot());
 				System.out.println("Program automaton as GBA:\n\n" + programGBA.toDot());
 				System.out.println("\n\nCE automaton:\n\n" + ce.toDot());
-				System.exit(-1);
+				System.out.println("\n\nNCSB difference automaton:\n\n" + difference.toDot());
+				System.out.println("\n\nMinus automaton:\n\n" + minus.getResult().toDot());
+				System.out.println("Difference is empty? " + diff_is_e);
+                System.out.println("Minus is empty? " + minus_is_e.getResult());
+				assertEquals(false, true);
 			}
-//			Minus minus = new Minus(program, ce);
-//			Boolean diff_is_e = difference.isEmpty();
-//			IsEmpty minus_is_e = new IsEmpty(minus.getResult());
-//			if (!(diff_is_e.equals(minus_is_e.getResult()))) {
-//				System.out.println("Found difference in behaviour");
-//				System.out.println("Program automaton:\n\n" + program.toDot());
-//				System.out.println("Program automaton as GBA:\n\n" + programGBA.toDot());
-//				System.out.println("\n\nCE automaton:\n\n" + ce.toDot());
-//				System.out.println("\n\nNCSB difference automaton:\n\n" + difference.toDot());
-//				System.out.println("\n\nMinus automaton:\n\n" + minus.getResult().toDot());
-//				System.out.println("Difference is empty? " + diff_is_e);
-//                System.out.println("Minus is empty? " + minus_is_e.getResult());
-//				assertEquals(false, true);
-//			}
 		}
 	}
+	
+
+	private static void print(PrintStream out, IBuchi ba, String name) {
+	    final String gbaStr = "Gba";
+	    final String baStr = "Buchi";
+	    final String newStr = "new"; 
+	    final String addState = "addState";
+	    final String setAccSize = "setAccSize";
+	    if(ba instanceof IGba) {
+	        IGba gba = (IGba)ba;
+	        out.println(gbaStr + " " + name + " = " + newStr + " " + gbaStr + "(" + ba.getAlphabetSize() + ");");
+	        out.println(name + "." + setAccSize + "(" + gba.getAccSize() + ");");
+	    }else {
+	        out.println(baStr + " " + name + " = " + newStr + " " + baStr + "(" + ba.getAlphabetSize() + ");");
+	    }
+	    for(int i = 0; i < ba.getStateSize(); i ++) {
+	        out.println(name + "." + addState + "();");
+	    }
+	    for(IState state : ba.getStates()) {
+	        printState(out, ba, state, ba.getAlphabetSize(), name);
+	    }
+	}
+	
+	private static void printState(PrintStream out, IBuchi aut, IState state, int apSize, String name) {
+	    final String getState = "getState";
+	    final String addSucc = "addSuccessor";
+	    final String setFinal = "setFinal";
+	    final String setInit = "setInitial";
+	    final int id = state.getId();
+	    if(aut.isInitial(id)) {
+	        out.println(name + "." + setInit + "(" + id + ");");
+	    }
+        if(state instanceof IGbaState) {
+            IGbaState gbaState = (IGbaState)state;
+            for(final int index : gbaState.getAccSet()) {
+                out.println(name + "." + setFinal + "(" + id + "," + index + ");");
+            }
+        }else {
+            out.println(name + "." + setFinal + "(" + id + ");");
+        }
+	    for(int letter = 0; letter < apSize; letter ++) {
+            for(final int succ : state.getSuccessors(letter)) {
+                out.println(name + "." + getState + "(" + id + ")." + addSucc + "(" + letter + ", " + succ + ");");
+            }
+        }
+    }
 }
