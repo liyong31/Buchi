@@ -18,7 +18,7 @@ class AsccAntichain {
     ISet mQPrime;
     Boolean mIsEmpty;
     
-    public AsccAntichain(Difference difference) {
+    AsccAntichain(Difference difference) {
         mDifference = difference;
         mSCCs = new Stack<>();
         mAct = new Stack<>();
