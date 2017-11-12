@@ -13,7 +13,7 @@ import util.ISet;
 import util.UtilISet;
 
 
-class RunConstructor {
+public class RunConstructor {
     
     private final IBuchi mBuchi;
     private final ISet mSources;
@@ -23,7 +23,7 @@ class RunConstructor {
     private final TIntObjectMap<SuccessorInfo> mSuccInfo;
     private final boolean mGoalIsFinal;
     
-    RunConstructor(IBuchi buchi, ISet source
+    public RunConstructor(IBuchi buchi, ISet source
                   , ISet target, boolean goalIsFinal) {
         mBuchi = buchi;
         mSources = source;
@@ -32,7 +32,7 @@ class RunConstructor {
         mGoalIsFinal = goalIsFinal;
     }
     
-    Run getRun() {
+    public Run getRun() {
         if(mRun == null) {
             search();
             construct();

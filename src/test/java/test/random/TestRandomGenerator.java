@@ -235,7 +235,7 @@ public class TestRandomGenerator {
     @Test
     public void testOndraExplore() {
         while (true) {
-            IGba program = RandomBuchiGenerator.getRandomGeneralizedBuchiAutomaton(6, 2, 2, 2, 2);
+            IGba program = RandomBuchiGenerator.getRandomGeneralizedBuchiAutomaton(4, 2, 2, 2, 2);
             try {
                 new OndraExplore(program);
             } catch (Throwable t) {
