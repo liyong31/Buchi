@@ -57,17 +57,17 @@ class AsccAntichain {
         }
         
         // now we construct all the accepting run
-        mLassos = new LinkedList<>();
-        for(Run loop : mLoops) {
-            ISet source = UtilISet.newISet();
-            source.or(mDifference.getInitialStates());
-            ISet target = UtilISet.newISet();
-            target.set(loop.getFirstState());
-            RunConstructor rc = new RunConstructor(mDifference, source, target, false);
-            Run stem = rc.getRun();
-            assert stem.getLastState() == loop.getFirstState();
-            mLassos.addLast(new LassoRun(stem, loop)); 
-        }
+//        mLassos = new LinkedList<>();
+//        for(Run loop : mLoops) {
+//            ISet source = UtilISet.newISet();
+//            source.or(mDifference.getInitialStates());
+//            ISet target = UtilISet.newISet();
+//            target.set(loop.getFirstState());
+//            RunConstructor rc = new RunConstructor(mDifference, source, target, false);
+//            Run stem = rc.getRun();
+//            assert stem.getLastState() == loop.getFirstState();
+//            mLassos.addLast(new LassoRun(stem, loop)); 
+//        }
         
     }
     
@@ -83,6 +83,9 @@ class AsccAntichain {
         boolean is_nemp = false;
         ProductState prodS = mDifference.getProductState(s);
         for(int letter = 0; letter < mDifference.getAlphabetSize(); letter ++ ) {
+            if(letter == 0 && s == 12) {
+                System.out.println("Hello");
+            }
             for(final int t : prodS.getSuccessors(letter)) {
                 ProductState prodT =  mDifference.getProductState(t);
                 if(mQPrime.get(t)) {
@@ -103,6 +106,7 @@ class AsccAntichain {
                         B.or(pair.mLabel);
                         if(B.cardinality() == mDifference.getAccSize()) {
                             is_nemp = true;
+                            System.out.println("State s" + u);
                             extractRun(u);
                         }
                     }while(mDfsNum.get(u) > mDfsNum.get(t));
@@ -141,7 +145,8 @@ class AsccAntichain {
             if(list.size() > 1) {
                 list.removeLast();
             }
-            loop.preappend(pair.mPred, pair.mLetter, h);
+            if(pair.mPred != SHARP)
+                loop.preappend(pair.mPred, pair.mLetter, h);
             h = pair.mPred;
         }while(h != SHARP);
         System.out.println(loop);
