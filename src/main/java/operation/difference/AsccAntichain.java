@@ -71,6 +71,8 @@ class AsccAntichain {
         
     }
     
+    private boolean mHasLoop = false;
+    
     private ISet getLabel(int state) {
         return mDifference.getAccSet(state);
     }
@@ -107,7 +109,10 @@ class AsccAntichain {
                         if(B.cardinality() == mDifference.getAccSize()) {
                             is_nemp = true;
                             System.out.println("State s" + u);
-                            extractRun(u);
+                            if(!mHasLoop) {
+                                mHasLoop = true;
+                                extractRun(u);
+                            }
                         }
                     }while(mDfsNum.get(u) > mDfsNum.get(t));
                     mSCCs.push(new ElemPair(u, B));
