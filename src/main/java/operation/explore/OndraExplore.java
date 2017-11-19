@@ -2,9 +2,9 @@ package operation.explore;
 
 import java.util.Stack;
 
-import automata.Gba;
-import automata.IGba;
-import automata.IGbaState;
+import automata.GeneralizedBuchi;
+import automata.IGeneralizedBuchi;
+import automata.IGeneralizedState;
 import gnu.trove.map.TIntIntMap;
 import gnu.trove.map.hash.TIntIntHashMap;
 import util.ISet;
@@ -18,10 +18,10 @@ public class OndraExplore extends Explore{
     int mCnt;
     ISet mEmp;
     ISet mQPrime;
-    IGba mOperandGBA;
+    IGeneralizedBuchi mOperandGBA;
     Boolean mIsEmpty;
     
-    public OndraExplore(IGba operand) {
+    public OndraExplore(IGeneralizedBuchi operand) {
         super(operand);
     }
     
@@ -41,7 +41,7 @@ public class OndraExplore extends Explore{
     @Override
     public void explore() {
         
-        mOperandGBA = (IGba) mOperand;
+        mOperandGBA = (IGeneralizedBuchi) mOperand;
         
         mSCCs = new Stack<>();
         mAct = new Stack<>();
@@ -64,23 +64,23 @@ public class OndraExplore extends Explore{
         for(int s : mEmp) {
             assert !mQPrime.get(s) : "Wrong state in mQPrime";
             // check whether this state can reach any accepting loop
-            IGba gba = copyGba(mOperandGBA);
+            IGeneralizedBuchi gba = copyGba(mOperandGBA);
             gba.setInitial(s);
             Tarjan tarjan = new Tarjan(gba);
             assert tarjan.isEmpty() : "not empty language";
         }
     }
     
-    private IGba copyGba(IGba operand) {
-        IGba gba = new Gba(operand.getAlphabetSize());
+    private IGeneralizedBuchi copyGba(IGeneralizedBuchi operand) {
+        IGeneralizedBuchi gba = new GeneralizedBuchi(operand.getAlphabetSize());
         gba.setAccSize(operand.getAccSize());
         for(int i = 0; i < operand.getStateSize(); i ++) {
             gba.addState();
         }
         // copy states
         for(int i = 0; i < operand.getStateSize(); i ++) {
-            IGbaState state = (IGbaState) operand.getState(i);
-            IGbaState copy = (IGbaState) gba.getState(i);
+            IGeneralizedState state = (IGeneralizedState) operand.getState(i);
+            IGeneralizedState copy = (IGeneralizedState) gba.getState(i);
             for(int letter = 0; letter < operand.getAlphabetSize(); letter ++) {
                 for(final int t : state.getSuccessors(letter)) {
                     copy.addSuccessor(letter, t);
@@ -94,7 +94,7 @@ public class OndraExplore extends Explore{
     }
 
     private boolean construct(int s) {
-        IGbaState state = (IGbaState) mOperandGBA.getState(s);
+        IGeneralizedState state = (IGeneralizedState) mOperandGBA.getState(s);
         ++ mCnt;
         mDfsNum.put(s, mCnt);
         mSCCs.push(new AsccElem(s, state.getAccSet()));

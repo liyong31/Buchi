@@ -1,8 +1,8 @@
 package operation.difference;
 
-import automata.Gba;
+import automata.GeneralizedBuchi;
 import automata.IBuchi;
-import automata.IGba;
+import automata.IGeneralizedBuchi;
 import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
 import operation.complement.Complement;
@@ -11,15 +11,15 @@ import operation.minus.IMminus;
 /**
  * We use Antichain to compute the difference 
  * */
-public class Difference extends Gba implements IMminus {
+public class Difference extends GeneralizedBuchi implements IMminus {
     
-    private final IGba mFstOperand;
+    private final IGeneralizedBuchi mFstOperand;
     private final IBuchi mSndOperand;
     private final Complement mSndComplement;
     private final TObjectIntMap<ProductState> mStateMap;
     private Boolean mIsEmpty;
     
-    public Difference(IGba fstOperand, IBuchi sndOperand) {
+    public Difference(IGeneralizedBuchi fstOperand, IBuchi sndOperand) {
         super(fstOperand.getAlphabetSize());
         assert fstOperand.getAlphabetSize() == sndOperand.getAlphabetSize();
         this.mFstOperand = fstOperand;
@@ -47,7 +47,7 @@ public class Difference extends Gba implements IMminus {
     
 
     @Override
-    public IGba getFirstOperand() {
+    public IGeneralizedBuchi getFirstOperand() {
         return mFstOperand;
     }
 
@@ -57,7 +57,7 @@ public class Difference extends Gba implements IMminus {
     }
 
     @Override
-    public IGba getResult() {
+    public IGeneralizedBuchi getResult() {
         return this;
     }
     

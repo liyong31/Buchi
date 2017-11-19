@@ -8,15 +8,15 @@ import java.util.List;
 import util.ISet;
 import util.UtilISet;
 
-public class Gba implements IGba {
+public class GeneralizedBuchi implements IGeneralizedBuchi {
     
     protected int mAccSize;
     protected final ISet mInitialStates;
     protected final ISet mFinalStates;
-    protected final List<IGbaState> mStates;
+    protected final List<IGeneralizedState> mStates;
     private final int mAlphabetSize;
     
-    public Gba(int alphabetSize) {
+    public GeneralizedBuchi(int alphabetSize) {
         mAlphabetSize = alphabetSize;
         mInitialStates = UtilISet.newISet();
         mFinalStates = UtilISet.newISet();
@@ -35,27 +35,27 @@ public class Gba implements IGba {
 
     @Override
     public IState addState() {
-        IGbaState state = makeState(getStateSize());
+        IGeneralizedState state = makeState(getStateSize());
         mStates.add(state);
         return state;
     }
 
     @Override
-    public IGbaState makeState(int id) {
-        return new GbaState(id);
+    public IGeneralizedState makeState(int id) {
+        return new GeneralizedState(id);
     }
 
     @Override
     public int addState(IState state) {
         assert state.getId() == getStateSize();
-        assert state instanceof IGbaState;
-        IGbaState gbaState = (IGbaState)state;
+        assert state instanceof IGeneralizedState;
+        IGeneralizedState gbaState = (IGeneralizedState)state;
         mStates.add(gbaState);
         return state.getId();
     }
 
     @Override
-    public IGbaState getState(int id) {
+    public IGeneralizedState getState(int id) {
         assertValidState(id);
         return mStates.get(id);
     }

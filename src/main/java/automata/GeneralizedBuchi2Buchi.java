@@ -5,12 +5,12 @@ import gnu.trove.map.hash.TObjectIntHashMap;
 import util.ISet;
 import util.UtilISet;
 
-public class GbaToBa extends Buchi {
+public class GeneralizedBuchi2Buchi extends Buchi {
 
-    private final IGba mGba;
+    private final IGeneralizedBuchi mGba;
     private final TObjectIntMap<TrackState> mStateMap;
     
-    public GbaToBa(IGba gba) {
+    public GeneralizedBuchi2Buchi(IGeneralizedBuchi gba) {
         super(gba.getAlphabetSize());
         mGba = gba;
         mStateMap = new TObjectIntHashMap<>();
@@ -19,7 +19,7 @@ public class GbaToBa extends Buchi {
     
     private void computeInitialStates() {
         for(int gbaState : mGba.getInitialStates()) {
-            TrackState baState = getOrAddState(gbaState, BaToGba.ZERO);
+            TrackState baState = getOrAddState(gbaState, Buchi2GeneralizedBuchi.ZERO);
             setInitial(baState.getId());
         }
     }
@@ -32,7 +32,7 @@ public class GbaToBa extends Buchi {
         TrackState newState = new TrackState(gbaState, track, getStateSize());
         int id = addState(newState);
         mStateMap.put(newState, id);
-        final boolean isFinal = (track == BaToGba.ZERO) && (mGba.isFinal(gbaState, BaToGba.ZERO));
+        final boolean isFinal = (track == Buchi2GeneralizedBuchi.ZERO) && (mGba.isFinal(gbaState, Buchi2GeneralizedBuchi.ZERO));
         if(isFinal) setFinal(id);
         return newState;
     }

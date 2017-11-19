@@ -7,16 +7,18 @@ import java.io.PrintStream;
 import org.junit.Test;
 import org.junit.Ignore;
 
-import automata.BaToGba;
+import automata.Buchi2GeneralizedBuchi;
 import automata.Buchi;
-import automata.Gba;
+import automata.GeneralizedBuchi;
 import automata.IBuchi;
-import automata.IGba;
-import automata.IGbaState;
+import automata.IGeneralizedBuchi;
+import automata.IGeneralizedState;
 import automata.IState;
 import automata.RandomBuchiGenerator;
 import main.Options;
+import operation.complement.Complement;
 import operation.difference.Difference;
+import operation.explore.Explore;
 import operation.explore.OndraExplore;
 import operation.isempty.IsEmpty;
 import operation.minus.Minus;
@@ -31,8 +33,8 @@ public class TestRandomGenerator {
 		}
 	}
 	
-	public static IGba getGba() {
-	    Gba gba = new Gba(2);
+	public static IGeneralizedBuchi getGba() {
+	    GeneralizedBuchi gba = new GeneralizedBuchi(2);
 	    final int size = 10;
 	    for(int i = 0; i < size; i ++) {
 	        gba.addState();
@@ -104,7 +106,7 @@ public class TestRandomGenerator {
 	@Test
 	public void testDifference() {
 	    Options.mLazyS = true;
-	    IGba program = getGba();
+	    IGeneralizedBuchi program = getGba();
 	    IBuchi ce = getBuchi();
 	    Difference difference = new Difference(program, ce);
         difference.explore();
@@ -114,7 +116,7 @@ public class TestRandomGenerator {
 	public void testBug() {
 		Options.mLazyS = true;
 
-		IGba program = new Gba(2);
+		IGeneralizedBuchi program = new GeneralizedBuchi(2);
 		program.addState();
 		program.addState();
 		program.setInitial(0);
@@ -170,7 +172,7 @@ public class TestRandomGenerator {
     public void testQPrime() {
         Options.mLazyS = true;
         Options.mAntichain = true;
-        IGba program = new Gba(2);
+        IGeneralizedBuchi program = new GeneralizedBuchi(2);
         program.addState();
         program.addState();
         program.setInitial(0);
@@ -210,7 +212,7 @@ public class TestRandomGenerator {
     
     @Test
     public void testOndraExploreSpecific() {
-        Gba program = new Gba(2);
+        GeneralizedBuchi program = new GeneralizedBuchi(2);
         program.setAccSize(2);
         program.addState();
         program.addState();
@@ -235,7 +237,7 @@ public class TestRandomGenerator {
     @Test
     public void testOndraExplore() {
         while (true) {
-            IGba program = RandomBuchiGenerator.getRandomGeneralizedBuchiAutomaton(4, 2, 2, 2, 2);
+            IGeneralizedBuchi program = RandomBuchiGenerator.getRandomGeneralizedBuchiAutomaton(4, 2, 2, 2, 2);
             try {
                 new OndraExplore(program);
             } catch (Throwable t) {
@@ -248,13 +250,29 @@ public class TestRandomGenerator {
 
         }
     }
+    
+    @Test
+    public void testLemma() {
+        Options.mLazyS = false;
+        Options.mAntichain = false;
+        while (true) {
+            IBuchi ce = RandomBuchiGenerator.getRandomSemideterministicBuchiAutomaton(5, 3, 2, 1, 2);
+            Complement complement = new Complement(ce);
+            new Explore(complement);
+            try {
+                complement.testLemma();
+            }catch (Throwable t) {
+                System.exit(-1);
+            }
+        }
+    }
 	@Test
 	public void testNCSB() {
 		Options.mLazyS = true;
 		Options.mAntichain = true;
 		while (true) {
 			IBuchi program = RandomBuchiGenerator.getRandomBuchiAutomaton(2, 2, 2, 2);
-			IGba programGBA = new BaToGba(program);
+			IGeneralizedBuchi programGBA = new Buchi2GeneralizedBuchi(program);
 			IBuchi ce = RandomBuchiGenerator.getRandomSemideterministicBuchiAutomaton(5, 3, 2, 1, 2);
 			Difference difference = new Difference(programGBA, ce);
 			try {
@@ -293,8 +311,8 @@ public class TestRandomGenerator {
 	    final String newStr = "new"; 
 	    final String addState = "addState";
 	    final String setAccSize = "setAccSize";
-	    if(ba instanceof IGba) {
-	        IGba gba = (IGba)ba;
+	    if(ba instanceof IGeneralizedBuchi) {
+	        IGeneralizedBuchi gba = (IGeneralizedBuchi)ba;
 	        out.println(gbaStr + " " + name + " = " + newStr + " " + gbaStr + "(" + ba.getAlphabetSize() + ");");
 	        out.println(name + "." + setAccSize + "(" + gba.getAccSize() + ");");
 	    }else {
@@ -317,8 +335,8 @@ public class TestRandomGenerator {
 	    if(aut.isInitial(id)) {
 	        out.println(name + "." + setInit + "(" + id + ");");
 	    }
-        if(state instanceof IGbaState) {
-            IGbaState gbaState = (IGbaState)state;
+        if(state instanceof IGeneralizedState) {
+            IGeneralizedState gbaState = (IGeneralizedState)state;
             for(final int index : gbaState.getAccSet()) {
                 out.println(name + "." + setFinal + "(" + id + "," + index + ");");
             }

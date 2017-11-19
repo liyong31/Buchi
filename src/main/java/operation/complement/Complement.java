@@ -72,5 +72,27 @@ public class Complement extends Buchi implements IUnaryOp<IBuchi, IBuchi> {
     public StateNCSB getStateNCSB(int id) {
         return (StateNCSB) getState(id);
     }
+    
+    public void testLemma() {
+        for(int i = 0; i < getStateSize(); i ++) {
+            StateNCSB s = (StateNCSB) getState(i);
+            ISet N = s.getNCSB().copyNSet();
+            ISet C = s.getNCSB().copyCSet();
+            ISet B = s.getNCSB().copyBSet();
+            C.andNot(B);
+            C.andNot(getFinalStates());
+            for(int n : C) {
+                ISet Cp = s.getNCSB().copyCSet();
+                Cp.clear(n);
+                ISet S = s.getNCSB().copySSet();
+                S.set(n);
+                NCSB ncsb = new NCSB(N, Cp, S, B);
+                StateNCSB nn = getOrAddState(ncsb);
+                System.out.println(s.getNCSB() + " : " + ncsb);
+                assert nn != null : "Not reachable " + s.getNCSB() + " -> " + ncsb;
+            }
+
+        }
+    }
 
 }

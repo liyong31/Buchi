@@ -1,8 +1,8 @@
 package operation.explore;
 
 import java.util.Stack;
-import automata.IGba;
-import automata.IGbaState;
+import automata.IGeneralizedBuchi;
+import automata.IGeneralizedState;
 import gnu.trove.map.TIntIntMap;
 import gnu.trove.map.hash.TIntIntHashMap;
 import util.ISet;
@@ -13,10 +13,10 @@ public class Tarjan {
     private final Stack<Integer> mStack;
     private final TIntIntMap mIndexMap ;
     private final TIntIntMap mLowlinkMap;
-    private final IGba mOperand;
+    private final IGeneralizedBuchi mOperand;
     private boolean mIsEmpty = true;
     
-    public Tarjan(IGba gba) {
+    public Tarjan(IGeneralizedBuchi gba) {
         this.mOperand = gba;
         this.mStack = new Stack<>();
         this.mLowlinkMap = new TIntIntHashMap();
@@ -46,7 +46,7 @@ public class Tarjan {
         mLowlinkMap.put(v, mIndex);
         ++ mIndex;          
         
-        IGbaState state = (IGbaState) mOperand.getState(v);
+        IGeneralizedState state = (IGeneralizedState) mOperand.getState(v);
         for(int letter = 0; letter < mOperand.getAlphabetSize(); letter ++) {
             for(int succ : state.getSuccessors(letter)) {
                 if(! mIndexMap.containsKey(succ)) {

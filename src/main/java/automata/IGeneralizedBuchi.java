@@ -6,7 +6,7 @@ import java.util.List;
 
 import util.ISet;
 
-public interface IGba extends IBuchi {
+public interface IGeneralizedBuchi extends IBuchi {
 
     @Override
     default public void setFinal(int id) {

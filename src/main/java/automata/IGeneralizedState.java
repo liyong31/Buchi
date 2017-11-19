@@ -2,7 +2,7 @@ package automata;
 
 import util.ISet;
 
-public interface IGbaState extends IState {
+public interface IGeneralizedState extends IState {
     
     void setFinal(int index);
 

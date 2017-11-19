@@ -1,0 +1,189 @@
+digraph {
+  0[ shape = circle, label="0"];
+  0 -> 1 [label="0"];
+  0 -> 7 [label="1"];
+  1[ shape = circle, label="1"];
+  2[ shape = circle, label="2"];
+  2 -> 6 [label="0"];
+  3[ shape = doublecircle, label="3 : [0]"];
+  3 -> 5 [label="1"];
+  4[ shape = doublecircle, label="4 : [1]"];
+  4 -> 9 [label="0"];
+  5[ shape = circle, label="5"];
+  5 -> 4 [label="0"];
+  5 -> 7 [label="0"];
+  5 -> 0 [label="1"];
+  5 -> 3 [label="1"];
+  6[ shape = doublecircle, label="6 : [0]"];
+  6 -> 4 [label="0"];
+  6 -> 7 [label="0"];
+  6 -> 7 [label="1"];
+  7[ shape = circle, label="7"];
+  7 -> 8 [label="0"];
+  7 -> 9 [label="0"];
+  8[ shape = circle, label="8"];
+  8 -> 5 [label="0"];
+  8 -> 1 [label="1"];
+  8 -> 5 [label="1"];
+  9[ shape = circle, label="9"];
+  9 -> 8 [label="0"];
+  10 [label="", shape = plaintext];
+  10 -> 8 [label=""];
+}
+
+
+
+
+CE automaton:
+
+digraph {
+  0 [label="0" , shape = circle];
+  0 -> 3 [label="0"];
+  0 -> 2 [label="1"];
+  0 -> 4 [label="1"];
+  1 [label="1" , shape = circle];
+  1 -> 2 [label="0"];
+  1 -> 3 [label="0"];
+  1 -> 1 [label="1"];
+  1 -> 3 [label="1"];
+  2 [label="2" , shape = circle];
+  2 -> 3 [label="0"];
+  3 [label="3" , shape = circle];
+  3 -> 4 [label="1"];
+  4 [label="4" , shape = doublecircle];
+  4 -> 4 [label="1"];
+  5 [label="", shape = plaintext];
+  5 -> 2 [label=""];
+}
+
+
+
+
+NCSB difference automaton:
+
+digraph {
+  0[ shape = doublecircle, label="0 : [2]"];
+  0 -> 1 [label="0"];
+  0 -> 6 [label="1"];
+  0 -> 9 [label="1"];
+  1[ shape = doublecircle, label="1 : [2]"];
+  1 -> 2 [label="0"];
+  1 -> 3 [label="0"];
+  1 -> 10 [label="1"];
+  1 -> 11 [label="1"];
+  2[ shape = doublecircle, label="2 : [1, 2]"];
+  2 -> 4 [label="0"];
+  3[ shape = doublecircle, label="3 : [2]"];
+  3 -> 4 [label="0"];
+  3 -> 5 [label="0"];
+  4[ shape = doublecircle, label="4 : [2]"];
+  4 -> 5 [label="0"];
+  5[ shape = doublecircle, label="5 : [2]"];
+  5 -> 6 [label="0"];
+  5 -> 6 [label="1"];
+  5 -> 9 [label="1"];
+  6[ shape = doublecircle, label="6 : [2]"];
+  6 -> 2 [label="0"];
+  6 -> 3 [label="0"];
+  6 -> 7 [label="1"];
+  6 -> 8 [label="1"];
+  7[ shape = doublecircle, label="7 : [2]"];
+  7 -> 9 [label="0"];
+  7 -> 3 [label="1"];
+  8[ shape = doublecircle, label="8 : [0, 2]"];
+  8 -> 6 [label="1"];
+  9[ shape = doublecircle, label="9 : [2]"];
+  10[ shape = circle, label="10"];
+  10 -> 9 [label="0"];
+  10 -> 12 [label="1"];
+  11[ shape = doublecircle, label="11 : [0]"];
+  11 -> 13 [label="1"];
+  12[ shape = circle, label="12"];
+  12 -> 4 [label="0"];
+  12 -> 5 [label="0"];
+  13[ shape = circle, label="13"];
+  13 -> 2 [label="0"];
+  13 -> 3 [label="0"];
+  13 -> 10 [label="1"];
+  13 -> 11 [label="1"];
+  14 [label="", shape = plaintext];
+  14 -> 0 [label=""];
+}
+
+
+
+
+Minus automaton:
+
+digraph {
+  0 [label="0" , shape = circle];
+  0 -> 1 [label="0"];
+  0 -> 6 [label="1"];
+  0 -> 9 [label="1"];
+  1 [label="1" , shape = circle];
+  1 -> 2 [label="0"];
+  1 -> 3 [label="0"];
+  1 -> 16 [label="1"];
+  1 -> 17 [label="1"];
+  2 [label="2" , shape = circle];
+  2 -> 4 [label="0"];
+  3 [label="3" , shape = circle];
+  3 -> 4 [label="0"];
+  3 -> 5 [label="0"];
+  4 [label="4" , shape = circle];
+  4 -> 5 [label="0"];
+  5 [label="5" , shape = circle];
+  5 -> 6 [label="0"];
+  5 -> 6 [label="1"];
+  5 -> 9 [label="1"];
+  6 [label="6" , shape = circle];
+  6 -> 2 [label="0"];
+  6 -> 3 [label="0"];
+  6 -> 7 [label="1"];
+  6 -> 8 [label="1"];
+  7 [label="7" , shape = circle];
+  7 -> 9 [label="0"];
+  7 -> 3 [label="1"];
+  8 [label="8" , shape = circle];
+  8 -> 10 [label="1"];
+  9 [label="9" , shape = circle];
+  10 [label="10" , shape = circle];
+  10 -> 2 [label="0"];
+  10 -> 11 [label="0"];
+  10 -> 8 [label="1"];
+  10 -> 15 [label="1"];
+  11 [label="11" , shape = circle];
+  11 -> 12 [label="0"];
+  11 -> 13 [label="0"];
+  12 [label="12" , shape = circle];
+  12 -> 10 [label="0"];
+  12 -> 10 [label="1"];
+  12 -> 14 [label="1"];
+  13 [label="13" , shape = circle];
+  13 -> 12 [label="0"];
+  14 [label="14" , shape = circle];
+  15 [label="15" , shape = circle];
+  15 -> 14 [label="0"];
+  15 -> 11 [label="1"];
+  16 [label="16" , shape = circle];
+  16 -> 9 [label="0"];
+  16 -> 18 [label="1"];
+  17 [label="17" , shape = circle];
+  17 -> 19 [label="1"];
+  18 [label="18" , shape = circle];
+  18 -> 4 [label="0"];
+  18 -> 5 [label="0"];
+  19 [label="19" , shape = circle];
+  19 -> 2 [label="0"];
+  19 -> 11 [label="0"];
+  19 -> 17 [label="1"];
+  19 -> 20 [label="1"];
+  20 [label="20" , shape = circle];
+  20 -> 14 [label="0"];
+  20 -> 21 [label="1"];
+  21 [label="21" , shape = circle];
+  21 -> 12 [label="0"];
+  21 -> 13 [label="0"];
+  22 [label="", shape = plaintext];
+  22 -> 0 [label=""];
+}

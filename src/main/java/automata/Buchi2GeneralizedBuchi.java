@@ -6,13 +6,13 @@ import util.ISet;
 import util.UtilISet;
 
 /** an GBA wrapper for BA */
-public class BaToGba implements IGba {
+public class Buchi2GeneralizedBuchi implements IGeneralizedBuchi {
 
     public static final int ONE = 1;
     public static final int ZERO = 0;
     private final IBuchi mBuchi;
     
-    public BaToGba(IBuchi buchi) {
+    public Buchi2GeneralizedBuchi(IBuchi buchi) {
         assert buchi != null;
         mBuchi = buchi;
     }

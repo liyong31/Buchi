@@ -3,11 +3,11 @@ package automata;
 import util.ISet;
 import util.UtilISet;
 
-public class GbaState extends State implements IGbaState {
+public class GeneralizedState extends State implements IGeneralizedState {
     
     private final ISet mLabel;
     
-    public GbaState(int id) {
+    public GeneralizedState(int id) {
         super(id);
         mLabel = UtilISet.newISet();
     }

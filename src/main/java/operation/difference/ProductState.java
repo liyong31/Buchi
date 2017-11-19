@@ -1,11 +1,11 @@
 package operation.difference;
 
-import automata.GbaState;
+import automata.GeneralizedState;
 import operation.complement.NCSB;
 import util.ISet;
 import util.UtilISet;
 
-class ProductState extends GbaState {
+class ProductState extends GeneralizedState {
 
     Difference mDifference;
     int mFstState;

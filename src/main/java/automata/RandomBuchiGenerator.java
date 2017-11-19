@@ -52,7 +52,7 @@ public class RandomBuchiGenerator {
 		return automaton;
 	}
 	
-	public static IGba getRandomGeneralizedBuchiAutomaton(
+	public static IGeneralizedBuchi getRandomGeneralizedBuchiAutomaton(
 			final int stateSetSize, 
 			final int alphabetSize, 
 			final int acceptingStates, 
@@ -60,7 +60,7 @@ public class RandomBuchiGenerator {
 			final int acceptingSets) {
 
 		final int transitionSetSize = (int) (stateSetSize * density);
-		final Gba automaton = new Gba(alphabetSize);
+		final GeneralizedBuchi automaton = new GeneralizedBuchi(alphabetSize);
 		automaton.setAccSize(acceptingSets);
 		
 		for (int i = 0; i < stateSetSize; i++) {
