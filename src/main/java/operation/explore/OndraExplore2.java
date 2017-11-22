@@ -1,0 +1,195 @@
+package operation.explore;
+
+import java.util.Iterator;
+import java.util.Stack;
+
+import automata.GeneralizedBuchi;
+import automata.IGeneralizedBuchi;
+import automata.IGeneralizedState;
+import gnu.trove.map.TIntIntMap;
+import gnu.trove.map.hash.TIntIntHashMap;
+import main.Options;
+import util.ISet;
+import util.UtilISet;
+
+public class OndraExplore2 extends Explore{
+
+    Stack<AsccElem> mSCCs;
+    Stack<Integer> mAct;
+    TIntIntMap mDfsNum;
+    int mCnt;
+    IAntichain mEmp;
+    ISet mQPrime;
+    IGeneralizedBuchi mOperandGBA;
+    Boolean mIsEmpty;
+    
+    public OndraExplore2(IGeneralizedBuchi operand) {
+        super(operand);
+    }
+    
+    public IAntichain getAntichain() {
+        return new Antichain();
+    }
+    
+    class AsccElem {
+        int mState;
+        ISet mLabel;
+        AsccElem(int state, ISet label) {
+            mState = state;
+            mLabel = label;
+        }
+        
+        public String toString() {
+            return "(" + mState + "," + mLabel + ")";
+        }
+    }
+    
+    @Override
+    public void explore() {
+        
+        mOperandGBA = (IGeneralizedBuchi) mOperand;
+        
+        mSCCs = new Stack<>();
+        mAct = new Stack<>();
+        mCnt = 0;
+        mEmp = getAntichain();
+        mQPrime = UtilISet.newISet();
+        mDfsNum = new TIntIntHashMap();
+        
+        boolean is_nemp = false;
+        
+        for(final int init : mOperandGBA.getInitialStates()) {
+            if(!mDfsNum.containsKey(init)) {
+                boolean result = construct(init);
+                is_nemp = result || is_nemp;
+            }
+        }
+        
+        mIsEmpty= !is_nemp;
+        
+        if(Options.mDebug) {
+            new Explore(mOperandGBA);
+            for(int s : mEmp) {
+                assert !mQPrime.get(s) : "Wrong state in mQPrime";
+                // check whether this state can reach any accepting loop
+                IGeneralizedBuchi gba = copyGba(mOperandGBA);
+                gba.setInitial(s);
+                Tarjan tarjan = new Tarjan(gba);
+                assert tarjan.isEmpty() : "not empty language";
+            }
+        }
+
+    }
+    
+    private IGeneralizedBuchi copyGba(IGeneralizedBuchi operand) {
+        IGeneralizedBuchi gba = new GeneralizedBuchi(operand.getAlphabetSize());
+        gba.setAccSize(operand.getAccSize());
+        for(int i = 0; i < operand.getStateSize(); i ++) {
+            gba.addState();
+        }
+        // copy states
+        for(int i = 0; i < operand.getStateSize(); i ++) {
+            IGeneralizedState state = (IGeneralizedState) operand.getState(i);
+            IGeneralizedState copy = (IGeneralizedState) gba.getState(i);
+            for(int letter = 0; letter < operand.getAlphabetSize(); letter ++) {
+                for(final int t : state.getSuccessors(letter)) {
+                    copy.addSuccessor(letter, t);
+                }
+            }
+            for(int index : state.getAccSet()) {
+                copy.setFinal(index);
+            }
+        }
+        return gba;
+    }
+
+    private boolean construct(int s) {
+        IGeneralizedState state = (IGeneralizedState) mOperandGBA.getState(s);
+        ++ mCnt;
+        mDfsNum.put(s, mCnt);
+        mSCCs.push(new AsccElem(s, state.getAccSet()));
+        mAct.push(s);
+        boolean is_nemp = false;
+        for(int letter = 0; letter < mOperandGBA.getAlphabetSize(); letter ++) {
+            for(final int t : state.getSuccessors(letter)) {
+                if(mQPrime.get(t)) {
+                    is_nemp = true;
+                }else if(mEmp.get(t)) {
+                    continue;
+                }else if(! mAct.contains(t)) {
+                    boolean result = construct(t);
+                    is_nemp = result || is_nemp;
+                }else {
+                    ISet B = UtilISet.newISet();
+                    int u;
+                    do {
+                        AsccElem p = mSCCs.pop();
+                        u = p.mState;
+                        B.or(p.mLabel);
+                        if(B.cardinality() == mOperandGBA.getAccSize()) {
+                            is_nemp = true;
+                        }
+                    }while(mDfsNum.get(u) > mDfsNum.get(t));
+                    mSCCs.push(new AsccElem(u, B));
+                }
+            }
+        }
+        
+        if(mSCCs.peek().mState == s) {
+            mSCCs.pop();
+            int u = 0;
+            do {
+                assert !mAct.isEmpty() : "Act empty";
+                u = mAct.pop();
+                if(is_nemp) {
+                    mQPrime.set(u);
+                }else {
+                    mEmp.set(u);
+                }
+            }while(u != s);
+        }
+        
+        return is_nemp;
+    }
+    
+    // implementation of antichain
+    private class Antichain implements IAntichain {
+        ISet mEmptyStates;
+        
+        Antichain() {
+            mEmptyStates = UtilISet.newISet();
+        }
+
+        @Override
+        public void set(int u) {
+            mEmptyStates.set(u);
+        }
+
+        @Override
+        public boolean get(int u) {
+            return mEmptyStates.get(u);
+        }
+
+        @Override
+        public int getSize() {
+            return mEmptyStates.cardinality();
+        }
+
+        @Override
+        public void clear() {
+            mEmptyStates.clear();
+        }
+        
+        @Override
+        public String toString() {
+            return mEmptyStates.toString();
+        }
+
+        @Override
+        public Iterator<Integer> iterator() {
+            return mEmptyStates.iterator();
+        }
+        
+    }
+
+}
