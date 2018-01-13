@@ -31,12 +31,12 @@ public class StateContainer {
     }
     
     public void addPredecessors(int letter, int pred) {
-        ISet preds = mSuccs.get(letter);
+        ISet preds = mPreds.get(letter);
         if(preds == null) {
             preds = UtilISet.newISet();
         }
         preds.set(pred);
-        mSuccs.put(letter, preds);
+        mPreds.put(letter, preds);
     }
     
     

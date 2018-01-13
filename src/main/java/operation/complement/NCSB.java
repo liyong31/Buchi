@@ -159,7 +159,7 @@ public class NCSB {
 		}
 	}
 	
-	private int hashValue(ISet set) {
+	public static int hashValue(ISet set) {
 		final int prime = 31;
         int result = 1;
         for(final int n : set) {
