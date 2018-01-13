@@ -5,13 +5,14 @@ import automata.IBuchi;
 import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
 import operation.IUnaryOp;
-import operation.complement.NCSB;
-import operation.complement.StateNCSB;
 import operation.explore.Explore;
 import util.ISet;
 
 /**
  * Semideterminize a given Buchi automaton
+ *  Costas Courcoubetis and Mihalis Yannakakis
+ *   "Verifying Temporal Properties of Finite-State Probabilistic Programs"
+ *  in FOCS 
  * */
 
 public class Semideterminize extends Buchi implements IUnaryOp<IBuchi, IBuchi> {
