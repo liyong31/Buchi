@@ -51,10 +51,9 @@ public class Semideterminize extends Buchi implements IUnaryOp<IBuchi, IBuchi> {
             int id = this.addState(newState);
             mStateIndices.put(newState, id);
             if(P != null && Q != null) {
-                boolean isEq = P.equals(Q);
-                if(isEq && P.overlap(mOpAcc)) setFinal(index);
+                if(P.overlap(mOpAcc) &&  P.equals(Q)) setFinal(index);
             }
-            
+            System.out.println("id: " + index + " state: " + newState + " isF: " + this.isFinal(index));
             return newState;
         }        
     }

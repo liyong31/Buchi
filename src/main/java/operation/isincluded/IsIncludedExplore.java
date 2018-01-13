@@ -11,6 +11,7 @@ import gnu.trove.map.TIntIntMap;
 import gnu.trove.map.hash.TIntIntHashMap;
 import operation.complement.Complement;
 import operation.determinize.Semideterminize;
+import test.BAStore;
 
 public class IsIncludedExplore {
     
@@ -185,6 +186,11 @@ public class IsIncludedExplore {
             }
             return inits;
         }
+    }
+    
+    public static void main(String[] args) {
+
+        
     }
     
 }

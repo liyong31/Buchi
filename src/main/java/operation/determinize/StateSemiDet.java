@@ -47,6 +47,7 @@ public class StateSemiDet extends State {
         }
         mVisitedLetters.set(letter);
         ISet succs = UtilISet.newISet();
+        int s = -1;
         if(mInnerState >= 0) {
             for(final int succ : mOperand.getState(mInnerState).getSuccessors(letter)) {
                 StateSemiDet stateSD = mSDBA.getOrAddState(null, null, succ);
@@ -57,13 +58,15 @@ public class StateSemiDet extends State {
             if(mOperand.isFinal(mInnerState)) {
                 ISet currP = UtilISet.newISet();
                 currP.set(mInnerState);
-                int s = computeSuccessor(letter, currP, currP);
-                super.addSuccessor(letter, s);
-                succs.set(s);
+                s = computeSuccessor(letter, currP, currP, true);
             }
         }else {
             assert mP != null && mQ != null;
-            int s = computeSuccessor(letter, mP, mQ);
+            s = computeSuccessor(letter, mP, mQ, mSDBA.isFinal(this.getId()));
+        }
+        
+        // if there is successor
+        if(s >= 0) {
             super.addSuccessor(letter, s);
             succs.set(s);
         }
@@ -72,7 +75,7 @@ public class StateSemiDet extends State {
     }
     
     // compute the successors of a pair <P, Q>
-    private int computeSuccessor(int letter, ISet currP, ISet currQ) {
+    private int computeSuccessor(int letter, ISet currP, ISet currQ, boolean accepting) {
         // first get the successors of the second component Q
         ISet succQ = UtilISet.newISet();
         ISet succP = UtilISet.newISet();
@@ -84,13 +87,16 @@ public class StateSemiDet extends State {
                 succP.or(succs);
             }
         }
-        boolean isEq = currP.equals(currQ);
         
-        if(!isEq) {
+        if(!accepting) {
             // P'
             for(final int p : currP) {
                 succP.or(mOperand.getState(p).getSuccessors(letter));
             }
+        }
+        
+        if(succP.isEmpty() && succQ.isEmpty()) {
+            return -1;
         }
         StateSemiDet stateSD = mSDBA.getOrAddState(succP, succQ, -1);
         return stateSD.getId();
