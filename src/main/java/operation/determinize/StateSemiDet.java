@@ -11,6 +11,8 @@ import util.UtilISet;
 public class StateSemiDet extends State {
     
     protected int mInnerState;
+    // there is an invariant that : P <= Q, so we can store
+    // only P and Q\P
     protected ISet mP;
     protected ISet mQ;
     protected final Semideterminize mSDBA;
@@ -58,7 +60,8 @@ public class StateSemiDet extends State {
             if(mOperand.isFinal(mInnerState)) {
                 ISet currP = UtilISet.newISet();
                 currP.set(mInnerState);
-                s = computeSuccessor(letter, currP, currP, true);
+                ISet currQMinusP = UtilISet.newISet();
+                s = computeSuccessor(letter, currP, currQMinusP, true);
             }
         }else {
             assert mP != null && mQ != null;
@@ -75,24 +78,41 @@ public class StateSemiDet extends State {
     }
     
     // compute the successors of a pair <P, Q>
-    private int computeSuccessor(int letter, ISet currP, ISet currQ, boolean accepting) {
+    private int computeSuccessor(int letter, ISet currP, ISet currQMinusP, boolean accepting) {
         // first get the successors of the second component Q
-        ISet succQ = UtilISet.newISet();
-        ISet succP = UtilISet.newISet();
-        for(final int q : currQ) {
+        ISet succQ = null;
+        ISet succP = null;
+        ISet succFromF = UtilISet.newISet();
+        ISet succNotFromF = UtilISet.newISet();
+        // get all states in 
+        for(final int q : currP) {
             ISet succs = mOperand.getState(q).getSuccessors(letter);
-            succQ.or(succs);
             // first set it to d(Q/\F, a)
             if(mOperand.isFinal(q)) {
-                succP.or(succs);
+                succFromF.or(succs);
+            }else {
+                succNotFromF.or(succs);
             }
         }
         
         if(!accepting) {
-            // P'
-            for(final int p : currP) {
-                succP.or(mOperand.getState(p).getSuccessors(letter));
+            succP = succFromF;
+            succP.or(succNotFromF);   
+            succQ = UtilISet.newISet();
+            for(final int p : currQMinusP) {
+                ISet succs = mOperand.getState(p).getSuccessors(letter);
+                if(mOperand.isFinal(p)) {
+                    succP.or(succs);       // d(P, a) \/ d(Q/\F, a)   
+                }else {
+                    succQ.or(succs);       // d(Q\P, a)   
+                }
             }
+            succQ.andNot(succP);
+        }else {
+            assert currQMinusP.isEmpty() : "Not empty for Q\\P";
+            succP = succFromF;          // P' = d(Q/\F, a)
+            succNotFromF.andNot(succP); // d(Q, a) \ P' = d(Q\F, a) \P'
+            succQ = succNotFromF;       
         }
         
         if(succP.isEmpty() && succQ.isEmpty()) {
@@ -110,7 +130,7 @@ public class StateSemiDet extends State {
             return false;
         }
         StateSemiDet other = (StateSemiDet)obj;
-        if(mInnerState >= 0) {
+        if(mInnerState >= 0 || other.mInnerState >= 0) {
             return mInnerState == other.mInnerState; 
         }
         // in the deterministic part

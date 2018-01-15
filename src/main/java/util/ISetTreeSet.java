@@ -22,7 +22,7 @@ public class ISetTreeSet implements ISet {
 	@Override
 	public void andNot(ISet set) {
 		if(! (set instanceof ISetTreeSet)) {
-		    throw new UnsupportedOperationException("OPERAND should be TreeSet");
+		    throw new UnsupportedOperationException("OPERAND should be TreeSet: " + set.getClass());
 		}
 		ISetTreeSet temp = (ISetTreeSet)set;
 		this.mSet.removeAll(temp.mSet);
@@ -31,7 +31,7 @@ public class ISetTreeSet implements ISet {
 	@Override
 	public void and(ISet set) {
 		if(! (set instanceof ISetTreeSet)) {
-		    throw new UnsupportedOperationException("OPERAND should be TreeSet");
+		    throw new UnsupportedOperationException("OPERAND should be TreeSet: " + set.getClass());
 		}
 		ISetTreeSet temp = (ISetTreeSet)set;
 		this.mSet.retainAll(temp.mSet);
@@ -40,7 +40,7 @@ public class ISetTreeSet implements ISet {
 	@Override
 	public void or(ISet set) {
 		if(! (set instanceof ISetTreeSet)) {
-		    throw new UnsupportedOperationException("OPERAND should be TreeSet");
+		    throw new UnsupportedOperationException("OPERAND should be TreeSet: " + set.getClass());
 		}
 		ISetTreeSet temp = (ISetTreeSet)set;
 		this.mSet.addAll(temp.mSet);
@@ -84,7 +84,7 @@ public class ISetTreeSet implements ISet {
 	@Override
 	public boolean subsetOf(ISet set) {
 		if(! (set instanceof ISetTreeSet)) {
-		    throw new UnsupportedOperationException("OPERAND should be TreeSet");
+		    throw new UnsupportedOperationException("OPERAND should be TreeSet: " + set.getClass());
 		}
 		ISetTreeSet temp = (ISetTreeSet)set;
 		return temp.mSet.containsAll(this.mSet);
@@ -93,7 +93,7 @@ public class ISetTreeSet implements ISet {
 	@Override
 	public boolean contentEq(ISet set) {
 		if(! (set instanceof ISetTreeSet)) {
-		    throw new UnsupportedOperationException("OPERAND should be TreeSet");
+		    throw new UnsupportedOperationException("OPERAND should be TreeSet: " + set.getClass());
 		}
 		ISetTreeSet temp = (ISetTreeSet)set;
 		return this.mSet.equals(temp.mSet);
@@ -104,9 +104,10 @@ public class ISetTreeSet implements ISet {
 		return mSet;
 	}
 	
+	@Override
 	public boolean equals(Object obj) {
 		if(! (obj instanceof ISetTreeSet)) {
-		    throw new UnsupportedOperationException("OPERAND should be TreeSet");
+		    throw new UnsupportedOperationException("OPERAND should be TreeSet: " + obj.getClass());
 		}
 		ISetTreeSet temp = (ISetTreeSet)obj;
 		return this.contentEq(temp);

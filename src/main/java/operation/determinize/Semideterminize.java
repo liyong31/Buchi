@@ -4,6 +4,7 @@ import automata.Buchi;
 import automata.IBuchi;
 import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
+import main.Options;
 import operation.IUnaryOp;
 import operation.explore.Explore;
 import util.ISet;
@@ -51,9 +52,10 @@ public class Semideterminize extends Buchi implements IUnaryOp<IBuchi, IBuchi> {
             int id = this.addState(newState);
             mStateIndices.put(newState, id);
             if(P != null && Q != null) {
-                if(P.overlap(mOpAcc) &&  P.equals(Q)) setFinal(index);
+                if(P.overlap(mOpAcc) &&  Q.isEmpty()) setFinal(index);
             }
-            System.out.println("id: " + index + " state: " + newState + " isF: " + this.isFinal(index));
+            if(Options.mVerbose) 
+                System.out.println("id: " + index + " state: " + newState + " isF: " + this.isFinal(index));
             return newState;
         }        
     }
