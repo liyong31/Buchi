@@ -14,6 +14,10 @@ import util.ISet;
  *  Costas Courcoubetis and Mihalis Yannakakis
  *   "Verifying Temporal Properties of Finite-State Probabilistic Programs"
  *  in FOCS 
+ *  
+ *  (P1, Q1) <= (P2, Q2) then (P1', Q1') <= (P2', Q2')
+ *  (P1, Q1) <= (P2, Q2) and (P1,Q1) is not accepting implies that (P1, Q1) is not accepting
+ *  is a simulation relation in SDBA construction
  * */
 
 public class Semideterminize extends Buchi implements IUnaryOp<IBuchi, IBuchi> {
