@@ -63,7 +63,7 @@ public class StateNCSB extends State {
 		return computeSuccessors(new NCSB(NSuccs, CSuccs, SSuccs, BSuccs), minusFSuccs, interFSuccs, letter);
 	}
 	
-
+    @Override
 	public boolean equals(Object obj) {
 		if(this == obj) return true;
 		if(!(obj instanceof StateNCSB)) {
@@ -73,7 +73,7 @@ public class StateNCSB extends State {
 		return  mNCSB.equals(other.mNCSB);
 	}
 	
-	
+	@Override
 	public String toString() {
 		return mNCSB.toString();
 	}
