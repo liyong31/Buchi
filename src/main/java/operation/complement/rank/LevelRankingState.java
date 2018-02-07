@@ -56,6 +56,7 @@ public class LevelRankingState {
             LevelRankingState other = (LevelRankingState)obj;
             ISet S = getS();
             ISet otherS = other.getS();
+            if(S.cardinality() != otherS.cardinality()) return false;
             if(!S.equals(otherS)) return false;
             for(final int state : S) {
                 if(mLevelRankings.get(state)

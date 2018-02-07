@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import automata.IBuchi;
+import main.Options;
 import util.ISet;
 import util.UtilISet;
 
@@ -18,7 +19,16 @@ public class LevelRankingGenerator extends LevelRankingConstraint {
     
     public Collection<LevelRankingState> generateLevelRankings(LevelRankingConstraint constraint) {
         //
-        ISet succs = constraint.getS();
+        ISet succs = null;
+        ISet S = constraint.getS();
+        ISet O = constraint.getO();
+        if(!Options.mLazyS) {
+            succs = S;
+        }else {
+            // only keep guessing the successors in O
+            succs = O;
+        }
+        
         ISet[] succRanks = new ISet[succs.cardinality()];
         int [] succStates = new int[succs.cardinality()];
         int i = 0;
@@ -30,7 +40,19 @@ public class LevelRankingGenerator extends LevelRankingConstraint {
         
         Set<LevelRankingState> states = new HashSet<>();
         generateLevelRankings(constraint, states, 0, succStates, succRanks);
-        return states;
+        if(!Options.mLazyS) {
+            return states;
+        }else {
+            // should also set elements not in O
+            S.andNot(O);
+            for(LevelRankingState state : states) {
+                for(final int s : S) {
+                    state.addLevelRank(s, constraint.getLevelRank(s), false);
+                }
+            }
+            return states;
+        }
+        
     }
     
     private void generateLevelRankings(LevelRankingConstraint constraint
