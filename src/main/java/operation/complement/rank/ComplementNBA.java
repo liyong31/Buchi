@@ -82,18 +82,17 @@ public class ComplementNBA extends Buchi implements IUnaryOp<IBuchi, IBuchi> {
         System.out.println(buchi.toDot());
         
         ComplementNBA complement = new ComplementNBA(buchi);
-        new Explore(complement);
-        System.out.println(complement.toDot());
-        Remove rm = new Remove(complement);
-        System.out.println(rm.getResult().toDot());
-        System.out.println(rm.getResult().toBA());
+//        new Explore(complement);
+//        System.out.println(complement.toDot());
+//        Remove rm = new Remove(complement);
+//        System.out.println(rm.getResult().toDot());
+//        System.out.println(rm.getResult().toBA());
         
         complement = new ComplementNBA(buchi);
         Options.mLazyS = true;
         new Explore(complement);
         System.out.println(complement.toDot());
-        rm = new Remove(complement);
-        System.out.println(rm.getResult().toDot());
+        System.out.println(complement.toBA());
     }
 
 }

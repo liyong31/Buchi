@@ -45,11 +45,21 @@ public class LevelRankingGenerator extends LevelRankingConstraint {
         }else {
             // should also set elements not in O
             S.andNot(O);
-            for(LevelRankingState state : states) {
+            if(!S.isEmpty() && states.isEmpty()) {
+                // we donot do nondeterministic guessing here
+                LevelRankingState state = new LevelRankingState();
                 for(final int s : S) {
                     state.addLevelRank(s, constraint.getLevelRank(s), false);
                 }
+                states.add(state);
+            }else {
+                for(LevelRankingState state : states) {
+                    for(final int s : S) {
+                        state.addLevelRank(s, constraint.getLevelRank(s), false);
+                    }
+                }
             }
+            
             return states;
         }
         

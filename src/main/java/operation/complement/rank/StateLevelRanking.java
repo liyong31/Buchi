@@ -46,7 +46,9 @@ public class StateLevelRanking extends State {
             }
         }
         LevelRankingGenerator generator = new LevelRankingGenerator(mComplement);
+        System.out.println("state=" + this.toString() + " letter=" + letter);
         Collection<LevelRankingState> lvlRanks = generator.generateLevelRankings(constraint);
+        
         for(LevelRankingState lvlRank : lvlRanks) {
             StateLevelRanking succ = mComplement.getOrAddState(lvlRank);
             super.addSuccessor(letter, succ.getId());
