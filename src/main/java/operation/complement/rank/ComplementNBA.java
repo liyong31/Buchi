@@ -1,5 +1,9 @@
 package operation.complement.rank;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
+
 import automata.Buchi;
 import automata.IBuchi;
 import automata.IState;
@@ -90,9 +94,62 @@ public class ComplementNBA extends Buchi implements IUnaryOp<IBuchi, IBuchi> {
         
         complement = new ComplementNBA(buchi);
         Options.mLazyS = true;
+        Options.mMinusOne = true;
         new Explore(complement);
         System.out.println(complement.toDot());
         System.out.println(complement.toBA());
+        
+        // now we use the complement as input
+        buchi = new Buchi(2);
+        aState = buchi.addState();
+        bState = buchi.addState();
+        
+        aState.addSuccessor(1, aState.getId()); 
+        aState.addSuccessor(0, bState.getId());     
+        bState.addSuccessor(0, bState.getId());     
+        bState.addSuccessor(1, aState.getId());
+        
+        buchi.setFinal(bState);
+        buchi.setInitial(aState);
+        
+        complement = new ComplementNBA(buchi);
+        Options.mLazyS = true;
+        new Explore(complement);
+        System.out.println(complement.toDot());
+        System.out.println(complement.toBA());
+        
+//        complement = new ComplementNBA(buchi);
+//        Options.mLazyS = false;
+//        new Explore(complement);
+//        System.out.println(complement.toDot());
+//        System.out.println(complement.toBA());
+        buchi = complement;
+        complement = new ComplementNBA(buchi);
+        Options.mLazyS = true;
+        Options.mMinusOne = false;
+        new Explore(complement);
+        PrintStream print;
+        try {
+            print = new PrintStream(new FileOutputStream("/home/liyong/Downloads/op2.ba"));
+            print.print(complement.toBA());
+            print.close();
+        } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
+        complement = new ComplementNBA(buchi);
+        Options.mLazyS = false;
+        Options.mMinusOne = false;
+        new Explore(complement);
+        try {
+            print = new PrintStream(new FileOutputStream("/home/liyong/Downloads/op1.ba"));
+            print.print(complement.toBA());
+            print.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        
     }
 
 }

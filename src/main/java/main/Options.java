@@ -16,5 +16,9 @@ public class Options {
     
     // debug mode
     public static boolean mDebug = false;
+    
+    
+    // rank-based complementation options
+    public static boolean mMinusOne = false;
 
 }

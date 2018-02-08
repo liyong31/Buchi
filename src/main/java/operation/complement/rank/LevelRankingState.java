@@ -14,7 +14,9 @@ import util.UtilISet;
 public class LevelRankingState {
 
     protected final TIntIntMap mLevelRankings;
-    protected final int TWO = 2;
+    protected static final int TWO = 2;
+    protected static final int ONE = 1;
+    protected static final int ZERO = 0;
     protected int mMaxRank;
     protected final ISet mOSet;
     

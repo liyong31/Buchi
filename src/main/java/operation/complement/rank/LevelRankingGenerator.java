@@ -93,7 +93,14 @@ public class LevelRankingGenerator extends LevelRankingConstraint {
     
     private ISet getPotentialRanks(int maxRank, boolean isFinal) {
         ISet ranks = UtilISet.newISet();
-        for(int r = 0; r <= maxRank; r ++) {
+        int low;
+        if(Options.mMinusOne) {
+           low = maxRank - 1;
+        }else {
+           low = 0;
+        }
+        low = Integer.max(low, LevelRankingState.ZERO);
+        for(int r = maxRank; r >= low; r --) {
             if(isFinal && isOdd(r)) continue;
             ranks.set(r);
         }
