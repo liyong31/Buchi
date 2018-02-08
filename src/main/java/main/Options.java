@@ -19,6 +19,11 @@ public class Options {
     
     
     // rank-based complementation options
+    
+    // only one decrease in guessing
     public static boolean mMinusOne = false;
+    
+    // only allow tight ranking
+    public static boolean mOnlyTight = false;
 
 }
