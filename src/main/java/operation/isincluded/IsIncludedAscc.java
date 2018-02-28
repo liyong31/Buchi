@@ -1,3 +1,22 @@
+/*
+ * Written by Yong Li (liyong@ios.ac.cn)
+ * This file is part of the Buchi which is a simple version of SemiBuchi.
+ * 
+ * Buchi is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * Buchi is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Buchi. If not, see <http://www.gnu.org/licenses/>.
+ * 
+ */
+
 package operation.isincluded;
 
 import java.util.Stack;
@@ -7,18 +26,18 @@ import automata.IState;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import main.Options;
-import operation.complement.Complement;
+import operation.complement.ncsb.ComplementSDBA;
 
 class IsIncludedAscc {
     
     protected final IBuchi mFstOperand;
-    protected final Complement mSndComplement;
+    protected final ComplementSDBA mSndComplement;
     protected int mFstFinalState;
     protected int mSndFinalState;
     protected IBuchi mProduct;
     protected Boolean mResult;
     
-    IsIncludedAscc(IBuchi fstOperand, Complement sndComplement) {
+    IsIncludedAscc(IBuchi fstOperand, ComplementSDBA sndComplement) {
         mFstOperand = fstOperand;
         mSndComplement = sndComplement;
         mFstFinalState = -1;

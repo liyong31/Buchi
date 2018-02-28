@@ -1,0 +1,220 @@
+/**
+ * JavaCC template file created by SF JavaCC plugin 1.5.28+ wizard for JavaCC 1.5.0+
+ */options{
+  JDK_VERSION = "1.8";  static = false;}PARSER_BEGIN(ATSParser)package util.parser.ats;
+
+import automata.IBuchi;
+import automata.IState;
+import automata.Buchi;
+
+import util.parser.ats.ATSFileParser;
+
+public class ATSParser{
+
+  private IBuchi buchi;
+
+  private ATSFileParser parser ;
+  
+  public void parse(ATSFileParser parser)
+  {
+    this.parser = parser;
+    try
+    {
+      parseFile();
+    }
+    catch (ParseException e)
+    {
+      e.printStackTrace();
+    }
+  }
+  }PARSER_END(ATSParser)SKIP :{  " "| "\r"| "\t"| "\n"
+  // skip comments
+| < "%" (~[ "\r", "\n" ])* >
+| < "//" (~[ "\r", "\n" ])* >}TOKEN : /* OPERATORS */{
+  < LEFTPARA : "(">
+| < RIGHTPARA : ")" >
+| < LEFTCURLY : "{" >
+| < RIGHTCURLY : "}" >
+| < AUTOMATON : "FiniteAutomaton" >
+| < ALPHABET : "alphabet" >
+| < ASSIGNMENT : "=" >
+| < STATES : "states" >
+| < INITSTATES : "initialStates" >
+| < FINALSTATES : "finalStates" >
+| < TRANSITIONS : "transitions" >
+| < COMMA : "," >
+| < SEMICOLON : ";" >
+| < STRING : (~[ ",", "(", ")", "{", "}", "-", "\n", "\r", " ","\t" ])+ > // allow space and tab character in String}
+
+private void parseFile() :
+{
+  IBuchi fst, snd;
+}
+{
+  (
+    {
+      buchi = null;
+      parser.clearStateMap();
+    }
+    parseAutomaton()
+    {
+      fst = buchi;
+      buchi = null;
+      parser.clearStateMap();
+    }
+    parseAutomaton()
+    {
+      snd = buchi;
+      parser.addPair(fst, snd);
+    }
+      )+
+}
+
+private void parseAutomaton() :
+{
+  Token nameStr, labelStr, sourceStr, targetStr;
+}
+{
+
+  <AUTOMATON>
+  <STRING> // automaton name
+  <ASSIGNMENT>
+  <LEFTPARA>
+
+  parseAlphabet()
+  {
+    buchi = new Buchi(parser.getAlphabetSize());
+  }
+  parseStates()
+  parseInitStates()
+  parseFinalStates()
+  parseTransitions()
+  <RIGHTPARA>
+  <SEMICOLON>
+  
+}
+
+private void parseAlphabet() :
+{
+  Token labelStr;
+}
+{
+
+  <ALPHABET >
+  <ASSIGNMENT>
+  <LEFTCURLY>
+  // a list of alphabet
+
+  (
+    labelStr = <STRING>
+    {
+      String label = labelStr.toString();
+//      int num = parser.getAlphabetSize();
+//      parser.putLetter(label, num);
+      parser.addLetter(label);
+    }  )+
+  
+  <RIGHTCURLY>
+  <COMMA>
+  
+}
+
+private void parseStates() :
+{
+  Token stateStr;
+}
+{
+
+  <STATES >
+  <ASSIGNMENT>
+  <LEFTCURLY>
+  // a list of alphabet
+  (
+    stateStr = <STRING>
+    {
+      String state = stateStr.toString();
+      IState st = buchi.addState();
+      parser.putState(state, st.getId());
+    }
+  )+
+  
+  <RIGHTCURLY>
+  <COMMA>
+}
+
+private void parseInitStates() :
+{
+  Token stateStr;
+}
+{
+
+  <INITSTATES>
+  <ASSIGNMENT>
+  <LEFTCURLY>
+  // a list of alphabet
+  (
+    stateStr = <STRING>
+    {
+      int id = parser.getStateId(stateStr.toString());
+      buchi.setInitial(id);
+    }
+  )+
+  
+  <RIGHTCURLY>
+  <COMMA>
+}
+
+private void parseFinalStates() :
+{
+  Token stateStr;
+}
+{
+
+  <FINALSTATES>
+  <ASSIGNMENT>
+  <LEFTCURLY>
+  // a list of alphabet
+  (
+    stateStr = <STRING>
+    {
+      int id = parser.getStateId(stateStr.toString());
+      buchi.setFinal(id);
+    }
+  )+
+  
+  <RIGHTCURLY>
+  <COMMA>
+}
+
+private void parseTransitions() :
+{
+  Token sourceStr, labelStr, targetStr;
+  int sourceId, letter, targetId;
+}
+{
+
+  <TRANSITIONS>
+  <ASSIGNMENT>
+  <LEFTCURLY>
+  // a list of alphabet
+  (
+    <LEFTPARA>
+    sourceStr = <STRING>
+    {
+      sourceId = parser.getStateId(sourceStr.toString());
+    }
+    labelStr = <STRING>
+    {
+      letter = parser.getLetterId(labelStr.toString());
+    }
+    targetStr = <STRING>
+    {
+      targetId = parser.getStateId(targetStr.toString());
+      IState state = buchi.getState(sourceId);
+      state.addSuccessor(letter, targetId);
+    }
+    <RIGHTPARA>
+  )*
+  
+  <RIGHTCURLY>
+}

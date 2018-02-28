@@ -1,4 +1,4 @@
-package operation.complement;
+package operation.complement.ncsb;
 
 import main.Options;
 import util.ISet;

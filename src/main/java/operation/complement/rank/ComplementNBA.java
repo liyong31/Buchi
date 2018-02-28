@@ -1,3 +1,22 @@
+/*
+ * Written by Yong Li (liyong@ios.ac.cn)
+ * This file is part of the Buchi which is a simple version of SemiBuchi.
+ * 
+ * Buchi is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * Buchi is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Buchi. If not, see <http://www.gnu.org/licenses/>.
+ * 
+ */
+
 package operation.complement.rank;
 
 import java.io.FileNotFoundException;
@@ -10,22 +29,22 @@ import automata.IState;
 import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
 import main.Options;
-import operation.IUnaryOp;
+import operation.complement.Complement;
 import operation.explore.Explore;
-import operation.removal.Remove;
 
-public class ComplementNBA extends Buchi implements IUnaryOp<IBuchi, IBuchi> {
+// valid for all nondeteministic Buchi automata
 
-    private final IBuchi mOperand;
+public class ComplementNBA extends Complement {
+
     private final TObjectIntMap<StateLevelRanking> mStateIndices = new TObjectIntHashMap<>();
     
     public ComplementNBA(IBuchi operand) {
-        super(operand.getAlphabetSize());
-        this.mOperand = operand;
+        super(operand);
         computeInitialStates();
     }
     
-    private void computeInitialStates() {
+    @Override
+    protected void computeInitialStates() {
         // compute initial states
         int n = mOperand.getStateSize();
         int r = mOperand.getFinalStates().cardinality();
@@ -59,16 +78,6 @@ public class ComplementNBA extends Buchi implements IUnaryOp<IBuchi, IBuchi> {
     public String getName() {
         return "ComplementNBA";
     }
-
-    @Override
-    public IBuchi getOperand() {
-        return mOperand;
-    }
-
-    @Override
-    public IBuchi getResult() {
-        return this;
-    } 
     
     public static void main(String[] args) {
         Buchi buchi = new Buchi(2);

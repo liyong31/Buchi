@@ -1,3 +1,22 @@
+/*
+ * Written by Yong Li (liyong@ios.ac.cn)
+ * This file is part of the Buchi which is a simple version of SemiBuchi.
+ * 
+ * Buchi is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * Buchi is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Buchi. If not, see <http://www.gnu.org/licenses/>.
+ * 
+ */
+
 package operation.isincluded;
 
 import java.util.HashMap;
@@ -9,14 +28,14 @@ import java.util.Stack;
 import automata.IBuchi;
 import gnu.trove.map.TIntIntMap;
 import gnu.trove.map.hash.TIntIntHashMap;
-import operation.complement.Complement;
+import operation.complement.ncsb.ComplementSDBA;
 import operation.determinize.Semideterminize;
 import test.BAStore;
 
 public class IsIncludedExplore {
     
     protected final IBuchi mFstOperand;
-    protected final Complement mSndComplement;
+    protected final ComplementSDBA mSndComplement;
 //    protected int mFstFinalState;
 //    protected int mSndFinalState;
 //    protected IBuchi mProduct;
@@ -31,7 +50,7 @@ public class IsIncludedExplore {
         }else {
             semiOperand = new Semideterminize(sndOperand);
         }
-        mSndComplement = new Complement(semiOperand);
+        mSndComplement = new ComplementSDBA(semiOperand);
         new AsccExplore();
     }
     
