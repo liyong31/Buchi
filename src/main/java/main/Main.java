@@ -11,7 +11,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import main.Options.Algorithm;
 import operation.complement.Complement;
+import operation.complement.ncsb.ComplementSDBA;
+import operation.complement.rank.ComplementNBA;
 import util.PairXX;
 
 import util.parser.ParserType;
@@ -69,7 +72,12 @@ public class Main {
 				Options.mGBA = true;
 			}else if(args[i].equals("-oe")) {
                 Options.mOE = true;
+            }else if(args[i].equals("-ncsb")) {
+                Options.mAlgo = Algorithm.NCSB;
+            }else if(args[i].equals("-rank")) {
+                Options.mAlgo = Algorithm.RANK;
             }
+			
 		}
 		time = time * 1_000; // miliseconds
 		if(test) {
@@ -89,7 +97,7 @@ public class Main {
 
 	private static void printUsage() {
 		
-		System.out.println("SemiBuchi v1: Library for Semi-deterministic Buchi automata");
+		System.out.println("Buchi v1: Library for Buchi automata");
 		System.out.println("\nUsage:\n     <PROP> [options] <ATS-FILE> \n");
 		System.out.println("Recommended use: java -jar SemiBuchi.jar -ascc -ac aut.ats");
 		System.out.println("\nOptions:");
@@ -112,6 +120,8 @@ public class Main {
 		System.out.println("-gba: Use generalized Buchi automata");
 		System.out.println("-to k: Limit execution in k seconds (20 secs by default)");
 		System.out.println("-complement <file-out>: Output complement of the last automaton");
+		System.out.println("-ncsb: NCSB complementation");
+		System.out.println("-rank: Rank-based complementation");
 		
 	}
 	
@@ -246,8 +256,19 @@ public class Main {
 		parser.parse(fileIn.getAbsolutePath());
 		automata.IBuchi buchi = parser.getBuchi();
 //		buchi.makeComplete();
-		Complement buchiComplement = new Complement(buchi);
-
+		Complement buchiComplement = null;
+		switch(Options.mAlgo) {
+		case NCSB:
+		    buchiComplement = new ComplementSDBA(buchi);
+		    break;
+		case RANK:
+		    buchiComplement = new ComplementNBA(buchi);
+            break;
+        default:
+            buchiComplement = new ComplementNBA(buchi);
+            break;
+		}
+        buchiComplement.explore();
 		TaskComplement task = new TaskComplement(fileIn.getName());
 		task.setOperation(buchiComplement);
 		RunTask runTask = new RunTask(task, time);
@@ -263,6 +284,9 @@ public class Main {
 			out.close();
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+		if(Options.mVerbose && !buchi.isSemiDeterministic() && Options.mAlgo == Algorithm.NCSB) {
+		    System.err.println("Result may not be correct");
 		}
 	}
 	

@@ -32,16 +32,16 @@ import util.UtilISet;
  * */
 public class ComplementSDBA extends Complement {
 
-    private final TObjectIntMap<StateNCSB> mStateIndices = new TObjectIntHashMap<>();
+    private TObjectIntMap<StateNCSB> mStateIndices;
     
     public ComplementSDBA(IBuchi buchi) {
         super(buchi);
         assert mOperand.isSemiDeterministic();
-        computeInitialStates();
     }
 
     @Override
     protected void computeInitialStates() {
+        mStateIndices = new TObjectIntHashMap<>();
         ISet C = mOperand.getInitialStates().clone();
         C.and(mOperand.getFinalStates()); // goto C
         ISet N = mOperand.getInitialStates().clone();

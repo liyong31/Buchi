@@ -36,16 +36,16 @@ import operation.explore.Explore;
 
 public class ComplementNBA extends Complement {
 
-    private final TObjectIntMap<StateLevelRanking> mStateIndices = new TObjectIntHashMap<>();
+    private TObjectIntMap<StateLevelRanking> mStateIndices;
     
     public ComplementNBA(IBuchi operand) {
         super(operand);
-        computeInitialStates();
     }
     
     @Override
     protected void computeInitialStates() {
         // compute initial states
+        mStateIndices = new TObjectIntHashMap<>();
         int n = mOperand.getStateSize();
         int r = mOperand.getFinalStates().cardinality();
         LevelRankingState lvlRnk = new LevelRankingState();

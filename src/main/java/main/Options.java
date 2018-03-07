@@ -27,5 +27,12 @@ public class Options {
 	
 	// Ondra exploration
 	public static boolean mOE = false;
+	
+	public static Algorithm mAlgo = Algorithm.RANK;
+	
+	public static enum Algorithm {
+	    NCSB, 
+	    RANK
+	}
 
 }

@@ -3,6 +3,7 @@ package operation.complement;
 import automata.Buchi;
 import automata.IBuchi;
 import operation.IUnaryOp;
+import operation.explore.Explore;
 
 public class Complement extends Buchi implements IUnaryOp<IBuchi, IBuchi> {
 
@@ -35,7 +36,7 @@ public class Complement extends Buchi implements IUnaryOp<IBuchi, IBuchi> {
     }
     
     public void explore() {
-        
+        new Explore(this);
     }
 
 }
