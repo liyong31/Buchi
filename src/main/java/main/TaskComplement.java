@@ -26,7 +26,7 @@ public class TaskComplement extends GenericUnaryTask {
 	
 	public void setOperation(Complement complement) {
 		mComplement = complement;
-		this.mOperationName = "Complement";
+		this.mOperationName = complement.getName();
 		this.mOperationName += "+" + UtilISet.getSetType() + (Options.mLazyS ? "+lazyS" : "")
 				                                         + (Options.mLazyB ? "+lazyB" : "")
 				                                         + (Options.mGBA ? "+GBA" : "+BA")

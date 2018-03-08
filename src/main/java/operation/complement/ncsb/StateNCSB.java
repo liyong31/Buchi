@@ -31,9 +31,9 @@ public class StateNCSB extends State {
 	private final NCSB mNCSB;
 	
 	private final IBuchi mOperand;
-	private final ComplementSDBA mComplement;
+	private final ComplementNcsb mComplement;
 	
-	public StateNCSB(ComplementSDBA complement, int id, NCSB ncsb) {
+	public StateNCSB(ComplementNcsb complement, int id, NCSB ncsb) {
 		super(id);
 		this.mComplement = complement;
 		this.mOperand = complement.getOperand();

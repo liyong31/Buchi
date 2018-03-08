@@ -34,11 +34,11 @@ import util.UtilISet;
 
 public class StateLevelRanking extends State {
  
-    private final ComplementNBA mComplement;
+    private final ComplementRank mComplement;
     private final IBuchi mOperand;
     private final LevelRankingState mLevelRanking; // (S, O, f)
     
-    public StateLevelRanking(ComplementNBA complement, int id, LevelRankingState lvlRank) {
+    public StateLevelRanking(ComplementRank complement, int id, LevelRankingState lvlRank) {
         super(id);
         this.mComplement = complement;
         this.mOperand = complement.getOperand();

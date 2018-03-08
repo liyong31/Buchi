@@ -5,7 +5,7 @@ import automata.IBuchi;
 import operation.IUnaryOp;
 import operation.explore.Explore;
 
-public class Complement extends Buchi implements IUnaryOp<IBuchi, IBuchi> {
+public abstract class Complement extends Buchi implements IUnaryOp<IBuchi, IBuchi> {
 
     protected final IBuchi mOperand;
     
@@ -24,15 +24,9 @@ public class Complement extends Buchi implements IUnaryOp<IBuchi, IBuchi> {
         return mOperand;
     }
 
-
     @Override
     public IBuchi getResult() {
         return this;
-    }
-
-    @Override
-    public String getName() {
-        return "Complement";
     }
     
     public void explore() {

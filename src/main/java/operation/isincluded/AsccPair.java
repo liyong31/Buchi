@@ -19,18 +19,18 @@
 
 package operation.isincluded;
 
-import operation.complement.ncsb.ComplementSDBA;
+import operation.complement.ncsb.ComplementNcsb;
 import operation.complement.ncsb.StateNCSB;
 
 class AsccPair {
     
     protected int mFstState;
     protected int mSndState;
-    protected ComplementSDBA mSndComplement;
+    protected ComplementNcsb mSndComplement;
     protected int mDfsnum;
     protected boolean mCurrent;
     
-    AsccPair(int fstState, int sndState, ComplementSDBA sndComplement) {
+    AsccPair(int fstState, int sndState, ComplementNcsb sndComplement) {
         mFstState = fstState;
         mSndState = sndState;
         mSndComplement = sndComplement;

@@ -13,8 +13,8 @@ import java.util.List;
 
 import main.Options.Algorithm;
 import operation.complement.Complement;
-import operation.complement.ncsb.ComplementSDBA;
-import operation.complement.rank.ComplementNBA;
+import operation.complement.ncsb.ComplementNcsb;
+import operation.complement.rank.ComplementRank;
 import util.PairXX;
 
 import util.parser.ParserType;
@@ -259,13 +259,13 @@ public class Main {
 		Complement buchiComplement = null;
 		switch(Options.mAlgo) {
 		case NCSB:
-		    buchiComplement = new ComplementSDBA(buchi);
+		    buchiComplement = new ComplementNcsb(buchi);
 		    break;
 		case RANK:
-		    buchiComplement = new ComplementNBA(buchi);
+		    buchiComplement = new ComplementRank(buchi);
             break;
         default:
-            buchiComplement = new ComplementNBA(buchi);
+            buchiComplement = new ComplementRank(buchi);
             break;
 		}
         buchiComplement.explore();

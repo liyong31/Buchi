@@ -34,11 +34,11 @@ import operation.explore.Explore;
 
 // valid for all nondeteministic Buchi automata
 
-public class ComplementNBA extends Complement {
+public class ComplementRank extends Complement {
 
     private TObjectIntMap<StateLevelRanking> mStateIndices;
     
-    public ComplementNBA(IBuchi operand) {
+    public ComplementRank(IBuchi operand) {
         super(operand);
     }
     
@@ -76,7 +76,7 @@ public class ComplementNBA extends Complement {
 
     @Override
     public String getName() {
-        return "ComplementNBA";
+        return "ComplementRank";
     }
     
     public static void main(String[] args) {
@@ -94,14 +94,14 @@ public class ComplementNBA extends Complement {
         
         System.out.println(buchi.toDot());
         
-        ComplementNBA complement = new ComplementNBA(buchi);
+        ComplementRank complement = new ComplementRank(buchi);
 //        new Explore(complement);
 //        System.out.println(complement.toDot());
 //        Remove rm = new Remove(complement);
 //        System.out.println(rm.getResult().toDot());
 //        System.out.println(rm.getResult().toBA());
         
-        complement = new ComplementNBA(buchi);
+        complement = new ComplementRank(buchi);
         Options.mLazyS = true;
         Options.mMinusOne = true;
         new Explore(complement);
@@ -121,7 +121,7 @@ public class ComplementNBA extends Complement {
         buchi.setFinal(bState);
         buchi.setInitial(aState);
         
-        complement = new ComplementNBA(buchi);
+        complement = new ComplementRank(buchi);
         Options.mLazyS = true;
         new Explore(complement);
         System.out.println(complement.toDot());
@@ -142,7 +142,7 @@ public class ComplementNBA extends Complement {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        complement = new ComplementNBA(buchi);
+        complement = new ComplementRank(buchi);
         Options.mLazyS = true;
         Options.mMinusOne = true;
         new Explore(complement);
@@ -156,7 +156,7 @@ public class ComplementNBA extends Complement {
             e.printStackTrace();
         }
         
-        complement = new ComplementNBA(buchi);
+        complement = new ComplementRank(buchi);
         Options.mLazyS = false;
         Options.mMinusOne = true;
         new Explore(complement);

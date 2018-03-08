@@ -20,14 +20,14 @@
 package operation.isincluded;
 
 import automata.IBuchi;
-import operation.complement.ncsb.ComplementSDBA;
+import operation.complement.ncsb.ComplementNcsb;
 import operation.complement.ncsb.StateNCSB;
 
 public class IsIncluded implements IIsIncluded {
     
     protected final IBuchi mFstOperand;
     protected final IBuchi mSndOperand;
-    protected final ComplementSDBA mSndComplement;
+    protected final ComplementNcsb mSndComplement;
     protected Boolean mResult;
     
     public IsIncluded(IBuchi fstOperand, IBuchi sndOperand) {
@@ -36,7 +36,7 @@ public class IsIncluded implements IIsIncluded {
         }
         mFstOperand = fstOperand;
         mSndOperand = sndOperand;
-        mSndComplement = new ComplementSDBA(sndOperand);
+        mSndComplement = new ComplementNcsb(sndOperand);
     }
 
     @Override
@@ -55,7 +55,7 @@ public class IsIncluded implements IIsIncluded {
     }
 
     @Override
-    public ComplementSDBA getSecondComplement() {
+    public ComplementNcsb getSecondComplement() {
         return mSndComplement;
     }
 

@@ -16,7 +16,7 @@ import automata.IGeneralizedState;
 import automata.IState;
 import automata.RandomBuchiGenerator;
 import main.Options;
-import operation.complement.ncsb.ComplementSDBA;
+import operation.complement.ncsb.ComplementNcsb;
 import operation.difference.Difference;
 import operation.explore.Explore;
 import operation.explore.OndraExplore;
@@ -257,7 +257,7 @@ public class TestRandomGenerator {
         Options.mAntichain = false;
         while (true) {
             IBuchi ce = RandomBuchiGenerator.getRandomSemideterministicBuchiAutomaton(5, 3, 2, 1, 2);
-            ComplementSDBA complement = new ComplementSDBA(ce);
+            ComplementNcsb complement = new ComplementNcsb(ce);
             new Explore(complement);
             try {
                 complement.testLemma();

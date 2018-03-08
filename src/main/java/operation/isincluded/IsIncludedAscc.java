@@ -26,18 +26,18 @@ import automata.IState;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import main.Options;
-import operation.complement.ncsb.ComplementSDBA;
+import operation.complement.ncsb.ComplementNcsb;
 
 class IsIncludedAscc {
     
     protected final IBuchi mFstOperand;
-    protected final ComplementSDBA mSndComplement;
+    protected final ComplementNcsb mSndComplement;
     protected int mFstFinalState;
     protected int mSndFinalState;
     protected IBuchi mProduct;
     protected Boolean mResult;
     
-    IsIncludedAscc(IBuchi fstOperand, ComplementSDBA sndComplement) {
+    IsIncludedAscc(IBuchi fstOperand, ComplementNcsb sndComplement) {
         mFstOperand = fstOperand;
         mSndComplement = sndComplement;
         mFstFinalState = -1;

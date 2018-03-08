@@ -28,14 +28,14 @@ import java.util.Stack;
 import automata.IBuchi;
 import gnu.trove.map.TIntIntMap;
 import gnu.trove.map.hash.TIntIntHashMap;
-import operation.complement.ncsb.ComplementSDBA;
+import operation.complement.ncsb.ComplementNcsb;
 import operation.determinize.Semideterminize;
 import test.BAStore;
 
 public class IsIncludedExplore {
     
     protected final IBuchi mFstOperand;
-    protected final ComplementSDBA mSndComplement;
+    protected final ComplementNcsb mSndComplement;
 //    protected int mFstFinalState;
 //    protected int mSndFinalState;
 //    protected IBuchi mProduct;
@@ -50,7 +50,7 @@ public class IsIncludedExplore {
         }else {
             semiOperand = new Semideterminize(sndOperand);
         }
-        mSndComplement = new ComplementSDBA(semiOperand);
+        mSndComplement = new ComplementNcsb(semiOperand);
         new AsccExplore();
     }
     

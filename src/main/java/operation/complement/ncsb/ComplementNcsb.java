@@ -30,11 +30,11 @@ import util.UtilISet;
 /**
  * Only valid for Semi-deterministic Buchi automata
  * */
-public class ComplementSDBA extends Complement {
+public class ComplementNcsb extends Complement {
 
     private TObjectIntMap<StateNCSB> mStateIndices;
     
-    public ComplementSDBA(IBuchi buchi) {
+    public ComplementNcsb(IBuchi buchi) {
         super(buchi);
         assert mOperand.isSemiDeterministic();
     }
@@ -73,7 +73,7 @@ public class ComplementSDBA extends Complement {
 
     @Override
     public String getName() {
-        return "ComplementSDBA";
+        return "ComplementNcsb";
     }
     
     public StateNCSB getStateNCSB(int id) {
