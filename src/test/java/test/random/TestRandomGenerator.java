@@ -16,12 +16,14 @@ import automata.IGeneralizedState;
 import automata.IState;
 import automata.RandomBuchiGenerator;
 import main.Options;
+import operation.complement.dba.ComplementDBA;
 import operation.complement.ncsb.ComplementNcsb;
 import operation.difference.Difference;
 import operation.explore.Explore;
 import operation.explore.OndraExplore;
 import operation.isempty.IsEmpty;
 import operation.minus.Minus;
+import test.BAStore;
 
 public class TestRandomGenerator {
 
@@ -266,6 +268,28 @@ public class TestRandomGenerator {
             }
         }
     }
+    
+    @Test
+    public void testNCSB1() {
+        Options.mLazyS = false;
+        Options.mLazyB = false;
+        Options.mVerbose = true;
+        IBuchi input = BAStore.getA1();
+        ComplementNcsb complement = new ComplementNcsb(input);
+        complement.explore();
+        System.out.println(complement.toDot());
+    }
+    
+    @Test
+    public void testDBAComplement() {
+        IBuchi input = BAStore.getB();
+        input.makeComplete();
+        ComplementDBA complement = new ComplementDBA(input);
+        complement.explore();
+        System.out.println(input.toDot());
+        System.out.println(complement.toDot());
+    }
+    
 	@Test
 	public void testNCSB() {
 		Options.mLazyS = true;

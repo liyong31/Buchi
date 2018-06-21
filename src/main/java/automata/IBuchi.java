@@ -51,6 +51,28 @@ public interface IBuchi {
     ISet getInitialStates();
 
     ISet getFinalStates();
+    
+    default void makeComplete() {
+        IState deadState = null;
+        List<IState> states = new ArrayList<>();
+        for(final IState state : getStates()) {
+            states.add(state);
+        }
+        for(final IState state : states) {
+            for (int letter = 0; letter < getAlphabetSize(); letter ++) {
+                ISet succs = state.getSuccessors(letter);
+                if(succs.cardinality() == 0) {
+                    if(deadState == null) deadState = addState();
+                    state.addSuccessor(letter, deadState.getId());
+                }
+            }
+        }
+        if(deadState != null) {
+            for (int letter = 0; letter < getAlphabetSize(); letter ++) {
+                deadState.addSuccessor(letter, deadState.getId());
+            }
+        }
+    }
 
     default public boolean isInitial(IState s) {
         return isInitial(s.getId());

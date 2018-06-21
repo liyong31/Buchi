@@ -32,7 +32,7 @@ import main.Options;
 import operation.complement.Complement;
 import operation.explore.Explore;
 
-// valid for all nondeteministic Buchi automata
+// valid for all nondeterministic Buchi automata
 
 public class ComplementRank extends Complement {
 

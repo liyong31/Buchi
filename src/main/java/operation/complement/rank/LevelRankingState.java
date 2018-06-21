@@ -175,7 +175,6 @@ public class LevelRankingState {
     
     /**
      * the tight definition is in FKV paper
-     * 
      * **/
     boolean isTight() {
         assert mMaxRank >= 0;
@@ -222,6 +221,7 @@ public class LevelRankingState {
         return true;
     }
     
+    // static helper functions
     public static boolean isEven(int number) {
         if((number & 1) == 0) {
             return true;
