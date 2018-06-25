@@ -17,7 +17,7 @@
  * 
  */
 
-package operation.determinize;
+package operation.semideterminize;
 
 import automata.Buchi;
 import automata.IBuchi;

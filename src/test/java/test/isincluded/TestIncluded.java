@@ -3,9 +3,9 @@ package test.isincluded;
 import org.junit.Test;
 
 import automata.IBuchi;
-import operation.determinize.Semideterminize;
 import operation.explore.Explore;
 import operation.isincluded.IsIncludedExplore;
+import operation.semideterminize.Semideterminize;
 import test.BAStore;
 
 public class TestIncluded {
