@@ -1,27 +1,41 @@
-package operation.determinize;
+package operation.determinize.sdba;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import automata.Buchi;
 import automata.IBuchi;
 import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
 import operation.IUnaryOp;
+import operation.determinize.Determinize;
 import operation.explore.Explore;
 import util.ISet;
+import util.UtilISet;
 
-public class Determinize extends Buchi implements IUnaryOp<IBuchi, IBuchi> {
+public class DeterminizeSDBA extends Buchi implements IUnaryOp<IBuchi, IBuchi> {
 
     private final IBuchi mOperand;
     private final TObjectIntMap<StateDet> mStateIndices = new TObjectIntHashMap<>();
 
-    public Determinize(IBuchi operand) {
+    public DeterminizeSDBA(IBuchi operand) {
         super(operand.getAlphabetSize());
         this.mOperand = operand;
         computeInitialStates();
     }
     
     protected void computeInitialStates() {
-        ISet inits = mOperand.getInitialStates().clone();
-        ParallelRuns runs = new ParallelRuns(inits);
+        ISet D = mOperand.getInitialStates().clone();
+        D.and(mOperand.getFinalStates()); // goto C
+        ISet N = mOperand.getInitialStates().clone();
+        N.andNot(D);
+        // we have to get the indexed
+        int label = 0;
+        ParallelRuns runs = new ParallelRuns(N);
+        for(int s : D) {
+            runs.addLabel(s, label);
+            label ++;
+        }
         StateDet init = getOrAddState(runs);
         this.setInitial(init.getId());
     }
@@ -45,15 +59,15 @@ public class Determinize extends Buchi implements IUnaryOp<IBuchi, IBuchi> {
         return (StateDet) getState(id);
     }
 
-    protected StateDet getOrAddState(ParallelRuns runs) {
+    protected StateDet getOrAddState(ParallelRuns ndb) {
 
-        StateDet state = new StateDet(this, 0, runs);
+        StateDet state = new StateDet(this, 0, ndb);
 
         if (mStateIndices.containsKey(state)) {
             return getStateDet(mStateIndices.get(state));
         } else {
             int index = getStateSize();
-            StateDet newState = new StateDet(this, index, runs);
+            StateDet newState = new StateDet(this, index, ndb);
             int id = this.addState(newState);
             mStateIndices.put(newState, id);
 //            if (ndb.getBSet().overlap(mOperand.getFinalStates()))
@@ -98,7 +112,7 @@ public class Determinize extends Buchi implements IUnaryOp<IBuchi, IBuchi> {
         // 
         System.out.println(buchi.toDot());
         
-        Determinize deted = new Determinize(buchi);
+        DeterminizeSDBA deted = new DeterminizeSDBA(buchi);
         new Explore(deted);
         
         System.out.println(deted.toDot());
@@ -120,12 +134,10 @@ public class Determinize extends Buchi implements IUnaryOp<IBuchi, IBuchi> {
         
         System.out.println(b2.toDot());
         
-        deted = new Determinize(b2);
+        deted = new DeterminizeSDBA(b2);
         new Explore(deted);
         
         System.out.println(deted.toDot());
-        
-        
     }
 
 }
