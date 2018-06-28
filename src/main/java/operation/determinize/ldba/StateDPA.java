@@ -43,9 +43,7 @@ public class StateDPA extends StateDA {
                 }
             }
         }
-        if(this.getId() == 6 && letter == 0) {
-            System.out.println("Hello");
-        }
+
         // now the nSuccs has been fixed, we have to compute the successors of D
         ISet dSuccs = UtilISet.newISet();
         /**
@@ -58,11 +56,14 @@ public class StateDPA extends StateDA {
             int prio = index + 1;
             int stateId = mORuns.getOrdDetStates().get(index);
             for(final int succId : mOperand.getState(stateId).getSuccessors(letter)) {
+                if(this.getId() == 6 && letter == 0) {
+                    System.out.println("Hello: " + succId);
+                }
                 if(! dSuccs.get(succId)) {
                     dSuccs.set(succId);
                     detSuccs.add(succId);
                 }else {
-                    if(minDecVs < -1) {
+                    if(minDecVs < 0) {
                         minDecVs = prio; // has been merged to smaller index
                     }
                 }
