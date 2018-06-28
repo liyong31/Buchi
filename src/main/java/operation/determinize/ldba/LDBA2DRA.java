@@ -1,25 +1,24 @@
-package operation.determinize.sdba;
+package operation.determinize.ldba;
 
 import java.util.LinkedList;
 
 import automata.Buchi;
 import automata.DRA;
 import automata.IBuchi;
-import automata.IState;
 import automata.StateDA;
 import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
 import operation.IUnaryOp;
-import operation.explore.Explore;
 import util.ISet;
 import util.UtilISet;
 
-public class DeterminizeSDBA extends DRA implements IUnaryOp<IBuchi, DRA> {
+public class LDBA2DRA extends DRA implements IUnaryOp<IBuchi, DRA> {
 
     private final IBuchi mOperand;
-    private final TObjectIntMap<StateDet> mStateIndices = new TObjectIntHashMap<>();
-
-    public DeterminizeSDBA(IBuchi operand) {
+    private final TObjectIntMap<StateDRA> mStateIndices = new TObjectIntHashMap<>();
+    protected int mMaxLabel = 0;
+    
+    public LDBA2DRA(IBuchi operand) {
         super(operand.getAlphabetSize());
         this.mOperand = operand;
         computeInitialStates();
@@ -31,13 +30,12 @@ public class DeterminizeSDBA extends DRA implements IUnaryOp<IBuchi, DRA> {
         ISet N = mOperand.getInitialStates().clone();
         N.andNot(D);
         // we have to get the indexed
-        int label = 0;
+        final int label = 0;
         ParallelRuns runs = new ParallelRuns(N);
         for(int s : D) {
             runs.addLabel(s, label);
-            label ++;
         }
-        StateDet init = getOrAddState(runs);
+        StateDRA init = getOrAddState(runs);
         this.setInitial(init.getId());
     }
 
@@ -56,23 +54,24 @@ public class DeterminizeSDBA extends DRA implements IUnaryOp<IBuchi, DRA> {
         return this;
     }
 
-    public StateDet getStateDet(int id) {
-        return (StateDet) getState(id);
+    public StateDRA getStateDet(int id) {
+        return (StateDRA) getState(id);
+    }
+    
+    public int getLabelSize() {
+        return mMaxLabel + 1;
     }
 
-    protected StateDet getOrAddState(ParallelRuns ndb) {
-
-        StateDet state = new StateDet(this, 0, ndb);
-
+    protected StateDRA getOrAddState(ParallelRuns runs) {
+        StateDRA state = new StateDRA(this, 0, runs);
         if (mStateIndices.containsKey(state)) {
             return getStateDet(mStateIndices.get(state));
         } else {
             int index = getStateSize();
-            StateDet newState = new StateDet(this, index, ndb);
+            StateDRA newState = new StateDRA(this, index, runs);
             int id = this.addState(newState);
             mStateIndices.put(newState, id);
-//            if (ndb.getBSet().overlap(mOperand.getFinalStates()))
-//                setFinal(index);
+            //this.getAcceptance().addE(state, label);
             return newState;
         }
     }
@@ -97,6 +96,7 @@ public class DeterminizeSDBA extends DRA implements IUnaryOp<IBuchi, DRA> {
                 }
             }
         }
+        
     }
     
     public static void main(String[] args) {
@@ -135,10 +135,12 @@ public class DeterminizeSDBA extends DRA implements IUnaryOp<IBuchi, DRA> {
         // 
         System.out.println(buchi.toDot());
         
-        DeterminizeSDBA deted = new DeterminizeSDBA(buchi);
+        LDBA2DRA deted = new LDBA2DRA(buchi);
         explore(deted);
         
         System.out.println(deted.toDot());
+        System.out.println("max label: " + (deted.getLabelSize() - 1));
+
         
         Buchi b2 = new Buchi(2);
         b2.addState();
@@ -157,11 +159,11 @@ public class DeterminizeSDBA extends DRA implements IUnaryOp<IBuchi, DRA> {
         
         System.out.println(b2.toDot());
         
-        deted = new DeterminizeSDBA(b2);
+        deted = new LDBA2DRA(b2);
         explore(deted);
         
         System.out.println(deted.toDot());
-        
+        System.out.println("max label: " + (deted.getLabelSize() - 1));
         Buchi A = new Buchi(2);
         A.addState();
         A.addState();
@@ -188,10 +190,12 @@ public class DeterminizeSDBA extends DRA implements IUnaryOp<IBuchi, DRA> {
         A.getState(3).addSuccessor(1, 3);
         
         System.out.println(A.toDot());
-        deted = new DeterminizeSDBA(A);
+        deted = new LDBA2DRA(A);
         explore(deted);
         
         System.out.println(deted.toDot());
+        System.out.println("max label: " + (deted.getLabelSize() - 1));
+
     }
 
 }

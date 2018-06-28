@@ -1,4 +1,4 @@
-package operation.determinize.sdba;
+package operation.determinize.ldba;
 
 import automata.IBuchi;
 import automata.StateDA;
@@ -8,13 +8,13 @@ import gnu.trove.map.hash.TIntIntHashMap;
 import util.ISet;
 import util.UtilISet;
 
-public class StateDet extends StateDA {
+public class StateDRA extends StateDA {
     
     private ParallelRuns mRuns;
     private final IBuchi mOperand;
-    private final DeterminizeSDBA mDeterminized;
+    private final LDBA2DRA mDeterminized;
     
-    public StateDet(DeterminizeSDBA determinized, int id, ParallelRuns runs) {
+    public StateDRA(LDBA2DRA determinized, int id, ParallelRuns runs) {
         super(id);
         this.mOperand = determinized.getOperand();
         this.mDeterminized = determinized;
@@ -32,6 +32,8 @@ public class StateDet extends StateDA {
         // computing successors
         ISet nSuccs = UtilISet.newISet();
         ISet jSuccs = UtilISet.newISet();
+        
+        // compute successors of nondeterministic part
         for(final int stateId : mRuns.getNondetStates()) {
             for(final int succId : mOperand.getState(stateId).getSuccessors(letter)) {
                 if(mOperand.isFinal(succId)) {
@@ -44,10 +46,16 @@ public class StateDet extends StateDA {
         // now the nSuccs has been fixed, we have to compute the successors of D
         ISet dSuccs = UtilISet.newISet();
         TIntIntMap map = new TIntIntHashMap();
-        ISet labels = UtilISet.newISet();
+        ISet usedLabels = UtilISet.newISet();
+        /**
+         * compute the (smallest) label for every successor of deterministic part
+         * */
         for(final int stateId : mRuns.getDetStates()) {
             int label = mRuns.getLabel(stateId);
-            labels.set(label);
+            usedLabels.set(label);
+            if(mDeterminized.mMaxLabel < label) {
+                mDeterminized.mMaxLabel = label; 
+            }
             for(final int succId : mOperand.getState(stateId).getSuccessors(letter)) {
                 // set the smallest label
                 if(map.containsKey(succId)) {
@@ -61,25 +69,23 @@ public class StateDet extends StateDA {
                 dSuccs.set(succId);
             }
         }
-
-        // now for jSuccs, every time it will be the same
+        // now for jSuccs, pick a label not being used
+        int label = 0;
+        while(usedLabels.get(label)) {
+            label ++;
+        }
         for(final int succId : jSuccs) {
             // ignore those successors that are already in map
             if(dSuccs.get(succId)) continue;
-            int label = 0;
-            while(labels.get(label)) {
-                label ++;
-            }
             map.put(succId, label);
             dSuccs.set(succId);
-            labels.set(label);
         }
         nSuccs.andNot(dSuccs);
         // now we compute the successor
         ParallelRuns nextRuns = new ParallelRuns(nSuccs);
         nextRuns.addLabel(map);
-        StateDet succ = mDeterminized.getOrAddState(nextRuns);
-        
+        //nextRuns.checkConsistency();
+        StateDRA succ = mDeterminized.getOrAddState(nextRuns);
         System.out.println(getId() + " "+ mRuns + " -> " + succ.getId() + " "+ nextRuns + ": " + letter);
         super.addSuccessor(letter, succ.getId());
         return succ.getId();
@@ -88,10 +94,10 @@ public class StateDet extends StateDA {
     @Override
     public boolean equals(Object obj) {
         if(this == obj) return true;
-        if(!(obj instanceof StateDet)) {
+        if(!(obj instanceof StateDRA)) {
             return false;
         }
-        StateDet other = (StateDet)obj;
+        StateDRA other = (StateDRA)obj;
         return  mRuns.equals(other.mRuns);
     }
     

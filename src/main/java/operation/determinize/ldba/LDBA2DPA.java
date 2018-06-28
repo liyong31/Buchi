@@ -1,25 +1,23 @@
-package operation.determinize.sdba;
+package operation.determinize.ldba;
 
 import java.util.LinkedList;
 
 import automata.Buchi;
-import automata.DRA;
+import automata.DPA;
 import automata.IBuchi;
-import automata.IState;
 import automata.StateDA;
 import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
 import operation.IUnaryOp;
-import operation.explore.Explore;
 import util.ISet;
 import util.UtilISet;
 
-public class DeterminizeSDBA extends DRA implements IUnaryOp<IBuchi, DRA> {
+public class LDBA2DPA extends DPA implements IUnaryOp<IBuchi, DPA> {
 
     private final IBuchi mOperand;
-    private final TObjectIntMap<StateDet> mStateIndices = new TObjectIntHashMap<>();
+    private final TObjectIntMap<StateDPA> mStateIndices = new TObjectIntHashMap<>();
 
-    public DeterminizeSDBA(IBuchi operand) {
+    public LDBA2DPA(IBuchi operand) {
         super(operand.getAlphabetSize());
         this.mOperand = operand;
         computeInitialStates();
@@ -31,13 +29,12 @@ public class DeterminizeSDBA extends DRA implements IUnaryOp<IBuchi, DRA> {
         ISet N = mOperand.getInitialStates().clone();
         N.andNot(D);
         // we have to get the indexed
-        int label = 0;
+        final int label = 1;
         ParallelRuns runs = new ParallelRuns(N);
         for(int s : D) {
             runs.addLabel(s, label);
-            label ++;
         }
-        StateDet init = getOrAddState(runs);
+        StateDPA init = getOrAddState(runs);
         this.setInitial(init.getId());
     }
 
@@ -52,23 +49,23 @@ public class DeterminizeSDBA extends DRA implements IUnaryOp<IBuchi, DRA> {
     }
 
     @Override
-    public DRA getResult() {
+    public DPA getResult() {
         return this;
     }
 
-    public StateDet getStateDet(int id) {
-        return (StateDet) getState(id);
+    public StateDPA getStateDet(int id) {
+        return (StateDPA) getState(id);
     }
 
-    protected StateDet getOrAddState(ParallelRuns ndb) {
+    protected StateDPA getOrAddState(ParallelRuns ndb) {
 
-        StateDet state = new StateDet(this, 0, ndb);
+        StateDPA state = new StateDPA(this, 0, ndb);
 
         if (mStateIndices.containsKey(state)) {
             return getStateDet(mStateIndices.get(state));
         } else {
             int index = getStateSize();
-            StateDet newState = new StateDet(this, index, ndb);
+            StateDPA newState = new StateDPA(this, index, ndb);
             int id = this.addState(newState);
             mStateIndices.put(newState, id);
 //            if (ndb.getBSet().overlap(mOperand.getFinalStates()))
@@ -77,7 +74,7 @@ public class DeterminizeSDBA extends DRA implements IUnaryOp<IBuchi, DRA> {
         }
     }
     
-    private static void explore(DRA dra) {
+    private static void explore(DPA dra) {
 
         LinkedList<StateDA> walkList = new LinkedList<>();
         walkList.add(dra.getState(dra.getInitialState()));
@@ -135,7 +132,7 @@ public class DeterminizeSDBA extends DRA implements IUnaryOp<IBuchi, DRA> {
         // 
         System.out.println(buchi.toDot());
         
-        DeterminizeSDBA deted = new DeterminizeSDBA(buchi);
+        LDBA2DPA deted = new LDBA2DPA(buchi);
         explore(deted);
         
         System.out.println(deted.toDot());
@@ -157,7 +154,7 @@ public class DeterminizeSDBA extends DRA implements IUnaryOp<IBuchi, DRA> {
         
         System.out.println(b2.toDot());
         
-        deted = new DeterminizeSDBA(b2);
+        deted = new LDBA2DPA(b2);
         explore(deted);
         
         System.out.println(deted.toDot());
@@ -188,7 +185,7 @@ public class DeterminizeSDBA extends DRA implements IUnaryOp<IBuchi, DRA> {
         A.getState(3).addSuccessor(1, 3);
         
         System.out.println(A.toDot());
-        deted = new DeterminizeSDBA(A);
+        deted = new LDBA2DPA(A);
         explore(deted);
         
         System.out.println(deted.toDot());

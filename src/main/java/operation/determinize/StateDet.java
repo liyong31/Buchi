@@ -33,6 +33,9 @@ public class StateDet extends State {
         ISet nSuccs = UtilISet.newISet();
         ISet jSuccs = UtilISet.newISet();
         TIntIntMap map = new TIntIntHashMap();
+        /**
+         * compute the (smallest) label for every successor
+         * */
         for(final int stateId : mRuns.getStates()) {
             int label = mRuns.getLabel(stateId);
             for(final int succId : mOperand.getState(stateId).getSuccessors(letter)) {

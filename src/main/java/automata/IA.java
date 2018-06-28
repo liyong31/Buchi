@@ -9,6 +9,8 @@ import java.util.List;
 
 public interface IA {
     
+    IAcc getAcceptance();
+    
     int getStateSize();
 
     int getAlphabetSize();

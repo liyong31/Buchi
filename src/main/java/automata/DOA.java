@@ -7,7 +7,7 @@ import java.util.Collections;
 import java.util.List;
 // deterministic Omega Automaton
 
-public class DOA implements IDA {
+public abstract class DOA implements IDA {
 
     private int mInitState;
         
@@ -19,6 +19,7 @@ public class DOA implements IDA {
         this.mAlphabetSize = alphabetSize;
         this.mStates = new ArrayList<>();
     }
+    
     @Override
     public int getStateSize() {
         return mStates.size();
@@ -74,7 +75,6 @@ public class DOA implements IDA {
 
     @Override
     public void toDot(PrintStream out, List<String> alphabet) {
-        // TODO Auto-generated method stub
         
     }
 
