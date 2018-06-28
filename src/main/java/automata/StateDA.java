@@ -1,7 +1,9 @@
 package automata;
 
+import java.io.PrintStream;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -50,6 +52,13 @@ public class StateDA implements IS, Comparable<StateDA>{
     @Override
     public String toString() {
         return "s" + mId;
+    }
+    
+    public void toDot(PrintStream printer, List<String> alphabet) {
+        Set<Integer> enabledLetters = this.getEnabledLetters();
+        for(Integer letter : enabledLetters) {
+             printer.print("  " + this.getId() + " -> " + getSuccessor(letter) + " [label=\"" + alphabet.get(letter) + "\"];\n");
+        }
     }
 
 }

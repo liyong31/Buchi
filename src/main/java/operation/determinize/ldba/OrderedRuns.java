@@ -19,7 +19,8 @@ class OrderedRuns {
     protected final ISet mDets; //
     protected final ArrayList<Integer> mOrds;
     protected final TIntIntMap mIndices;  // state to index
-        
+    protected int mPriority;    
+    
     public OrderedRuns(ISet nondets) {
         this.mNondets = nondets;
         this.mDets = UtilISet.newISet();
@@ -43,6 +44,14 @@ class OrderedRuns {
         return -1;
     }
     
+    public int getPriority() {
+        return mPriority;
+    }
+    
+    public void setPriority(int prio) {
+        this.mPriority = prio;
+    }
+    
     public void addDetState(int state) {
         int index = mOrds.size();
         mOrds.add(state);
@@ -57,7 +66,8 @@ class OrderedRuns {
         }
         OrderedRuns otherRuns = (OrderedRuns)other;
         return  this.mNondets.equals(otherRuns.mNondets) && 
-                this.mOrds.equals(otherRuns.mOrds);
+                this.mOrds.equals(otherRuns.mOrds) &&
+                this.mPriority == otherRuns.mPriority;
     }
     
     public static int hashValue(ISet set) {
@@ -77,12 +87,13 @@ class OrderedRuns {
         for(final int state : mOrds) {
             result = prime * result + state;
         }
+        result = prime * result + mPriority;
         return result;
     }
     
     @Override
     public String toString() {
-        return "<" + mNondets + ", " + this.mOrds + ">"; 
+        return "<" + mNondets + ", " + this.mOrds + ", " + this.mPriority +  ">"; 
     }
 
 }

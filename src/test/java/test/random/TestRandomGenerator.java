@@ -281,6 +281,17 @@ public class TestRandomGenerator {
     }
     
     @Test
+    public void testNCSB2() {
+        Options.mLazyS = true;
+        Options.mLazyB = true;
+        Options.mVerbose = true;
+        IBuchi input = BAStore.getF();
+        ComplementNcsb complement = new ComplementNcsb(input);
+        complement.explore();
+        System.out.println(complement.toDot());
+    }
+    
+    @Test
     public void testDBAComplement() {
         IBuchi input = BAStore.getB();
         input.makeComplete();

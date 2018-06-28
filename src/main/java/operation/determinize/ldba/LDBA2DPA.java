@@ -33,8 +33,13 @@ public class LDBA2DPA extends DPA implements IUnaryOp<IBuchi, DPA> {
         for(int s : D) {
             runs.addDetState(s);
         }
+        runs.setPriority(-1);
         StateDPA init = getOrAddState(runs);
         this.setInitial(init.getId());
+    }
+    
+    public int getPriority(int state) {
+        return 0;
     }
 
     @Override
@@ -67,8 +72,7 @@ public class LDBA2DPA extends DPA implements IUnaryOp<IBuchi, DPA> {
             StateDPA newState = new StateDPA(this, index, runs);
             int id = this.addState(newState);
             mStateIndices.put(newState, id);
-//            if (ndb.getBSet().overlap(mOperand.getFinalStates()))
-//                setFinal(index);
+            this.getAcceptance().setColor(id, runs.mPriority == -1 ? 2*mOperand.getStateSize() - 1 : runs.mPriority);
             return newState;
         }
     }
