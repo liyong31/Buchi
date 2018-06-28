@@ -29,10 +29,9 @@ public class LDBA2DPA extends DPA implements IUnaryOp<IBuchi, DPA> {
         ISet N = mOperand.getInitialStates().clone();
         N.andNot(D);
         // we have to get the indexed
-        final int label = 1;
-        ParallelRuns runs = new ParallelRuns(N);
+        OrderedRuns runs = new OrderedRuns(N);
         for(int s : D) {
-            runs.addLabel(s, label);
+            runs.addDetState(s);
         }
         StateDPA init = getOrAddState(runs);
         this.setInitial(init.getId());
@@ -57,15 +56,15 @@ public class LDBA2DPA extends DPA implements IUnaryOp<IBuchi, DPA> {
         return (StateDPA) getState(id);
     }
 
-    protected StateDPA getOrAddState(ParallelRuns ndb) {
+    protected StateDPA getOrAddState(OrderedRuns runs) {
 
-        StateDPA state = new StateDPA(this, 0, ndb);
+        StateDPA state = new StateDPA(this, 0, runs);
 
         if (mStateIndices.containsKey(state)) {
             return getStateDet(mStateIndices.get(state));
         } else {
             int index = getStateSize();
-            StateDPA newState = new StateDPA(this, index, ndb);
+            StateDPA newState = new StateDPA(this, index, runs);
             int id = this.addState(newState);
             mStateIndices.put(newState, id);
 //            if (ndb.getBSet().overlap(mOperand.getFinalStates()))
