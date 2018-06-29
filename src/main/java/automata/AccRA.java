@@ -57,5 +57,15 @@ public class AccRA implements IAcc {
     public void simplify() {
         
     }
+    
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        for(int i = 0; i < mEs.size(); i ++) {
+            builder.append("E" + i + ": " + mEs.get(i) + "\n");
+            builder.append("F" + i + ": " + mFs.get(i) + "\n\n");
+        }
+        return builder.toString();
+    }
 
 }

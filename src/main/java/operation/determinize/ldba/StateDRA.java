@@ -1,5 +1,8 @@
 package operation.determinize.ldba;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import automata.IBuchi;
 import automata.StateDA;
 import gnu.trove.map.TIntIntMap;
@@ -22,6 +25,20 @@ public class StateDRA extends StateDA {
     }
     
     private ISet mVisitedLetters = UtilISet.newISet();
+    
+    protected Map<Integer, ISet> getLabelStates() {
+        Map<Integer, ISet> labelStates = new HashMap<>();
+        for(final int s : mRuns.mDets) {
+            int label = mRuns.getLabel(s);
+            ISet states = labelStates.get(label);
+            if(states == null) {
+                states = UtilISet.newISet();
+            }
+            states.set(s);
+            labelStates.put(label, states);
+        }
+        return labelStates;
+    }
     
     @Override
     public int getSuccessor(int letter) {
@@ -73,6 +90,9 @@ public class StateDRA extends StateDA {
         int label = 0;
         while(usedLabels.get(label)) {
             label ++;
+        }
+        if(mDeterminized.mMaxLabel < label) {
+            mDeterminized.mMaxLabel = label; 
         }
         for(final int succId : jSuccs) {
             // ignore those successors that are already in map

@@ -1,6 +1,7 @@
 package operation.determinize.ldba;
 
 import java.util.LinkedList;
+import java.util.Map;
 
 import automata.Buchi;
 import automata.DRA;
@@ -76,7 +77,21 @@ public class LDBA2DRA extends DRA implements IUnaryOp<IBuchi, DRA> {
         }
     }
     
-    private static void explore(DRA dra) {
+    public void computeAcceptance() {
+        ISet finalStates = mOperand.getFinalStates();
+        for(int sid = 0; sid < getStateSize(); sid ++) {
+            Map<Integer, ISet> labelStates = getStateDet(sid).getLabelStates();
+            for(int label = 0; label < mMaxLabel; label ++) {
+                if(!labelStates.containsKey(label)) {
+                    this.getAcceptance().addE(sid, label);
+                }else if(finalStates.overlap(labelStates.get(label))){
+                    this.getAcceptance().addF(sid, label);
+                }
+            }
+        }
+    }
+    
+    private static void explore(LDBA2DRA dra) {
 
         LinkedList<StateDA> walkList = new LinkedList<>();
         walkList.add(dra.getState(dra.getInitialState()));
@@ -96,6 +111,8 @@ public class LDBA2DRA extends DRA implements IUnaryOp<IBuchi, DRA> {
                 }
             }
         }
+        
+        dra.computeAcceptance();
         
     }
     
@@ -195,6 +212,7 @@ public class LDBA2DRA extends DRA implements IUnaryOp<IBuchi, DRA> {
         
         System.out.println(deted.toDot());
         System.out.println("max label: " + (deted.getLabelSize() - 1));
+        System.out.println("acc label:\n" + (deted.getAcceptance()));
 
     }
 
