@@ -9,6 +9,8 @@ import automata.StateDA;
 import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
 import operation.IUnaryOp;
+import operation.convert.dpa.DPA2NBA;
+import operation.explore.Explore;
 import util.ISet;
 import util.UtilISet;
 
@@ -59,6 +61,29 @@ public class LDBA2DPA extends DPA implements IUnaryOp<IBuchi, DPA> {
 
     public StateDPA getStateDet(int id) {
         return (StateDPA) getState(id);
+    }
+    
+    public DPA copy(int increment) {
+        DPA result = new DPA(this.getAlphabetSize()); 
+        for(int s = 0; s < this.getStateSize(); s ++) {
+            result.addState();
+            for(int c = 0; c < this.getAlphabetSize(); c ++) {
+                int t = this.getState(s).getSuccessor(c);
+                result.getState(s).addSuccessor(c, t);
+            }
+            result.getAcceptance().setColor(s
+                    , this.getAcceptance().getColor(s) + increment);
+            
+        }
+        return result;
+    }
+    
+    public DPA clone() {
+        return copy(0);
+    }
+    
+    public DPA complement() {
+        return copy(1);
     }
 
     protected StateDPA getOrAddState(OrderedRuns runs) {
@@ -139,6 +164,11 @@ public class LDBA2DPA extends DPA implements IUnaryOp<IBuchi, DPA> {
         explore(deted);
         
         System.out.println(deted.toDot());
+        DPA cmp = deted.complement();
+        System.out.println(cmp.toDot());
+        Buchi bcmp = new DPA2NBA(cmp);
+        new Explore(bcmp);
+        System.out.println(bcmp.toDot());
         
         Buchi b2 = new Buchi(2);
         b2.addState();
