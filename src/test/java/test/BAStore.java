@@ -1,6 +1,7 @@
 package test;
 
 import automata.Buchi;
+import automata.IBuchi;
 import automata.IState;
 
 public class BAStore {
@@ -151,6 +152,29 @@ public class BAStore {
         A.getState(3).addSuccessor(0, 3);
         A.getState(3).addSuccessor(1, 3);
         return A;
+	}
+	
+	public static Buchi getG() {
+        Buchi buchi = new Buchi(2);
+        
+        buchi.addState();
+        buchi.addState();
+        buchi.addState();
+        
+        buchi.getState(0).addSuccessor(0, 0);
+        buchi.getState(0).addSuccessor(1, 0);
+        buchi.getState(0).addSuccessor(0, 1);
+        buchi.getState(0).addSuccessor(1, 1);
+        
+        buchi.getState(1).addSuccessor(0, 2);
+        buchi.getState(1).addSuccessor(1, 1);
+        
+        buchi.getState(2).addSuccessor(0, 2);
+        buchi.getState(2).addSuccessor(1, 2);
+        
+        buchi.setFinal(1);
+        buchi.setInitial(0);
+        return buchi;
 	}
 
 }

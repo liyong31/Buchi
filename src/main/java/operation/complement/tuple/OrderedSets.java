@@ -110,7 +110,7 @@ public class OrderedSets {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("[");
+        builder.append("<");
         if(this.mIsColored) {
             for(int i = 0; i < mOSets.size(); i ++) {
                 builder.append("(" + mOSets.get(i) + "," + mColors.get(i) + "),");
@@ -121,7 +121,7 @@ public class OrderedSets {
             }
         }
         
-        builder.append("]");
+        builder.append(">");
         return builder.toString(); 
     }
 
