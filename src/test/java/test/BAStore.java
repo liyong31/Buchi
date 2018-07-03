@@ -176,5 +176,30 @@ public class BAStore {
         buchi.setInitial(0);
         return buchi;
 	}
+	
+    public static Buchi getH() {
+        Buchi buchi = new Buchi(2);
+
+        buchi.addState();
+        buchi.addState();
+        buchi.addState();
+        buchi.addState();
+
+        buchi.getState(0).addSuccessor(0, 0);
+        buchi.getState(0).addSuccessor(1, 0);
+        buchi.getState(0).addSuccessor(0, 1);
+
+        buchi.getState(1).addSuccessor(0, 2);
+        buchi.getState(1).addSuccessor(0, 3);
+
+        buchi.getState(2).addSuccessor(0, 2);
+        buchi.getState(2).addSuccessor(1, 1);
+        
+        buchi.getState(3).addSuccessor(1, 2);
+
+        buchi.setFinal(2);
+        buchi.setInitial(0);
+        return buchi;
+    }
 
 }

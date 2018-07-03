@@ -18,6 +18,7 @@ import automata.RandomBuchiGenerator;
 import main.Options;
 import operation.complement.dba.ComplementDBA;
 import operation.complement.ncsb.ComplementNcsb;
+import operation.complement.tuple.ComplementTuple;
 import operation.difference.Difference;
 import operation.explore.Explore;
 import operation.explore.OndraExplore;
@@ -287,6 +288,14 @@ public class TestRandomGenerator {
         Options.mVerbose = true;
         IBuchi input = BAStore.getF();
         ComplementNcsb complement = new ComplementNcsb(input);
+        complement.explore();
+        System.out.println(complement.toDot());
+    }
+    
+    @Test
+    public void testComplementTuple() {
+        IBuchi input = BAStore.getH();
+        ComplementTuple complement = new ComplementTuple(input);
         complement.explore();
         System.out.println(complement.toDot());
     }

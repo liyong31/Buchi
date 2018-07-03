@@ -1,32 +1,33 @@
-package operation.complement.tuple;
+package operation.complement.slice;
+
+import java.util.ArrayList;
+import java.util.Map;
 
 import automata.Buchi;
 import automata.IBuchi;
 import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
 import operation.complement.Complement;
+import operation.complement.tuple.Color;
+import operation.complement.tuple.ComplementTuple;
+import operation.complement.tuple.OrderedSets;
 import operation.explore.Explore;
 import util.ISet;
+import util.UtilISet;
 
-// tuple-based complementation
+
 /**
- * Complementing Buchi Automata with a Subset-tuple Construction
- *    Joel Allred and Ulrich Ultes-Nitsche
- *    
+ * Automata: From Logics to Algorithms
+ * by Moshe Y. Vardi, Thomas Wilke
+ * In Logic and Automata: History and Perspective
  * */
+public class ComplementSliceVW extends Complement {
 
-public class ComplementTuple extends Complement {
-
-    public ComplementTuple(IBuchi operand) {
+    public ComplementSliceVW(IBuchi operand) {
         super(operand);
     }
 
-    @Override
-    public String getName() {
-        return "ComplementTuple";
-    }
-    
-    private TObjectIntMap<StateTuple> mStateIndices;
+    private TObjectIntMap<StateSliceVW> mStateIndices;
     
     @Override
     protected void computeInitialStates() {
@@ -44,28 +45,33 @@ public class ComplementTuple extends Complement {
         if(!pset2.isEmpty()) {
             osets.addSet(pset2, Color.NONE);
         }
-        StateTuple stateSlice = getOrAddState(osets);
+        
+        StateSliceVW stateSlice = getOrAddState(osets);
         this.setInitial(stateSlice.getId());
     }
     
-    protected StateTuple getStateTuple(int id) {
-        return (StateTuple)getState(id);
+    protected StateSliceVW getStateSlice(int id) {
+        return (StateSliceVW)getState(id);
     }
 
-    protected StateTuple getOrAddState(OrderedSets osets) {
-        StateTuple state = new StateTuple(this, 0, osets);
+    protected StateSliceVW getOrAddState(OrderedSets osets) {
+        StateSliceVW state = new StateSliceVW(this, 0, osets);
         if(mStateIndices.containsKey(state)) {
-            return getStateTuple(mStateIndices.get(state));
+            return getStateSlice(mStateIndices.get(state));
         }else {
             int index = getStateSize();
-            StateTuple newState = new StateTuple(this, index, osets);
+            StateSliceVW newState = new StateSliceVW(this, index, osets);
             int id = this.addState(newState);
             mStateIndices.put(newState, id);
             if(osets.isFinal()) setFinal(index);
             return newState;
         }
     }
-    
+
+    @Override
+    public String getName() {
+        return "ComplementSliceVW";
+    }
     
     public static void main(String[] args) {
         IBuchi buchi = new Buchi(2);
@@ -90,15 +96,12 @@ public class ComplementTuple extends Complement {
         
         System.out.println(buchi.toDot());
         
-        ComplementTuple complement = new ComplementTuple(buchi);
+        ComplementSliceVW complement = new ComplementSliceVW(buchi);
         new Explore(complement);
         System.out.println(complement.toDot());
         
         System.out.println(complement.toBA());
 
     }
-
-    
-    
 
 }
