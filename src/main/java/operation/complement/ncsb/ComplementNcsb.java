@@ -29,6 +29,10 @@ import util.UtilISet;
 
 /**
  * Only valid for Semi-deterministic Buchi automata
+ * 
+ * Complementing Semi-deterministic Büchi Automata
+ * by František Blahoudek, Matthias Heizmann, Sven Schewe, Jan Strejček and Ming-Hsien Tsai
+ * in TACAS 2016
  * */
 public class ComplementNcsb extends Complement {
 

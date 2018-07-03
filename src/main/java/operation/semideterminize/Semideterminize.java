@@ -29,7 +29,7 @@ import operation.explore.Explore;
 import util.ISet;
 
 /**
- * Semideterminize a given Buchi automaton
+ * Semideterminizing a given Buchi automaton
  *  Costas Courcoubetis and Mihalis Yannakakis
  *   "Verifying Temporal Properties of Finite-State Probabilistic Programs"
  *  in FOCS 

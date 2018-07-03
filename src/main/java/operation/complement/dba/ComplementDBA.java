@@ -6,8 +6,12 @@ import gnu.trove.map.hash.TObjectIntHashMap;
 import operation.complement.Complement;
 import util.ISet;
 
-
 // must make sure DBA is complete
+/**
+ * Complementing deterministic Büchi automata in polynomial time
+ * by R.P.Kurshan
+ * in Journal of Computer and System Sciences
+ * */
 public class ComplementDBA extends Complement {
 
     private TObjectIntMap<StateDBA> mStateIndices;

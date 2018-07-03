@@ -34,6 +34,13 @@ import operation.explore.Explore;
 
 // valid for all nondeterministic Buchi automata
 
+/**
+ * 
+ *  Weak alternating automata are not that weak
+ *  by  Orna Kupferman and  Moshe Y. Vardi
+ *  in ACM Transactions on Computational Logic 
+ */
+
 public class ComplementRank extends Complement {
 
     private TObjectIntMap<StateLevelRanking> mStateIndices;

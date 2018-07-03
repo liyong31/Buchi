@@ -9,6 +9,11 @@ import operation.explore.Explore;
 import util.ISet;
 
 // tuple-based complementation
+/**
+ * Complementing Buchi Automata with a Subset-tuple Construction
+ *    Joel Allred and Ulrich Ultes-Nitsche
+ *    
+ * */
 
 public class ComplementTuple extends Complement {
 
