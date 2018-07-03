@@ -111,16 +111,14 @@ public class OrderedSets {
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("<");
-        if(this.mIsColored) {
-            for(int i = 0; i < mOSets.size(); i ++) {
+        for (int i = 0; i < mOSets.size(); i++) {
+            if (this.mIsColored) {
                 builder.append("(" + mOSets.get(i) + "," + mColors.get(i) + "),");
-            }
-        }else {
-            for(int i = 0; i < mOSets.size(); i ++) {
+            } else {
                 builder.append(mOSets.get(i) + ",");
             }
+
         }
-        
         builder.append(">");
         return builder.toString(); 
     }
