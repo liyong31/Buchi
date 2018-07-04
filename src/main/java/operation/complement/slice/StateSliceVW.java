@@ -102,7 +102,7 @@ public class StateSliceVW extends State {
                 predMap.put(index, i);
                 index ++;
             }
-            if(mSlice.getColor(i) == Color.ONE
+            if(mSlice.getColor(i) == Slice.getInfinite()
             && nonFinalSuccs.isEmpty() && !Options.mEnhancedSliceGuess) {
                 hasColoredSucc = false;
             }

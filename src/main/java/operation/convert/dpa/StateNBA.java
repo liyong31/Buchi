@@ -5,6 +5,15 @@ import automata.State;
 import util.ISet;
 import util.UtilISet;
 
+/**
+ * TODO
+ * two states p and q are in the same equivalent class with respect to an even parity 2k
+ * if and only 
+ *  (1) succ(p, a) = succ(q, a) for every a and either
+ *  (2) <i> parity(p) = parity(q) = 2k,
+ *      <ii> parity(p) > 2k and parity(q) > 2k or
+ *      <iii> parity(p) < 2k and parity(q) < 2k
+ * */
 public class StateNBA extends State {
     
     private final int mState;

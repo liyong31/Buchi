@@ -9,6 +9,7 @@ import gnu.trove.map.hash.TObjectIntHashMap;
 import operation.IUnaryOp;
 import operation.explore.Explore;
 
+// DPA to NBA
 public class DPA2NBA extends Buchi implements IUnaryOp<DPA, IBuchi> {
 
     private final DPA mOperand;
