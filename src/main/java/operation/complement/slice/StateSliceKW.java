@@ -6,37 +6,37 @@ import automata.IBuchi;
 import automata.State;
 import gnu.trove.map.TIntIntMap;
 import gnu.trove.map.hash.TIntIntHashMap;
-import main.Options;
 import operation.complement.tuple.Color;
-
+import operation.complement.tuple.OrderedSets;
+import operation.complement.tuple.StateTuple;
 import util.ISet;
 import util.PowerSet;
 import util.UtilISet;
 
 
 
-public class StateSliceVW extends State {
+public class StateSliceKW extends State {
 
-    private final ComplementSliceVW mComplement;
-    private final Slice mSlice;
+    private final ComplementSliceKW mComplement;
+    private final Slice mOSets;
     
-    public StateSliceVW(ComplementSliceVW complement, int id, Slice slice) {
+    public StateSliceKW(ComplementSliceKW complement, int id, Slice osets) {
         super(id);
         this.mComplement = complement;
-        this.mSlice = slice;
+        this.mOSets = osets;
     }
     
     private ISet mVisitedLetters = UtilISet.newISet();
 
     /**
      * For normal transitions in the complement, see the paper
-     *   "Automata: From Logics to Algorithms" by Moshe Y. Vardi and Thomas Wilke
-     *    In Logic and Automata: History and Perspective
+     *   "Complementation, Disambiguation, and Determinization of Buchi Automata Unified" 
+     *     by Detlef Kaehler and Thomas Wilke In ICALP 2008
      * They defined the run trees and divide the states at the same level of the trees as slice
      * 
-     * we let * as newly emerging branch (marked components)
+     * we let 0 as newly emerging branch (marked components)
      *        1 as infinite continuations
-     *    and 0 as die out in the future (no continuation at some point)
+     *    and 2 as die out in the future (no continuation at some point)
      *    
      *    There are two parts in the complement (i) the initial part and (ii) the accepting part.
      *    
@@ -51,14 +51,14 @@ public class StateSliceVW extends State {
      *    3. [Transition in the accepting part]
      *      (i) current state <(Q1, c1), ..., (Qn, cn)> is not final state (has die out)
      *          for every component Qi with color ci, c'_{2i} = c'_{2i+1} = ci 
-     *          except that c'_{2i} = new (*) when ci = inf (1). This is to mark the component
+     *          except that c'_{2i} = new (0) when ci = inf (1). This is to mark the component
      *          filled with final states in the input BA as newly emerging runs.
      *      (ii) current state <(Q1, c1), ..., (Qn, cn)> is final state (no die out)
      *          for every component Qi with color ci, c'_{2i} = c'_{2i+1} = die 
-     *          except that c'_{2i} = die (0), c'_{2i+1} = inf when ci = inf (1). 
+     *          except that c'_{2i} = die (2), c'_{2i+1} = inf when ci = inf (1). 
      *          This is to make the runs of the component filled with final states to die out
      *          and keep only the runs of the other component without final states. Those runs
-     *          of marked components (new, *) also have to die out. 
+     *          of marked components (new, 0) also have to die out. 
      *      (iii) current state <(Q1, c1), ..., (Qn, cn)> has ci = inf (1) and Q'_{2i+1} is empty,
      *            then no successor for this letter since it is a wrong guess (no continuation).
      * **/
@@ -69,7 +69,7 @@ public class StateSliceVW extends State {
         }
         mVisitedLetters.set(letter);
         ISet succs = UtilISet.newISet();
-        ArrayList<ISet> ordSets = mSlice.getOrderedSets(); 
+        ArrayList<ISet> ordSets = mOSets.getOrderedSets(); 
         IBuchi operand = mComplement.getOperand();
         ISet leftSuccs = UtilISet.newISet();
         ArrayList<ISet> nextOrdSets = new ArrayList<>();
@@ -102,116 +102,103 @@ public class StateSliceVW extends State {
                 predMap.put(index, i);
                 index ++;
             }
-            if(mSlice.getColor(i) == Color.ONE
-            && nonFinalSuccs.isEmpty() && !Options.mEnhancedSliceGuess) {
+            if(mOSets.getColor(i) == Color.ONE
+            && nonFinalSuccs.isEmpty()) {
                 hasColoredSucc = false;
             }
         }
-        StateSliceVW nextState;
+        StateSliceKW nextState;
         //1. non-colored states compute successor
-        if(! mSlice.isColored()) {
-            Slice nextSlice = new Slice(false);
+        if(! mOSets.isColored()) {
+            Slice osets = new Slice(false);
             ISet indices = UtilISet.newISet();
             for(int i = 0; i < nextOrdSets.size(); i ++) {
-                nextSlice.addSet(nextOrdSets.get(i), Color.NONE);
+                osets.addSet(nextOrdSets.get(i), Color.NONE);
                 indices.set(i);
             }
-            nextState = mComplement.getOrAddState(nextSlice);
+            nextState = mComplement.getOrAddState(osets);
             super.addSuccessor(letter, nextState.getId());
             succs.set(nextState.getId());
-            System.out.println("" + getId() + " " + toString() + " -> " + nextState.getId() + " " + nextSlice + " : " + letter);
+            System.out.println("" + getId() + " " + toString() + " -> " + nextState.getId() + " " + osets + " : " + letter);
             
-            if(Options.mEnhancedSliceGuess) {
-                nextSlice = new Slice(true);
-                ISet fset = operand.getFinalStates();
+            //nondeterministic choices for {inf, die}
+            // we guess to inf for those component index appearing in set
+            PowerSet infGuesses = new PowerSet(indices);
+            while(infGuesses.hasNext()) {
+                ISet guess = infGuesses.next();
+                osets = new Slice(true);
                 for(int i = 0; i < nextOrdSets.size(); i ++) {
-                    ISet si = nextOrdSets.get(i);
-                    nextSlice.addSet(si, (si.overlap(fset) ? Color.ZERO : Color.ONE));
+                    if(guess.get(i)) {
+                        // inf
+                        osets.addSet(nextOrdSets.get(i), Color.ONE);
+                    }else {
+                        // die
+                        osets.addSet(nextOrdSets.get(i), Color.TWO);
+                    }
                 }
-                nextState = mComplement.getOrAddState(nextSlice);
+                nextState = mComplement.getOrAddState(osets);
                 super.addSuccessor(letter, nextState.getId());
                 succs.set(nextState.getId());
-                System.out.println("" + getId() + " " + toString() + " -> " + nextState.getId() + " " + nextSlice + " : " + letter);
-            }else {
-                //nondeterministic choices for {inf, die}
-                // we guess to inf for those component index appearing in set
-                PowerSet infGuesses = new PowerSet(indices);
-                while(infGuesses.hasNext()) {
-                    ISet guess = infGuesses.next();
-                    nextSlice = new Slice(true);
-                    for(int i = 0; i < nextOrdSets.size(); i ++) {
-                        if(guess.get(i)) {
-                            // inf
-                            nextSlice.addSet(nextOrdSets.get(i), Color.ONE);
-                        }else {
-                            // die
-                            nextSlice.addSet(nextOrdSets.get(i), Color.ZERO);
-                        }
-                    }
-                    nextState = mComplement.getOrAddState(nextSlice);
-                    super.addSuccessor(letter, nextState.getId());
-                    succs.set(nextState.getId());
-                    System.out.println("" + getId() + " " + toString() + " -> " + nextState.getId() + " " + nextSlice + " : " + letter);
-                } 
+                System.out.println("" + getId() + " " + toString() + " -> " + nextState.getId() + " " + osets + " : " + letter);
             }
         }else if(hasColoredSucc){
             //2. every state compute colors
-            Slice nextSlice = new Slice(true);
+            Slice osets = new Slice(true);
+            
             ISet fset = operand.getFinalStates();
             for(int i = 0; i < nextOrdSets.size(); i ++) {
-                nextSlice.addSet(nextOrdSets.get(i)
+                osets.addSet(nextOrdSets.get(i)
                         , decideColor(nextOrdSets.get(i), predMap.get(i), fset));
             }
-            nextState = mComplement.getOrAddState(nextSlice);
+            nextState = mComplement.getOrAddState(osets);
             super.addSuccessor(letter, nextState.getId());
             succs.set(nextState.getId());
-            System.out.println("" + getId() + " " + toString() + " -> " + nextState.getId() + " " + nextSlice + " : " + letter);
+            System.out.println("" + getId() + " " + toString() + " -> " + nextState.getId() + " " + osets + " : " + letter);
         }
         
         return succs;
     }
     
-    
     private Color decideColor(ISet sjp, int jpred, ISet fset) {        
-        if(! mSlice.isFinal()) {
-            if(mSlice.getColor(jpred) == Color.ONE
+        if(! mOSets.isFinal()) {
+            if(mOSets.getColor(jpred) == Color.ONE
             && sjp.overlap(fset)) {
                 // f_i is inf and final component set to new
-                return Color.TWO; 
+                return Color.ZERO; 
             }else {
                 // just f_i
-                return mSlice.getColor(jpred);
+                return mOSets.getColor(jpred);
             }
         }else {
             // current state is final
-            if (mSlice.getColor(jpred) == Color.ONE
+            if (mOSets.getColor(jpred) == Color.ONE
             && !sjp.overlap(fset)) {
                 // f_i is inf and not final component set to inf
                 return Color.ONE;
             } else {
                 // otherwise die
-                return Color.ZERO;
+                return Color.TWO;
             }
         }
     }
     
     @Override
     public int hashCode() {
-        return mSlice.hashCode();
+        return mOSets.hashCode();
     }
     
     @Override
     public String toString() {
-        return mSlice.toString();
+        return mOSets.toString() + ((mOSets.isFinal())? "*": "0");
     }
     
     @Override
     public boolean equals(Object obj) {
         if(obj == this) return true;
         if(obj == null) return false;
-        if(obj instanceof StateSliceVW) {
-            StateSliceVW other = (StateSliceVW)obj;
-            return this.mSlice.equals(other.mSlice);
+        if(obj instanceof StateSliceKW) {
+            StateSliceKW other = (StateSliceKW)obj;
+            return this.mOSets.equals(other.mOSets);
         }
         return false;
     }

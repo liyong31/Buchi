@@ -4,7 +4,6 @@ import automata.Buchi;
 import automata.IBuchi;
 import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
-import main.Options;
 import operation.complement.Complement;
 import operation.complement.tuple.Color;
 import operation.complement.tuple.OrderedSets;
@@ -14,17 +13,17 @@ import util.ISet;
 
 
 /**
- * Automata: From Logics to Algorithms
- * by Moshe Y. Vardi and Thomas Wilke
- * In Logic and Automata: History and Perspective
+ * Complementation, Disambiguation, and Determinization of Buchi Automata Unified
+ * by Detlef Kaehler and Thomas Wilke
+ * In ICALP 2008
  * */
-public class ComplementSliceVW extends Complement {
+public class ComplementSliceKW extends Complement {
 
-    public ComplementSliceVW(IBuchi operand) {
+    public ComplementSliceKW(IBuchi operand) {
         super(operand);
     }
 
-    private TObjectIntMap<StateSliceVW> mStateIndices;
+    private TObjectIntMap<StateSliceKW> mStateIndices;
     
     @Override
     protected void computeInitialStates() {
@@ -35,29 +34,29 @@ public class ComplementSliceVW extends Complement {
         pset1.and(inits);
         ISet pset2 = inits;
         pset2.andNot(pset1);
-        Slice osets = new Slice(false);
+        Slice osets = new Slice(true);
         if(!pset1.isEmpty()) {
-            osets.addSet(pset1, Color.NONE);
+            osets.addSet(pset1, Color.ONE);
         }
         if(!pset2.isEmpty()) {
-            osets.addSet(pset2, Color.NONE);
+            osets.addSet(pset2, Color.ONE);
         }
         
-        StateSliceVW stateSlice = getOrAddState(osets);
+        StateSliceKW stateSlice = getOrAddState(osets);
         this.setInitial(stateSlice.getId());
     }
     
-    protected StateSliceVW getStateSlice(int id) {
-        return (StateSliceVW)getState(id);
+    protected StateSliceKW getStateSlice(int id) {
+        return (StateSliceKW)getState(id);
     }
 
-    protected StateSliceVW getOrAddState(Slice osets) {
-        StateSliceVW state = new StateSliceVW(this, 0, osets);
+    protected StateSliceKW getOrAddState(Slice osets) {
+        StateSliceKW state = new StateSliceKW(this, 0, osets);
         if(mStateIndices.containsKey(state)) {
             return getStateSlice(mStateIndices.get(state));
         }else {
             int index = getStateSize();
-            StateSliceVW newState = new StateSliceVW(this, index, osets);
+            StateSliceKW newState = new StateSliceKW(this, index, osets);
             int id = this.addState(newState);
             mStateIndices.put(newState, id);
             if(osets.isFinal()) setFinal(index);
@@ -92,8 +91,8 @@ public class ComplementSliceVW extends Complement {
         buchi.setInitial(0);
         
         System.out.println(buchi.toDot());
-        Options.mEnhancedSliceGuess = true;
-        ComplementSliceVW complement = new ComplementSliceVW(buchi);
+        
+        ComplementSliceKW complement = new ComplementSliceKW(buchi);
         new Explore(complement);
         System.out.println(complement.toDot());
         

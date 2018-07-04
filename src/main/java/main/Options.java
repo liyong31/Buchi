@@ -40,4 +40,8 @@ public class Options {
     
     // only tight rank is allowed
     public static boolean mTightRank = false;
+    
+    
+    // deterministic guess for jumping edges
+    public static boolean mEnhancedSliceGuess= false;
 }

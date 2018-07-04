@@ -113,11 +113,13 @@ public class OrderedSets {
         builder.append("<");
         for (int i = 0; i < mOSets.size(); i++) {
             if (this.mIsColored) {
-                builder.append("(" + mOSets.get(i) + "," + mColors.get(i) + "),");
+                builder.append("(" + mOSets.get(i) + "," + mColors.get(i) + ")");
             } else {
-                builder.append(mOSets.get(i) + ",");
+                builder.append(mOSets.get(i) + "");
             }
-
+            if(i != mOSets.size() - 1) {
+                builder.append(",");
+            }
         }
         builder.append(">");
         return builder.toString(); 
