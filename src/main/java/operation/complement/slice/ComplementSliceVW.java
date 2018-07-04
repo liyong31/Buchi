@@ -1,19 +1,14 @@
 package operation.complement.slice;
 
-import java.util.ArrayList;
-import java.util.Map;
-
 import automata.Buchi;
 import automata.IBuchi;
 import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
 import operation.complement.Complement;
 import operation.complement.tuple.Color;
-import operation.complement.tuple.ComplementTuple;
 import operation.complement.tuple.OrderedSets;
 import operation.explore.Explore;
 import util.ISet;
-import util.UtilISet;
 
 
 /**
