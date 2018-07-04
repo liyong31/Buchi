@@ -122,6 +122,11 @@ public class StateSliceVW extends State {
             System.out.println("" + getId() + " " + toString() + " -> " + nextState.getId() + " " + nextSlice + " : " + letter);
             
             if(Options.mEnhancedSliceGuess) {
+                /**
+                 * "STATE OF BÜCHI COMPLEMENTATION"
+                 * by MING-HSIEN TSAI, SETH FOGARTY, MOSHE Y. VARDI, and YIH-KUEN TSAY
+                 * in LMCS, Vol. 10(4:13)2014, pp. 1–27
+                 * */
                 nextSlice = new Slice(true);
                 ISet fset = operand.getFinalStates();
                 for(int i = 0; i < nextOrdSets.size(); i ++) {
