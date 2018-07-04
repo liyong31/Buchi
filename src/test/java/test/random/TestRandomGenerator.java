@@ -18,12 +18,14 @@ import automata.RandomBuchiGenerator;
 import main.Options;
 import operation.complement.dba.ComplementDBA;
 import operation.complement.ncsb.ComplementNcsb;
+import operation.complement.slice.ComplementSliceVW;
 import operation.complement.tuple.ComplementTuple;
 import operation.difference.Difference;
 import operation.explore.Explore;
 import operation.explore.OndraExplore;
 import operation.isempty.IsEmpty;
 import operation.minus.Minus;
+import operation.removal.Remove;
 import test.BAStore;
 
 public class TestRandomGenerator {
@@ -298,6 +300,21 @@ public class TestRandomGenerator {
         ComplementTuple complement = new ComplementTuple(input);
         complement.explore();
         System.out.println(complement.toDot());
+        System.out.println(complement.toBA());
+        IBuchi result = (new Remove(complement)).getResult();
+        System.out.println(result.toBA());
+    }
+    
+    @Test
+    public void testComplementSliceVW() {
+        IBuchi input = BAStore.getH();
+        Options.mEnhancedSliceGuess = true;
+        ComplementSliceVW complement = new ComplementSliceVW(input);
+        complement.explore();
+        System.out.println(complement.toDot());
+        System.out.println(complement.toBA());
+        IBuchi result = (new Remove(complement)).getResult();
+        System.out.println(result.toBA());
     }
     
     @Test
