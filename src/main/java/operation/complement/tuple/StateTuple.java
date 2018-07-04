@@ -22,6 +22,37 @@ public class StateTuple extends State  {
     
     private ISet mVisitedLetters = UtilISet.newISet();
     
+    /**
+     * For normal transitions in the complement, see the paper
+     *   "Complementing Buchi Automata with a Subset-tuple Construction" by Joel Allred and Ulrich Ultes-Nitsche
+     *    In Logic and Automata: History and Perspective
+     * They defined the run trees and divide the states at the same level of the trees as slice
+     * 
+     * we label every component with a color in the accepting component
+     *        0 as runs has not yet visited final states
+     *        1 as runs has visited final states and wait to become 2 unless no 2 component in the predecessor 
+     *    and 2 as runs has visited final states
+     *    
+     *    There are two parts in the complement (i) the initial part and (ii) the accepting part.
+     *    
+     *    1. [Jump to accepting part]
+     *    Once the runs nondeterministically leave the initial part and go to the accepting part,
+     *    we will initially think all components have not visited final states.
+     *    
+     *    2. [Final states]
+     *    The final states will be those states which do not have 2-colored components.
+     *    
+     *    3. [Transition in the accepting part]
+     *      Assume that current state is <(Q1, c1), ..., (Qn, cn)> 
+     *       (i) current state is final state (no 2-colored component)
+     *          then c'_{2i+1} = 0 if  ci = 0; [runs still have not visited final states]
+     *          otherwise c'_{2i+1} = 2 and c'_{2i} = 2. [runs have visited final states]
+     *       (ii) current state is not final state (contains 2-colored component)
+     *          then (1) c'_{2i+1} = 0 if  ci = 0; [runs still have not visited final states]
+     *               (2) c'_{2i+1} = c'_{2i} =2 if ci = 2; [runs have visited final states]
+     *               (3) c'_{2i+1} = c'_{2i} =1 if ci = 2; [runs have visited final states but have to wait to be 2-colored]
+     * **/ 
+    
     @Override
     public ISet getSuccessors(int letter) {
         if(mVisitedLetters.get(letter)) {

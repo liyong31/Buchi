@@ -8,12 +8,13 @@ import operation.complement.Complement;
 import operation.complement.tuple.Color;
 import operation.complement.tuple.OrderedSets;
 import operation.explore.Explore;
+import operation.removal.Remove;
 import util.ISet;
 
 
 /**
  * Automata: From Logics to Algorithms
- * by Moshe Y. Vardi, Thomas Wilke
+ * by Moshe Y. Vardi and Thomas Wilke
  * In Logic and Automata: History and Perspective
  * */
 public class ComplementSliceVW extends Complement {
@@ -96,6 +97,13 @@ public class ComplementSliceVW extends Complement {
         System.out.println(complement.toDot());
         
         System.out.println(complement.toBA());
+        
+        IBuchi result = (new Remove(complement)).getResult();
+        
+        System.out.println(result.toDot());
+        
+        System.out.println(result.toBA());
+        
 
     }
 

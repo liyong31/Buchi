@@ -30,20 +30,20 @@ public class StateSliceVW extends State {
 
     /**
      * For normal transitions in the complement, see the paper
-     *   "Automata: From Logics to Algorithms" by Moshe Y. Vardi, Thomas Wilke
+     *   "Automata: From Logics to Algorithms" by Moshe Y. Vardi and Thomas Wilke
      *    In Logic and Automata: History and Perspective
      * They defined the run trees and divide the states at the same level of the trees as slice
      * 
      * we let 0 as newly emerging branch (marked components)
-     *        1 as infinite continuation
-     *    and 2 as die out 
+     *        1 as infinite continuations
+     *    and 2 as die out in the future (no continuation at some point)
      *    
      *    There are two parts in the complement (i) the initial part and (ii) the accepting part.
      *    
      *    1. [Jump to accepting part]
      *    Once the runs nondeterministically leave the initial part and go to the accepting part,
-     *    we will guess each component of the state will have infinitely continuations or die out
-     *    in the future. 
+     *    we will guess whether the runs of each component will have infinitely many continuations
+     *    or will die out in the future.
      *    
      *    2. [Final states]
      *    The final states will be those states which do not have die out components.
@@ -56,8 +56,9 @@ public class StateSliceVW extends State {
      *      (ii) current state <(Q1, c1), ..., (Qn, cn)> is final state (no die out)
      *          for every component Qi with color ci, c'_{2i} = c'_{2i+1} = die 
      *          except that c'_{2i} = die (2), c'_{2i+1} = inf when ci = inf (1). 
-     *          This is to make the component filled with final states in the input BA as die out
-     *          runs and keep only the other component without final states.
+     *          This is to make the runs of the component filled with final states to die out
+     *          and keep only the runs of the other component without final states. Those runs
+     *          of marked components (new, 0) also have to die out. 
      *      (iii) current state <(Q1, c1), ..., (Qn, cn)> has ci = inf (1) and Q'_{2i+1} is empty,
      *            then no successor for this letter since it is a wrong guess (no continuation).
      * **/
