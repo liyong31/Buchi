@@ -5,11 +5,14 @@ import operation.complement.tuple.OrderedSets;
 
 
 /**
- * Color definition in the paper
+ * Decoration definition in the paper
  *    NONE -   ? undefined
- *    ZERO -   0 belong to skeleton (accepting in the original Buchi automaton, guessed to die out)
- *    ONE  -   1 non-skeleton       (nonaccepting, guessed to be infinite branch)
- *    TWO  -   * put on hold        (newly emerging branch being marked)
+ *    ZERO -   0 belong to skeleton (runs have to die out before next reset slice)
+ *    ONE  -   1 non-skeleton       (runs are in the infinite branches)
+ *    TWO  -   * put on hold        (newly emerging branch from infinite branches being marked
+ *                                   to die out after next reset slice)
+ * Reset slice is the slice whose components do not have 0-decoration
+ * 
  * */
 public class Slice extends OrderedSets {
 
@@ -69,6 +72,22 @@ public class Slice extends OrderedSets {
     public Color getColor(int index) {
         if(mColors.isEmpty()) return Color.NONE;
         return this.mColors.get(index);
+    }
+    
+    public static Color getDieout() {
+        return Color.ZERO;
+    }
+    
+    public static Color getInfinite() {
+        return Color.ONE;
+    }
+    
+    public static Color getMarked() {
+        return Color.TWO;
+    }
+    
+    public static Color getNone() {
+        return Color.NONE;
     }
 
 }
