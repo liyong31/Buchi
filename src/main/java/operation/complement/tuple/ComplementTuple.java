@@ -14,6 +14,10 @@ import util.ISet;
  * Complementing Buchi Automata with a Subset-tuple Construction
  *    Joel Allred and Ulrich Ultes-Nitsche
  *    
+ *    COMMENTS: This paper seems to be almost the same algorithm proposed by Ming-Hsien Tsai et al
+ *    in their LMCS paper "STATE OF BÜCHI COMPLEMENTATION". The difference I am aware of is that Allred and Ultes-Nitsche
+ *    provide a different complexity analysis. 
+ *    
  * */
 
 public class ComplementTuple extends Complement {
