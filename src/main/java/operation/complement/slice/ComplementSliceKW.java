@@ -67,7 +67,7 @@ public class ComplementSliceKW extends Complement {
 
     @Override
     public String getName() {
-        return "ComplementSliceVW";
+        return "ComplementSliceKW";
     }
     
     public static void main(String[] args) {

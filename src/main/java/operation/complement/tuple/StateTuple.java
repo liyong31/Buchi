@@ -1,12 +1,10 @@
 package operation.complement.tuple;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import automata.IBuchi;
 import automata.State;
 import gnu.trove.map.TIntIntMap;
-import gnu.trove.map.hash.TIntIntHashMap;
 import main.Options;
 import util.ISet;
 import util.UtilISet;
@@ -62,39 +60,10 @@ public class StateTuple extends State  {
         }
         mVisitedLetters.set(letter);
         ISet succs = UtilISet.newISet();
-        List<ISet> ordSets = mOSets.getOrderedSets(); 
         IBuchi operand = mComplement.getOperand();
-        ISet leftSuccs = UtilISet.newISet();
-        ArrayList<ISet> nextOrdSets = new ArrayList<>();
-        TIntIntMap predMap = new TIntIntHashMap();
-        int index = 0;
-        for(int i = 0; i < ordSets.size(); i ++) {
-            ISet Si = ordSets.get(i);
-            ISet finalSuccs = UtilISet.newISet();
-            ISet nonFinalSuccs = UtilISet.newISet();
-            for(final int p : Si) {
-                for(final int q : operand.getState(p).getSuccessors(letter)) {
-                    // ignore successors already have been visited
-                    if(leftSuccs.get(q)) continue;
-                    if(operand.isFinal(q)) {
-                        finalSuccs.set(q);
-                    }else {
-                        nonFinalSuccs.set(q);
-                    }
-                    leftSuccs.set(q);
-                }
-            }
-            if(!finalSuccs.isEmpty()) {
-                nextOrdSets.add(finalSuccs);
-                predMap.put(index, i);
-                index ++;
-            }
-            if(!nonFinalSuccs.isEmpty()) {
-                nextOrdSets.add(nonFinalSuccs);
-                predMap.put(index, i);
-                index ++;
-            }
-        }
+        OrderedSetsGenerator generator = new OrderedSetsGenerator(operand, mOSets, letter);
+        ArrayList<ISet> nextOrdSets = generator.getResult().mNextOrdSets;
+        TIntIntMap predMap = generator.getResult().mPredMap;
         StateTuple nextState;
         //1. non-colored states compute successor
         if(!mOSets.isColored()) {
