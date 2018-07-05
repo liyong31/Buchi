@@ -33,6 +33,14 @@ public class Slice extends OrderedSets {
         return false;
     }
     
+    /**
+     * Only components labelled with 0 and * can be merged
+     * */
+    @Override
+    protected boolean isMergeableColor(Color color) {
+        return color == Color.ZERO || color == Color.TWO;
+    }
+    
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();

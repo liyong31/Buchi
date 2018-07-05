@@ -1,7 +1,10 @@
 package operation.complement.tuple;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
+import main.Options;
 import util.ISet;
 
 public class OrderedSets {
@@ -17,18 +20,42 @@ public class OrderedSets {
     }
     
     public void addSet(ISet oset, Color color) {
-        mOSets.add(oset);
-        if(this.mIsColored) {
-            mColors.add(color);
+        if(! this.mIsColored) {
+            mOSets.add(oset);
+        }else {
+            addOrMergeAdjacentSets(oset, color);
         }
     }
     
-    public ArrayList<ISet> getOrderedSets() {
-        return this.mOSets;
+    protected void addOrMergeAdjacentSets(ISet oset, Color color) {
+        // have to merge states
+        int index = mColors.size() - 1;
+        Color lastColor = getColor(index);
+        boolean canMerge = false;
+        // we have same mergeable colored sets
+        if(isMergeableColor(color) && lastColor == color) {
+            canMerge = true;
+        }
+        
+        canMerge = canMerge && Options.mMergeAdjacentSets;
+        if(canMerge) {
+            assert index == this.mOSets.size() - 1;
+            ISet mergeSet = this.mOSets.get(index);
+            mergeSet.or(oset);
+            this.mOSets.set(index, mergeSet);
+            this.mColors.set(index, color);
+        }else {
+            this.mOSets.add(oset);
+            this.mColors.add(color);
+        }
     }
     
-    public ArrayList<Color> getColors() {
-        return this.mColors;
+    public List<ISet> getOrderedSets() {
+        return Collections.unmodifiableList(this.mOSets);
+    }
+    
+    public List<Color> getColors() {
+        return (ArrayList<Color>) Collections.unmodifiableList(this.mColors);
     }
     
     public boolean isColored() {
@@ -124,5 +151,41 @@ public class OrderedSets {
         builder.append(">");
         return builder.toString(); 
     }
-
+    
+    protected boolean isMergeableColor(Color color) {
+        return color == Color.ONE || color == Color.TWO;
+    }
+    
+    /**
+     * merge 2-colored sets preceded by 1-colored
+     * **/
+    public void mergeAdjacentColoredSets() {
+        if(this.mIsColored) {
+            ArrayList<Color> newColors = new ArrayList<>();
+            ArrayList<ISet> newOSets = new ArrayList<>();
+            int index = 0;
+            Color lastColor = Color.NONE;
+            while(index < this.mOSets.size()) {
+                Color color = this.mColors.get(index);
+                // 1-colored set followed by 2-colored set
+                if(lastColor == Color.ONE && color == Color.TWO) {
+                    ISet jointSet = newOSets.get(index);
+                    jointSet.or(this.mOSets.get(index)); // same object
+                    newOSets.set(index, jointSet);
+                    newColors.set(index, color);
+                    lastColor = color;
+                 }else {
+                    newOSets.add(this.mOSets.get(index));
+                    newColors.add(color);
+                    lastColor = color;
+                }
+                index ++;
+            }
+            this.mOSets.clear();
+            this.mColors.clear();
+            this.mColors.addAll(newColors);
+            this.mOSets.addAll(newOSets);
+        }
+    }
+   
 }

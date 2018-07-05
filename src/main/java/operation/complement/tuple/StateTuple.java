@@ -1,11 +1,13 @@
 package operation.complement.tuple;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import automata.IBuchi;
 import automata.State;
 import gnu.trove.map.TIntIntMap;
 import gnu.trove.map.hash.TIntIntHashMap;
+import main.Options;
 import util.ISet;
 import util.UtilISet;
 
@@ -60,7 +62,7 @@ public class StateTuple extends State  {
         }
         mVisitedLetters.set(letter);
         ISet succs = UtilISet.newISet();
-        ArrayList<ISet> ordSets = mOSets.getOrderedSets(); 
+        List<ISet> ordSets = mOSets.getOrderedSets(); 
         IBuchi operand = mComplement.getOperand();
         ISet leftSuccs = UtilISet.newISet();
         ArrayList<ISet> nextOrdSets = new ArrayList<>();
@@ -112,6 +114,10 @@ public class StateTuple extends State  {
             for(int i = 0; i < nextOrdSets.size(); i ++) {
                 osets.addSet(nextOrdSets.get(i)
                         , decideColor(nextOrdSets.get(i), predMap.get(i), fset));
+            }
+            // merge 1-colored followed by a 2-colored
+            if(Options.mMergeAdjacentColoredSets) {
+                osets.mergeAdjacentColoredSets();
             }
             nextState = mComplement.getOrAddState(osets);
             super.addSuccessor(letter, nextState.getId());

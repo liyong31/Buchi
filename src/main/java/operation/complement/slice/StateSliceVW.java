@@ -1,6 +1,7 @@
 package operation.complement.slice;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import automata.IBuchi;
 import automata.State;
@@ -69,7 +70,7 @@ public class StateSliceVW extends State {
         }
         mVisitedLetters.set(letter);
         ISet succs = UtilISet.newISet();
-        ArrayList<ISet> ordSets = mSlice.getOrderedSets(); 
+        List<ISet> ordSets = mSlice.getOrderedSets(); 
         IBuchi operand = mComplement.getOperand();
         ISet leftSuccs = UtilISet.newISet();
         ArrayList<ISet> nextOrdSets = new ArrayList<>();

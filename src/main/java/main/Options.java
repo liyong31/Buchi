@@ -44,4 +44,11 @@ public class Options {
     
     // deterministic guess for jumping edges
     public static boolean mEnhancedSliceGuess= false;
+    
+    
+    // merge adjacent sets with same colors
+    public static boolean mMergeAdjacentSets = false;
+    
+    // merge adjacent sets with 1 and 2 colors
+    public static boolean mMergeAdjacentColoredSets = false;
 }

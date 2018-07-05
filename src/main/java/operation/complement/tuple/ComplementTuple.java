@@ -4,6 +4,7 @@ import automata.Buchi;
 import automata.IBuchi;
 import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
+import main.Options;
 import operation.complement.Complement;
 import operation.explore.Explore;
 import util.ISet;
@@ -91,6 +92,14 @@ public class ComplementTuple extends Complement {
         System.out.println(buchi.toDot());
         
         ComplementTuple complement = new ComplementTuple(buchi);
+        new Explore(complement);
+        System.out.println(complement.toDot());
+        
+        System.out.println(complement.toBA());
+        
+        Options.mMergeAdjacentSets = true;
+        Options.mMergeAdjacentColoredSets = true;
+        complement = new ComplementTuple(buchi);
         new Explore(complement);
         System.out.println(complement.toDot());
         
