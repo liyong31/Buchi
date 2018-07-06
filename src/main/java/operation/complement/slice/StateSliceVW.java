@@ -132,7 +132,7 @@ public class StateSliceVW extends State {
             ISet fset = operand.getFinalStates();
             for(int i = 0; i < nextOrdSets.size(); i ++) {
                 nextSlice.addSet(nextOrdSets.get(i)
-                        , decideColor(nextOrdSets.get(i), predMap.get(i), fset));
+                        , decideColor(mSlice, nextOrdSets.get(i), predMap.get(i), fset));
             }
             nextState = mComplement.getOrAddState(nextSlice);
             super.addSuccessor(letter, nextState.getId());
@@ -144,19 +144,19 @@ public class StateSliceVW extends State {
     }
     
     
-    private Color decideColor(ISet sjp, int jpred, ISet fset) {        
-        if(! mSlice.isFinal()) {
-            if(mSlice.getColor(jpred) == Slice.getInfinite()
+    protected static Color decideColor(Slice slice, ISet sjp, int jpred, ISet fset) {        
+        if(! slice.isFinal()) {
+            if(slice.getColor(jpred) == Slice.getInfinite()
             && sjp.overlap(fset)) {
                 // f_i is inf and final component set to new (marked)
                 return Slice.getMarked(); 
             }else {
                 // just f_i
-                return mSlice.getColor(jpred);
+                return slice.getColor(jpred);
             }
         }else {
             // current state is final
-            if (mSlice.getColor(jpred) == Slice.getInfinite()
+            if (slice.getColor(jpred) == Slice.getInfinite()
             && !sjp.overlap(fset)) {
                 // f_i is inf and not final component set to inf
                 return Slice.getInfinite();
