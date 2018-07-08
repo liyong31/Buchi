@@ -10,10 +10,10 @@ import util.UtilISet;
  * */
 public class NCSB {
 	
-	private ISet mNSet;
-	private ISet mCSet;
-	private ISet mSSet;
-	private ISet mBSet;
+	protected ISet mNSet;
+	protected ISet mCSet;
+	protected ISet mSSet;
+	protected ISet mBSet;
 	
 	public NCSB(ISet N, ISet C, ISet S, ISet B) {
 		this.mNSet = N;
@@ -74,7 +74,7 @@ public class NCSB {
 		return  contentEqual(ncsb);
 	}
 	
-	private boolean contentEqual(NCSB ncsb) {
+	protected boolean contentEqual(NCSB ncsb) {
 		if(! mNSet.equals(ncsb.mNSet)
 		|| ! mCSet.equals(ncsb.mCSet)
 		|| ! mSSet.equals(ncsb.mSSet)

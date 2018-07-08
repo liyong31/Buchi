@@ -232,13 +232,16 @@ public interface IBuchi {
     
     // a Buchi automaton is semideterministic if all transitions after the accepting states are deterministic
     default boolean isSemiDeterministic() {
+        return !getDetStatesAfterFinals().isEmpty();
+    }
+    
+    default ISet getDetStatesAfterFinals() {
         ISet finIds = getFinalStates();
         LinkedList<IState> walkList = new LinkedList<>();
         
-        // add to list
-        Iterator<Integer> iter = finIds.iterator();
-        while(iter.hasNext()) {
-            walkList.addFirst(getState(iter.next()));
+        // add final states to list
+        for(final int fin : finIds) {
+            walkList.addFirst(getState(fin));
         }
         
         ISet visited = UtilISet.newISet();
@@ -249,17 +252,19 @@ public interface IBuchi {
             for(int i = 0; i < getAlphabetSize(); i ++) {
                 ISet succs = s.getSuccessors(i);
                 if(succs.isEmpty()) continue;
-                if(succs.cardinality() > 1) return false;
-
-                iter = succs.iterator();
-                int succ = iter.next();
-                if(! visited.get(succ)) {
-                    walkList.addFirst(getState(succ));
+                if(succs.cardinality() > 1) {
+                    return UtilISet.newISet();
                 }
+
+                for(final int succ : succs) {
+                    if(! visited.get(succ)) {
+                        walkList.addFirst(getState(succ));
+                    }
+                }                
             }
         }
         
-        return true;
+        return visited;
     }
     
     default boolean isDeterministic(int state) {
