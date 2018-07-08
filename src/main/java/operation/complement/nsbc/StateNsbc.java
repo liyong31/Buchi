@@ -3,18 +3,14 @@ package operation.complement.nsbc;
 import automata.IBuchi;
 import automata.State;
 
-import operation.complement.ncsb.NCSB;
 import util.ISet;
 import util.PairXX;
 import util.PairXY;
 import util.UtilISet;
 
 /**
- * Only three set of states 
- *    0 should die out
- *    1 infinite branch
- *    * newly emerging branch
  * */
+
 public class StateNsbc extends State {
 
     private final ComplementNsbc mComplement;
@@ -47,6 +43,12 @@ public class StateNsbc extends State {
         return new PairXY<>(NP, new PairXX<>(finalSuccs, nonfinalSuccs));
         
     }
+    
+    /**
+     * possible optimizations
+     *   1. S is empty and B contains sink state, then no need to explore its successors
+     *   
+     *   **/
     
     @Override
     public ISet getSuccessors(int letter) {

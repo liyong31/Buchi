@@ -18,6 +18,7 @@ import automata.RandomBuchiGenerator;
 import main.Options;
 import operation.complement.dba.ComplementDBA;
 import operation.complement.ncsb.ComplementNcsb;
+import operation.complement.nsbc.ComplementNsbc;
 import operation.complement.slice.ComplementSliceVW;
 import operation.complement.tuple.ComplementTuple;
 import operation.difference.Difference;
@@ -281,6 +282,12 @@ public class TestRandomGenerator {
         ComplementNcsb complement = new ComplementNcsb(input);
         complement.explore();
         System.out.println(complement.toDot());
+        System.out.println(complement.toBA());
+        
+        ComplementNsbc complement2 = new ComplementNsbc(input);
+        complement2.explore();
+        System.out.println(complement2.toBA());
+        System.out.println(complement2.toDot());
     }
     
     @Test
@@ -289,9 +296,16 @@ public class TestRandomGenerator {
         Options.mLazyB = true;
         Options.mVerbose = true;
         IBuchi input = BAStore.getF();
+        System.out.println(input.toDot());
         ComplementNcsb complement = new ComplementNcsb(input);
         complement.explore();
         System.out.println(complement.toDot());
+        System.out.println(complement.toBA());
+        
+        ComplementNsbc complement2 = new ComplementNsbc(input);
+        complement2.explore();
+        System.out.println(complement2.toDot());
+        System.out.println(complement2.toBA());
     }
     
     @Test
