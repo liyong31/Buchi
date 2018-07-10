@@ -24,27 +24,28 @@ public class StateNsbc extends State {
     
     private ISet mVisitedLetters = UtilISet.newISet();
     
-    private PairXY<ISet, PairXX<ISet>> computeSuccessors(ISet N, int letter) {
+    private PairXY<ISet, PairXX<ISet>> computeSuccessors(ISet R, int letter) {
         IBuchi operand = mComplement.getOperand();
-        ISet NP = UtilISet.newISet();
+        ISet RP = UtilISet.newISet();
         ISet finalSuccs = UtilISet.newISet();
         ISet nonfinalSuccs = UtilISet.newISet();
-        for(final int pred : N) {
+        for(final int pred : R) {
             for(final int succ : operand.getState(pred).getSuccessors(letter)) {
                 if(operand.isFinal(succ)) {
                     finalSuccs.set(succ);
                 }else {
                     nonfinalSuccs.set(succ);
                 }
-                NP.set(succ);
+                RP.set(succ);
             }
         }
         
-        return new PairXY<>(NP, new PairXX<>(finalSuccs, nonfinalSuccs));
+        return new PairXY<>(RP, new PairXX<>(finalSuccs, nonfinalSuccs));
         
     }
     
     /**
+     * Currently we do not allow new runs enter S set
      * possible optimizations
      *   1. S is empty and B contains sink state, then no need to explore its successors
      *   
