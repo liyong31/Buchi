@@ -32,7 +32,7 @@ public class LevelRankingGenerator extends LevelRankingConstraint {
     
     protected IBuchi mOperand;
     
-    public LevelRankingGenerator(ComplementRank complement) {
+    public LevelRankingGenerator(ComplementRankKV complement) {
         mOperand = complement.getOperand();
     }
     

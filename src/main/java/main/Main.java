@@ -14,7 +14,7 @@ import java.util.List;
 import main.Options.Algorithm;
 import operation.complement.Complement;
 import operation.complement.ncsb.ComplementNcsb;
-import operation.complement.rank.ComplementRank;
+import operation.complement.rank.ComplementRankKV;
 import util.PairXX;
 
 import util.parser.ParserType;
@@ -262,10 +262,10 @@ public class Main {
 		    buchiComplement = new ComplementNcsb(buchi);
 		    break;
 		case RANK:
-		    buchiComplement = new ComplementRank(buchi);
+		    buchiComplement = new ComplementRankKV(buchi);
             break;
         default:
-            buchiComplement = new ComplementRank(buchi);
+            buchiComplement = new ComplementRankKV(buchi);
             break;
 		}
         buchiComplement.explore();

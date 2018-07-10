@@ -32,13 +32,13 @@ import util.UtilISet;
  * complementation algorithm (S, O, f)
  * */
 
-public class StateLevelRanking extends State {
+public class StateRankKV extends State {
  
-    private final ComplementRank mComplement;
+    private final ComplementRankKV mComplement;
     private final IBuchi mOperand;
     private final LevelRankingState mLevelRanking; // (S, O, f)
     
-    public StateLevelRanking(ComplementRank complement, int id, LevelRankingState lvlRank) {
+    public StateRankKV(ComplementRankKV complement, int id, LevelRankingState lvlRank) {
         super(id);
         this.mComplement = complement;
         this.mOperand = complement.getOperand();
@@ -69,7 +69,7 @@ public class StateLevelRanking extends State {
         Collection<LevelRankingState> lvlRanks = generator.generateLevelRankings(constraint);
         
         for(LevelRankingState lvlRank : lvlRanks) {
-            StateLevelRanking succ = mComplement.getOrAddState(lvlRank);
+            StateRankKV succ = mComplement.getOrAddState(lvlRank);
             super.addSuccessor(letter, succ.getId());
             System.out.println("Successor: " + succ.getId() + " = " + succ);
         }
@@ -91,8 +91,8 @@ public class StateLevelRanking extends State {
     public boolean equals(Object obj) {
         if(obj == null) return false;
         if(obj == this) return true;
-        if(obj instanceof StateLevelRanking) {
-            StateLevelRanking other = (StateLevelRanking)obj;
+        if(obj instanceof StateRankKV) {
+            StateRankKV other = (StateRankKV)obj;
             return mLevelRanking.equals(other.mLevelRanking);
         }
         return false;

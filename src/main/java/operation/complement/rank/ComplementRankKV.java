@@ -41,11 +41,11 @@ import operation.explore.Explore;
  *  in ACM Transactions on Computational Logic 
  */
 
-public class ComplementRank extends Complement {
+public class ComplementRankKV extends Complement {
 
-    private TObjectIntMap<StateLevelRanking> mStateIndices;
+    private TObjectIntMap<StateRankKV> mStateIndices;
     
-    public ComplementRank(IBuchi operand) {
+    public ComplementRankKV(IBuchi operand) {
         super(operand);
     }
     
@@ -59,21 +59,21 @@ public class ComplementRank extends Complement {
         for(final int init : mOperand.getInitialStates()) {
             lvlRnk.addLevelRank(init, 2*(n - r), false);
         }
-        StateLevelRanking stateLvlRnk = getOrAddState(lvlRnk);
+        StateRankKV stateLvlRnk = getOrAddState(lvlRnk);
         this.setInitial(stateLvlRnk.getId());
     }
     
-    protected StateLevelRanking getStateLevelRanking(int id) {
-        return (StateLevelRanking)getState(id);
+    protected StateRankKV getStateLevelRanking(int id) {
+        return (StateRankKV)getState(id);
     }
 
-    protected StateLevelRanking getOrAddState(LevelRankingState lvlRank) {
-        StateLevelRanking state = new StateLevelRanking(this, 0, lvlRank);
+    protected StateRankKV getOrAddState(LevelRankingState lvlRank) {
+        StateRankKV state = new StateRankKV(this, 0, lvlRank);
         if(mStateIndices.containsKey(state)) {
             return getStateLevelRanking(mStateIndices.get(state));
         }else {
             int index = getStateSize();
-            StateLevelRanking newState = new StateLevelRanking(this, index, lvlRank);
+            StateRankKV newState = new StateRankKV(this, index, lvlRank);
             int id = this.addState(newState);
             mStateIndices.put(newState, id);
             if(lvlRank.isOEmpty()) setFinal(index);
@@ -101,14 +101,14 @@ public class ComplementRank extends Complement {
         
         System.out.println(buchi.toDot());
         
-        ComplementRank complement = new ComplementRank(buchi);
+        ComplementRankKV complement = new ComplementRankKV(buchi);
 //        new Explore(complement);
 //        System.out.println(complement.toDot());
 //        Remove rm = new Remove(complement);
 //        System.out.println(rm.getResult().toDot());
 //        System.out.println(rm.getResult().toBA());
         
-        complement = new ComplementRank(buchi);
+        complement = new ComplementRankKV(buchi);
         Options.mLazyS = true;
         Options.mMinusOne = true;
         new Explore(complement);
@@ -128,7 +128,7 @@ public class ComplementRank extends Complement {
         buchi.setFinal(bState);
         buchi.setInitial(aState);
         
-        complement = new ComplementRank(buchi);
+        complement = new ComplementRankKV(buchi);
         Options.mLazyS = true;
         new Explore(complement);
         System.out.println(complement.toDot());
@@ -149,7 +149,7 @@ public class ComplementRank extends Complement {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        complement = new ComplementRank(buchi);
+        complement = new ComplementRankKV(buchi);
         Options.mLazyS = true;
         Options.mMinusOne = true;
         new Explore(complement);
@@ -163,7 +163,7 @@ public class ComplementRank extends Complement {
             e.printStackTrace();
         }
         
-        complement = new ComplementRank(buchi);
+        complement = new ComplementRankKV(buchi);
         Options.mLazyS = false;
         Options.mMinusOne = true;
         new Explore(complement);
