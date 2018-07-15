@@ -122,22 +122,25 @@ public class Profile extends ArrayList<RunSet> {
                 // there exists a q state
                 for(int q = 0; q < mBuchi.getStateSize(); q ++) {
                     RunSet runJq = pj.get(q);
-                    
-                    if(!hasIPsNotFinal && runIp.contains(q, false) && runJq.contains(s, false)) {
+                    boolean ipq = runIp.contains(q, false);
+                    boolean jqs = runJq.contains(s, false);
+                    if(!hasIPsNotFinal && ipq && jqs) {
                         hasIPsNotFinal = true;
                     }
                     
-                    if(!hasIPsFinal && runIp.contains(q, false) && runJq.contains(s, false)
-                      && (runIp.contains(q, true) || runJq.contains(s, true))) {
+                    boolean jqsFinal = runJq.contains(s, true);
+                    if(!hasIPsFinal && ipq && jqs
+                      && (runIp.contains(q, true) || jqsFinal)) {
                               hasIPsFinal = true;
                     }
                     
-                    if(!hasJPsNotFinal && runJp.contains(q, false) && runJq.contains(s, false)) {
+                    boolean jpq = runJp.contains(q, false);
+                    if(!hasJPsNotFinal && jpq && jqs) {
                         hasJPsNotFinal = true;
                     }
                     
-                    if(!hasJPsFinal && runJp.contains(q, false) && runJq.contains(s, false)
-                            && (runJp.contains(q, true) || runJq.contains(s, true))) {
+                    if(!hasJPsFinal && jpq && jqs
+                            && (runJp.contains(q, true) || jqsFinal)) {
                         hasJPsFinal = true;
                     }
                 }

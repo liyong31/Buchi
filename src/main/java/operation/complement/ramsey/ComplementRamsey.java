@@ -1,9 +1,12 @@
 package operation.complement.ramsey;
 
+import automata.Buchi;
 import automata.IBuchi;
 import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
 import operation.complement.Complement;
+import operation.complement.tuple.ComplementTuple;
+import operation.explore.Explore;
 import operation.explore.UtilExplore;
 
 /**
@@ -13,7 +16,7 @@ import operation.explore.UtilExplore;
  * **/
 public class ComplementRamsey extends Complement {
 
-    private final TObjectIntMap<StateRamsey> mStateIndices = new TObjectIntHashMap<>();
+    private TObjectIntMap<StateRamsey> mStateIndices;
     private DAProfile mDA;
     
     public ComplementRamsey(IBuchi operand) {
@@ -25,9 +28,14 @@ public class ComplementRamsey extends Complement {
         return "ComplementRamsey";
     }
     
+    protected DAProfile getDA() {
+        return mDA;
+    }
+    
     @Override
     protected void computeInitialStates() {
         // first compute deterministic automaton
+        this.mStateIndices = new TObjectIntHashMap<>();
         this.mDA = new DAProfile(this.mOperand);
         UtilExplore.explore(this.mDA);
         // compute initial state
@@ -47,11 +55,40 @@ public class ComplementRamsey extends Complement {
         }else {
             int index = getStateSize();
             newState = new StateRamsey(this, index, state, label);
+            int id = this.addState(newState);
+            mStateIndices.put(newState, id);
             if(mDA.isInitial(state.getId()) && label > 0) {
-                this.setFinal(index);
+                this.setFinal(id);
             }
             return newState;
         }
+    }
+    
+    public static void main(String[] args) {
+        IBuchi buchi = new Buchi(2);
+        buchi.addState();
+        buchi.addState();
+        
+        buchi.getState(0).addSuccessor(0, 0);
+        buchi.getState(0).addSuccessor(1, 0);
+        buchi.getState(0).addSuccessor(1, 1);
+        
+        buchi.getState(1).addSuccessor(0, 0);
+        buchi.getState(1).addSuccessor(0, 1);
+        
+        buchi.setFinal(1);
+        buchi.setInitial(0);
+        
+        ComplementRamsey cr = new ComplementRamsey(buchi);
+        new Explore(cr);
+        System.out.println(cr.toDot());
+        System.out.println(cr.toBA());
+        
+        ComplementTuple ct = new ComplementTuple(buchi);
+        new Explore(ct);
+        System.out.println(ct.toDot());
+        System.out.println(ct.toBA());
+        
     }
 
 }

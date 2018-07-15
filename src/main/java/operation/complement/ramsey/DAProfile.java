@@ -76,6 +76,10 @@ public class DAProfile extends DOA {
         return getStateDAProfile(i).isIntersectionEmpty(getStateDAProfile(j));
     }
     
+    protected boolean isPeriodic(int i, int j) {
+        return getStateDAProfile(i).isPeriodic(getStateDAProfile(j));
+    }
+    
     @Override
     public void toDot(PrintStream out, List<String> alphabet) {
         // output automata in dot
