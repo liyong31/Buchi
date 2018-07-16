@@ -18,7 +18,7 @@ import operation.removal.Remove;
 public class ComplementRamsey extends Complement {
 
     private TObjectIntMap<StateRamsey> mStateIndices;
-    private DAProfile mDA;
+    private DABg mDA;
     
     public ComplementRamsey(IBuchi operand) {
         super(operand);
@@ -29,7 +29,7 @@ public class ComplementRamsey extends Complement {
         return "ComplementRamsey";
     }
     
-    protected DAProfile getDA() {
+    protected DABg getDA() {
         return mDA;
     }
     
@@ -37,10 +37,10 @@ public class ComplementRamsey extends Complement {
     protected void computeInitialStates() {
         // first compute deterministic automaton
         this.mStateIndices = new TObjectIntHashMap<>();
-        this.mDA = new DAProfile(this.mOperand);
+        this.mDA = new DABg(this.mOperand);
         UtilExplore.explore(this.mDA);
         // compute initial state
-        StateDAProfile state = (StateDAProfile)this.mDA.getState(0);
+        StateDABg state = (StateDABg)this.mDA.getState(0);
         StateRamsey init = getOrAddState(state, 0);
         this.setInitial(init.getId());
     }
@@ -49,7 +49,7 @@ public class ComplementRamsey extends Complement {
         return (StateRamsey) getState(id);
     }
     
-    protected StateRamsey getOrAddState(StateDAProfile state, int label) {
+    protected StateRamsey getOrAddState(StateDABg state, int label) {
         StateRamsey newState = new StateRamsey(this, 0, state, label);
         if(mStateIndices.containsKey(newState)) {
             return getStateRamsey(mStateIndices.get(newState));

@@ -20,16 +20,16 @@ import util.UtilISet;
 
 /**
  * deterministic automaton for Buchi automata to partition words in \Sigma^+ 
- * 
+ * B<sub>g</sub> name from "BÜCHI COMPLEMENTATION AND SIZE-CHANGE TERMINATION"
  * */
 
-public class DAProfile extends DOA {
+public class DABg extends DOA {
 
-    private final TObjectIntMap<StateDAProfile> mStateIndices;
+    private final TObjectIntMap<StateDABg> mStateIndices;
     private final IBuchi mOperand;
     
     
-    public DAProfile(IBuchi operand) {
+    public DABg(IBuchi operand) {
         super(operand.getAlphabetSize());
         this.mOperand = operand;
         this.mStateIndices = new TObjectIntHashMap<>();
@@ -42,7 +42,7 @@ public class DAProfile extends DOA {
     
     protected void computeInitialState() {
         Profile profile = new Profile(mOperand);
-        StateDAProfile init = getOrAddState(profile);
+        StateDABg init = getOrAddState(profile);
         super.setInitial(init.getId());
     }
 
@@ -51,17 +51,17 @@ public class DAProfile extends DOA {
         return null;
     }
     
-    public StateDAProfile getStateDAProfile(int id) {
-        return (StateDAProfile) super.getState(id);
+    public StateDABg getStateDAProfile(int id) {
+        return (StateDABg) super.getState(id);
     }
     
-    public StateDAProfile getOrAddState(Profile profile) {
-        StateDAProfile state = new StateDAProfile(this, 0, profile);
+    public StateDABg getOrAddState(Profile profile) {
+        StateDABg state = new StateDABg(this, 0, profile);
         if(mStateIndices.containsKey(state)) {
             return getStateDAProfile(mStateIndices.get(state));
         }else {
             int index = getStateSize();
-            state = new StateDAProfile(this, index, profile);
+            state = new StateDABg(this, index, profile);
             int id = addState(state);
             mStateIndices.put(state, id);
             return state;
@@ -126,7 +126,7 @@ public class DAProfile extends DOA {
         buchi.setFinal(1);
         buchi.setInitial(0);
         
-        DAProfile po = new DAProfile(buchi);
+        DABg po = new DABg(buchi);
         
         LinkedList<StateDA> walkList = new LinkedList<>();
         walkList.add(po.getState(po.getInitialState()));
@@ -170,7 +170,7 @@ public class DAProfile extends DOA {
         buchi.setFinal(3);
         buchi.setInitial(0);
         
-        po = new DAProfile(buchi);
+        po = new DABg(buchi);
         UtilExplore.explore(po);
         System.out.println(po.toDot());
         

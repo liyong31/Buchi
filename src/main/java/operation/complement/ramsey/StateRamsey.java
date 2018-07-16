@@ -11,12 +11,12 @@ import util.UtilISet;
  * */
 public class StateRamsey extends State {
 
-    private final StateDAProfile mState;
+    private final StateDABg mState;
     private final int mLabel;
     private final ComplementRamsey mComplement;
-    private final DAProfile mDA;
+    private final DABg mDA;
     
-    public StateRamsey(ComplementRamsey complement, int id, StateDAProfile state, int label) {
+    public StateRamsey(ComplementRamsey complement, int id, StateDABg state, int label) {
         super(id);
         this.mComplement = complement;
         this.mState = state;
@@ -32,7 +32,7 @@ public class StateRamsey extends State {
         }
         mVisitedLetters.set(letter);
         ISet succs = UtilISet.newISet();
-        StateDAProfile nextDAState = mDA.getStateDAProfile(mState.getSuccessor(letter));
+        StateDABg nextDAState = mDA.getStateDAProfile(mState.getSuccessor(letter));
         StateRamsey nextState;
         if(mLabel == 0) {
             // add one state 

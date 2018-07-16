@@ -5,12 +5,12 @@ import util.ISet;
 import util.UtilISet;
 
 
-public class StateDAProfile extends StateDA {
+public class StateDABg extends StateDA {
 
     private final Profile mProfile;
-    private final DAProfile mDA;
+    private final DABg mDA;
     
-    public StateDAProfile(DAProfile da, int id, Profile profile) {
+    public StateDABg(DABg da, int id, Profile profile) {
         super(id);
         this.mDA = da;
         this.mProfile = profile;
@@ -24,7 +24,7 @@ public class StateDAProfile extends StateDA {
         }
         mVisitedLetters.set(letter);
         Profile nextProfile = mProfile.getSuccessorProfile(letter);
-        StateDAProfile nextState = mDA.getOrAddState(nextProfile);
+        StateDABg nextState = mDA.getOrAddState(nextProfile);
         super.addSuccessor(letter, nextState.getId());
         return nextState.getId();
     }
@@ -38,8 +38,8 @@ public class StateDAProfile extends StateDA {
     public boolean equals(Object obj) {
         if(this == obj) return true;
         if(obj == null) return false;
-        if(obj instanceof StateDAProfile) {
-            StateDAProfile other = (StateDAProfile)obj;
+        if(obj instanceof StateDABg) {
+            StateDABg other = (StateDABg)obj;
             return this.mProfile.equals(other.mProfile);
         }
         return false;
@@ -50,11 +50,11 @@ public class StateDAProfile extends StateDA {
         return this.mProfile.toString();
     }
     
-    protected boolean isDisjointWith(StateDAProfile other) {
+    protected boolean isDisjointWith(StateDABg other) {
         return this.mProfile.isDisjointWith(other.mProfile);
     }
     
-    protected boolean isProper(StateDAProfile other) {
+    protected boolean isProper(StateDABg other) {
         return this.mProfile.isProper(other.mProfile);
     }
 
