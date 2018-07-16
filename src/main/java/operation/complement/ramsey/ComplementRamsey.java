@@ -13,7 +13,9 @@ import operation.removal.Remove;
 /**
  * "The complementation problem for Buchi automata with applications to temporal logic"
  * by A. Prasad Sistla, Moshe Y. Vardi, and Pierre Wolper in Theoretical Computer Science.
- *  
+ * <br>
+ * "BÜCHI COMPLEMENTATION AND SIZE-CHANGE TERMINATION"
+ * by SETH FOGARTY a AND MOSHE Y. VARDI in Logical Methods in Computer Science.
  * **/
 public class ComplementRamsey extends Complement {
 

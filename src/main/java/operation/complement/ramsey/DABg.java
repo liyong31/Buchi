@@ -20,7 +20,8 @@ import util.UtilISet;
 
 /**
  * deterministic automaton for Buchi automata to partition words in \Sigma^+ 
- * B<sub>g</sub> name from "BÜCHI COMPLEMENTATION AND SIZE-CHANGE TERMINATION"
+ * <br>
+ * Automaton name B<sub>g</sub> is taken from paper "BÜCHI COMPLEMENTATION AND SIZE-CHANGE TERMINATION"
  * */
 
 public class DABg extends DOA {
@@ -71,6 +72,8 @@ public class DABg extends DOA {
     /**
      * check whether the language Y<sub>ij</sub> is disjoint with the language of input
      * NBA where Y<sub>ij</sub> = X<sub>j</sub>(X<sub>j</sub>)<sup>w</sup> and X<sub>i</sub> = L(D)
+     * defined in "BÜCHI COMPLEMENTATION AND SIZE-CHANGE TERMINATION"
+     * in Lemma 2.7 by SETH FOGARTY a AND MOSHE Y. VARDI in LMCS 2012 
      ***/
     public boolean isDisjointWith(int i, int j) {
         return getStateDAProfile(i).isDisjointWith(getStateDAProfile(j));
@@ -85,7 +88,7 @@ public class DABg extends DOA {
      * <br>
      *  where Y<sub>ij</sub> = X<sub>j</sub>(X<sub>j</sub>)<sup>w</sup> and X<sub>i</sub> = L(D)
      *  This definition is defined in "BÜCHI COMPLEMENTATION AND SIZE-CHANGE TERMINATION"
-     *  by SETH FOGARTY a AND MOSHE Y. VARDI in LMCS 2012
+     *  before Lemma 2.5 by SETH FOGARTY a AND MOSHE Y. VARDI in LMCS 2012
      ***/
     protected boolean isProper(int i, int j) {
         return getStateDAProfile(i).isProper(getStateDAProfile(j));
