@@ -76,8 +76,19 @@ public class DAProfile extends DOA {
         return getStateDAProfile(i).isIntersectionEmpty(getStateDAProfile(j));
     }
     
-    protected boolean isPeriodic(int i, int j) {
-        return getStateDAProfile(i).isPeriodic(getStateDAProfile(j));
+    /**
+     * check whether the language Y<sub>ij</sub> is proper:
+     * <br>
+     *   X<sub>i</sub>(X<sub>j</sub>) <= X<sub>i</sub> and
+     * <br>  
+     *   X<sub>j</sub>(X<sub>j</sub>) <= X<sub>j</sub>
+     * <br>
+     *  where Y<sub>ij</sub> = X<sub>j</sub>(X<sub>j</sub>)<sup>w</sup> and X<sub>i</sub> = L(D)
+     *  This definition is defined in "BÜCHI COMPLEMENTATION AND SIZE-CHANGE TERMINATION"
+     *  by SETH FOGARTY a AND MOSHE Y. VARDI in LMCS 2012
+     ***/
+    protected boolean isProper(int i, int j) {
+        return getStateDAProfile(i).isProper(getStateDAProfile(j));
     }
     
     @Override

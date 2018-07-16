@@ -8,6 +8,7 @@ import operation.complement.Complement;
 import operation.complement.tuple.ComplementTuple;
 import operation.explore.Explore;
 import operation.explore.UtilExplore;
+import operation.removal.Remove;
 
 /**
  * "The complementation problem for Buchi automata with applications to temporal logic"
@@ -81,8 +82,9 @@ public class ComplementRamsey extends Complement {
         
         ComplementRamsey cr = new ComplementRamsey(buchi);
         new Explore(cr);
-        System.out.println(cr.toDot());
-        System.out.println(cr.toBA());
+        IBuchi crr = (new Remove(cr)).getResult();
+        System.out.println(crr.toDot());
+        System.out.println(crr.toBA());
         
         ComplementTuple ct = new ComplementTuple(buchi);
         new Explore(ct);

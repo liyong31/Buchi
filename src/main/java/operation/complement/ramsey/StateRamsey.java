@@ -43,7 +43,7 @@ public class StateRamsey extends State {
             for(int j = 0; j < mDA.getStateSize(); j ++) {
                 if(mDA.isInitial(j)) continue;
                 boolean valid = mDA.isIntersectionEmpty(nextDAState.getId(), j) 
-                        && mDA.isPeriodic(nextDAState.getId(), j);
+                        && mDA.isProper(nextDAState.getId(), j);
                 if(valid) {
                     nextState = mComplement.getOrAddState(mDA.getStateDAProfile(0), j);
                     succs.set(nextState.getId());

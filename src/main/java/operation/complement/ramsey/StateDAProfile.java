@@ -54,8 +54,8 @@ public class StateDAProfile extends StateDA {
         return this.mProfile.isIntersectionEmpty(other.mProfile);
     }
     
-    protected boolean isPeriodic(StateDAProfile other) {
-        return this.mProfile.isPeriodic(other.mProfile);
+    protected boolean isProper(StateDAProfile other) {
+        return this.mProfile.isProper(other.mProfile);
     }
 
 }

@@ -100,8 +100,11 @@ public class Profile extends ArrayList<RunSet> {
      *      that (p, s) in X<sub>j</sub> [note final transition]
      *    </br>
      *  where L(D<sub>i</sub>) = X<sub>i</sub>
+     *  
+     *  defined in "BÜCHI COMPLEMENTATION AND SIZE-CHANGE TERMINATION"
+     *  by SETH FOGARTY a AND MOSHE Y. VARDI in LMCS 2012
      * **/
-    public boolean isPeriodic(Profile pj) {
+    public boolean isProper(Profile pj) {
         // get all successors visited by initial states
         Profile pi = this;
         for(int s = 0; s < mBuchi.getStateSize(); s ++) {
