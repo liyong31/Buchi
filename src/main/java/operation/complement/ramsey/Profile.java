@@ -71,7 +71,7 @@ public class Profile extends ArrayList<RunSet> {
      *  current language X<sub>i</sub> and input periodic language X<sub>j</sub> 
      *  where L(D<sub>i</sub>) = X<sub>i</sub>
      * **/
-    public boolean isIntersectionEmpty(Profile pj) {
+    public boolean isDisjointWith(Profile pj) {
         // get all successors visited by initial states
         for(int init : mBuchi.getInitialStates()) {
             for(RunPair pair : this.get(init)) {

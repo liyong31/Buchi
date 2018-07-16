@@ -69,11 +69,11 @@ public class DAProfile extends DOA {
     }
     
     /**
-     * check whether the language Y<sub>ij</sub> intersects with the language of input
+     * check whether the language Y<sub>ij</sub> is disjoint with the language of input
      * NBA where Y<sub>ij</sub> = X<sub>j</sub>(X<sub>j</sub>)<sup>w</sup> and X<sub>i</sub> = L(D)
      ***/
-    public boolean isIntersectionEmpty(int i, int j) {
-        return getStateDAProfile(i).isIntersectionEmpty(getStateDAProfile(j));
+    public boolean isDisjointWith(int i, int j) {
+        return getStateDAProfile(i).isDisjointWith(getStateDAProfile(j));
     }
     
     /**

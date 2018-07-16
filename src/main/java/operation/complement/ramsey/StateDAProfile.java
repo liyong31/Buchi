@@ -50,8 +50,8 @@ public class StateDAProfile extends StateDA {
         return this.mProfile.toString();
     }
     
-    protected boolean isIntersectionEmpty(StateDAProfile other) {
-        return this.mProfile.isIntersectionEmpty(other.mProfile);
+    protected boolean isDisjointWith(StateDAProfile other) {
+        return this.mProfile.isDisjointWith(other.mProfile);
     }
     
     protected boolean isProper(StateDAProfile other) {
