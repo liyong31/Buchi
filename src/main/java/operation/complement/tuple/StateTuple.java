@@ -74,7 +74,7 @@ public class StateTuple extends State  {
             nextState = mComplement.getOrAddState(osets);
             super.addSuccessor(letter, nextState.getId());
             succs.set(nextState.getId());
-            System.out.println("" + getId() + " " + toString() + " -> " + nextState.getId() + " " + osets + " : " + letter);
+            if(Options.mDebug) System.out.println("" + getId() + " " + toString() + " -> " + nextState.getId() + " " + osets + " : " + letter);
         }
         //2. every state compute colors
         {
@@ -91,7 +91,7 @@ public class StateTuple extends State  {
             nextState = mComplement.getOrAddState(osets);
             super.addSuccessor(letter, nextState.getId());
             succs.set(nextState.getId());
-            System.out.println("" + getId() + " " + toString() + " -> " + nextState.getId() + " " + osets + " : " + letter);
+            if(Options.mDebug) System.out.println("" + getId() + " " + toString() + " -> " + nextState.getId() + " " + osets + " : " + letter);
         }
         
         return succs;

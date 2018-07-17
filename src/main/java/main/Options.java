@@ -24,7 +24,10 @@ public class Options {
 	
 	public static enum Algorithm {
 	    NCSB, // actually NCSB is a special case of RANK-based algorithm 
-	    RANK 
+	    RANK,
+	    TUPLE,
+	    SLICE,
+	    NSBC
 	}
 
 	   // whether to enable optimized version of NCSB
@@ -51,4 +54,6 @@ public class Options {
     
     // merge adjacent sets with 1 and 2 colors
     public static boolean mMergeAdjacentColoredSets = false;
+    
+    public static boolean mRemoveDead = false;
 }

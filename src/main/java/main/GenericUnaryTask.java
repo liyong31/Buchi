@@ -10,6 +10,8 @@ public abstract class GenericUnaryTask implements ITask {
 			, "ALPHABET_SIZE" // shoud be the same as RHS_ALPHABET
 			, "RESULT_STATES"
 			, "RESULT_TRANS"
+			, "RM_RESULT_STATES"
+			, "RM_RESULT_TRANS"
 			, "ALGORITHM"
 			, "RUNTIME(ms)"
 			, "RESULT"
@@ -29,6 +31,10 @@ public abstract class GenericUnaryTask implements ITask {
 	
 	protected int mResultStateSize;
 	
+    protected int mRmResultTransSize;
+    
+    protected int mRmResultStateSize;
+    
 	protected String mOperationName;
 	
 	protected long mRunTime;
@@ -65,9 +71,11 @@ public abstract class GenericUnaryTask implements ITask {
 		+ COLUMN_NAMES[4] + " = "	+ mAlphabetSize + "\n"
 		+ COLUMN_NAMES[5] + " = "	+ mResultStateSize + "\n"
 		+ COLUMN_NAMES[6] + " = "   + mResultTransSize + "\n"
-		+ COLUMN_NAMES[7] + " = "	+ mOperationName + "\n"
-		+ COLUMN_NAMES[8] + " = "	+ mRunTime + "\n"
-		+ COLUMN_NAMES[9] + " = "	+ mResultValue  + "\n";
+		+ COLUMN_NAMES[7] + " = "   + mRmResultStateSize + "\n"
+		+ COLUMN_NAMES[8] + " = "   + mRmResultTransSize + "\n"
+		+ COLUMN_NAMES[9] + " = "	+ mOperationName + "\n"
+		+ COLUMN_NAMES[10] + " = "	+ mRunTime + "\n"
+		+ COLUMN_NAMES[11] + " = "	+ mResultValue  + "\n";
 	}
 	
 	@Override
@@ -79,6 +87,8 @@ public abstract class GenericUnaryTask implements ITask {
 		+ "," + mAlphabetSize
 		+ "," + mResultStateSize
 		+ "," + mResultTransSize
+		+ "," + mRmResultStateSize
+        + "," + mRmResultTransSize
 		+ "," + mOperationName
 		+ "," + mRunTime
 		+ "," + mResultValue;

@@ -1,6 +1,8 @@
 package main;
 
+import automata.IBuchi;
 import operation.complement.Complement;
+import operation.removal.Remove;
 import util.UtilISet;
 
 public class TaskComplement extends GenericUnaryTask {
@@ -22,6 +24,12 @@ public class TaskComplement extends GenericUnaryTask {
 		mAlphabetSize = mComplement.getOperand().getAlphabetSize();
 		mResultStateSize = mComplement.getStateSize();
 		mResultTransSize = mComplement.getTransitionSize();
+		if(Options.mRemoveDead) {
+		    IBuchi buchi = (new Remove(mComplement)).getResult();
+	        mRmResultStateSize = buchi.getStateSize();
+	        mRmResultTransSize = buchi.getTransitionSize();    
+		}
+		
 	}
 	
 	public void setOperation(Complement complement) {

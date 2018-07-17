@@ -14,7 +14,10 @@ import java.util.List;
 import main.Options.Algorithm;
 import operation.complement.Complement;
 import operation.complement.ncsb.ComplementNcsb;
+import operation.complement.nsbc.ComplementNsbc;
 import operation.complement.rank.ComplementRankKV;
+import operation.complement.slice.ComplementSliceVW;
+import operation.complement.tuple.ComplementTuple;
 import util.PairXX;
 
 import util.parser.ParserType;
@@ -64,6 +67,8 @@ public class Main {
 				++ i;	
 			}else if(args[i].equals("-lazyb")) {
 				Options.mLazyB = true;
+			}else if(args[i].equals("-lazyg")) {
+			    Options.mEnhancedSliceGuess = true;
 			}else if(args[i].equals("-diff")) {
 				difference = true;
 			}else if(args[i].equals("-incl")) {
@@ -74,8 +79,17 @@ public class Main {
                 Options.mOE = true;
             }else if(args[i].equals("-ncsb")) {
                 Options.mAlgo = Algorithm.NCSB;
-            }else if(args[i].equals("-rank")) {
+            }else if(args[i].equals("-nsbc")) {
+                Options.mAlgo = Algorithm.NSBC;
+            }else if(args[i].equals("-slice")) {
+                Options.mAlgo = Algorithm.SLICE;
+            }else if(args[i].equals("-tuple")) {
+                Options.mAlgo = Algorithm.TUPLE;
+            }
+            else if(args[i].equals("-rank")) {
                 Options.mAlgo = Algorithm.RANK;
+            }else if(args[i].equals("-rmdead")) {
+                Options.mRemoveDead = true;
             }
 			
 		}
@@ -108,6 +122,7 @@ public class Main {
 		System.out.println("-test: Test all benchmarks");
 		System.out.println("-lazys: Delay word distribution to S");
 		System.out.println("-lazyb: Delay word distribution to B");
+		System.out.println("-lazyg: Delay word guess to the accepting component");
 		System.out.println("-tarjan: Use Tarjan algorithm");
 		System.out.println("-rabit: Use RABIT tool");
 		System.out.println("-ascc: Use ASCC algorithm (Default)");
@@ -121,7 +136,11 @@ public class Main {
 		System.out.println("-to k: Limit execution in k seconds (20 secs by default)");
 		System.out.println("-complement <file-out>: Output complement of the last automaton");
 		System.out.println("-ncsb: NCSB complementation");
+		System.out.println("-nsbc: NCSB complementation");
 		System.out.println("-rank: Rank-based complementation");
+		System.out.println("-tuple: Tuple-based complementation");
+		System.out.println("-slice: Slice-based complementation");
+		System.out.println("-rmdead: Remove dead states");
 		
 	}
 	
@@ -264,6 +283,15 @@ public class Main {
 		case RANK:
 		    buchiComplement = new ComplementRankKV(buchi);
             break;
+		case SLICE:
+		    buchiComplement = new ComplementSliceVW(buchi);
+		    break;
+		case TUPLE:
+            buchiComplement = new ComplementTuple(buchi);
+            break;
+		case NSBC:
+	         buchiComplement = new ComplementNsbc(buchi);
+	         break;
         default:
             buchiComplement = new ComplementRankKV(buchi);
             break;

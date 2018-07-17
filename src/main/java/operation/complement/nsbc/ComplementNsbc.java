@@ -59,7 +59,7 @@ public class ComplementNsbc extends Complement {
 
     @Override
     public String getName() {
-        return "ComplementSliceSDBA";
+        return "ComplementNsbc";
     }
     
     

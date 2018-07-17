@@ -2,7 +2,7 @@ package operation.complement.nsbc;
 
 import automata.IBuchi;
 import automata.State;
-
+import main.Options;
 import util.ISet;
 import util.PairXX;
 import util.PairXY;
@@ -110,15 +110,21 @@ public class StateNsbc extends State {
         
         // now consider successors of C
         result = computeSuccessors(C, letter);
-        ISet CP = result.getFirst();
+        ISet CP = result.getFirst().clone();
         CP.or(NPInterQ2);
         CP.or(SPInterF);
         CP.andNot(SP); // remove successors of S
         
         ISet BP;
         if(B.isEmpty()) { // breakpoint construction
-            BP = CP;
-            CP = UtilISet.newISet();
+            if(Options.mLazyB) {
+                BP = result.getFirst();
+                BP.andNot(SP);
+                CP.andNot(BP);
+            }else {
+                BP = CP;
+                CP = UtilISet.newISet();
+            }
         }else {
             // now consider successors of B
             result = computeSuccessors(B, letter);

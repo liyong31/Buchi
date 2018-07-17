@@ -86,7 +86,7 @@ public class StateSliceVW extends State {
             nextState = mComplement.getOrAddState(nextSlice);
             super.addSuccessor(letter, nextState.getId());
             succs.set(nextState.getId());
-            System.out.println("" + getId() + " " + toString() + " -> " + nextState.getId() + " " + nextSlice + " : " + letter);
+            if(Options.mDebug) System.out.println("" + getId() + " " + toString() + " -> " + nextState.getId() + " " + nextSlice + " : " + letter);
             
             if(Options.mEnhancedSliceGuess) {
                 /**
@@ -103,7 +103,7 @@ public class StateSliceVW extends State {
                 nextState = mComplement.getOrAddState(nextSlice);
                 super.addSuccessor(letter, nextState.getId());
                 succs.set(nextState.getId());
-                System.out.println("" + getId() + " " + toString() + " -> " + nextState.getId() + " " + nextSlice + " : " + letter);
+                if(Options.mDebug) System.out.println("" + getId() + " " + toString() + " -> " + nextState.getId() + " " + nextSlice + " : " + letter);
             }else {
                 //nondeterministic choices for {inf, die}
                 // we guess to inf for those component index appearing in set
@@ -123,7 +123,7 @@ public class StateSliceVW extends State {
                     nextState = mComplement.getOrAddState(nextSlice);
                     super.addSuccessor(letter, nextState.getId());
                     succs.set(nextState.getId());
-                    System.out.println("" + getId() + " " + toString() + " -> " + nextState.getId() + " " + nextSlice + " : " + letter);
+                    if(Options.mDebug) System.out.println("" + getId() + " " + toString() + " -> " + nextState.getId() + " " + nextSlice + " : " + letter);
                 } 
             }
         }else if(hasColoredSucc){
@@ -137,7 +137,7 @@ public class StateSliceVW extends State {
             nextState = mComplement.getOrAddState(nextSlice);
             super.addSuccessor(letter, nextState.getId());
             succs.set(nextState.getId());
-            System.out.println("" + getId() + " " + toString() + " -> " + nextState.getId() + " " + nextSlice + " : " + letter);
+            if(Options.mDebug) System.out.println("" + getId() + " " + toString() + " -> " + nextState.getId() + " " + nextSlice + " : " + letter);
         }
         
         return succs;
