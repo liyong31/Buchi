@@ -15,6 +15,7 @@ import main.Options.Algorithm;
 import operation.complement.Complement;
 import operation.complement.ncsb.ComplementNcsb;
 import operation.complement.nsbc.ComplementNsbc;
+import operation.complement.ramsey.ComplementRamsey;
 import operation.complement.rank.ComplementRankKV;
 import operation.complement.slice.ComplementSliceVW;
 import operation.complement.tuple.ComplementTuple;
@@ -85,8 +86,9 @@ public class Main {
                 Options.mAlgo = Algorithm.SLICE;
             }else if(args[i].equals("-tuple")) {
                 Options.mAlgo = Algorithm.TUPLE;
-            }
-            else if(args[i].equals("-rank")) {
+            }else if(args[i].equals("-ramsey")) {
+                Options.mAlgo = Algorithm.RAMSEY;
+            }else if(args[i].equals("-rank")) {
                 Options.mAlgo = Algorithm.RANK;
             }else if(args[i].equals("-rmdead")) {
                 Options.mRemoveDead = true;
@@ -137,6 +139,7 @@ public class Main {
 		System.out.println("-complement <file-out>: Output complement of the last automaton");
 		System.out.println("-ncsb: NCSB complementation");
 		System.out.println("-nsbc: NCSB complementation");
+		System.out.println("-ramsey: Ramsey-based complementation");
 		System.out.println("-rank: Rank-based complementation");
 		System.out.println("-tuple: Tuple-based complementation");
 		System.out.println("-slice: Slice-based complementation");
@@ -288,6 +291,9 @@ public class Main {
 		    break;
 		case TUPLE:
             buchiComplement = new ComplementTuple(buchi);
+            break;
+		case RAMSEY:
+            buchiComplement = new ComplementRamsey(buchi);
             break;
 		case NSBC:
 	         buchiComplement = new ComplementNsbc(buchi);

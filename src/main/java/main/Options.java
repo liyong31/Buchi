@@ -25,6 +25,7 @@ public class Options {
 	public static enum Algorithm {
 	    NCSB, // actually NCSB is a special case of RANK-based algorithm 
 	    RANK,
+	    RAMSEY,
 	    TUPLE,
 	    SLICE,
 	    NSBC
