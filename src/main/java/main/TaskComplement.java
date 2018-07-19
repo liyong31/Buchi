@@ -22,8 +22,9 @@ public class TaskComplement extends GenericUnaryTask {
 		mOpStateNum = mComplement.getOperand().getStateSize();
 		mOpTransNum = mComplement.getOperand().getTransitionSize();
 		mAlphabetSize = mComplement.getOperand().getAlphabetSize();
-		mResultStateSize = mComplement.getStateSize();
-		mResultTransSize = mComplement.getTransitionSize();
+		IBuchi result = mComplement.getResult();
+		mResultStateSize = result.getStateSize();
+		mResultTransSize = result.getTransitionSize();
 		if(Options.mRemoveDead) {
 		    IBuchi buchi = (new Remove(mComplement)).getResult();
 	        mRmResultStateSize = buchi.getStateSize();

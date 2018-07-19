@@ -57,4 +57,9 @@ public class Options {
     public static boolean mMergeAdjacentColoredSets = false;
     
     public static boolean mRemoveDead = false;
+    
+    public static boolean mComplete = false;
+    
+    // merge states in complement
+    public static boolean mMergeStates = false;
 }

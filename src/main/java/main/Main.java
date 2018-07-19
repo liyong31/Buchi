@@ -78,6 +78,8 @@ public class Main {
 				Options.mGBA = true;
 			}else if(args[i].equals("-oe")) {
                 Options.mOE = true;
+            }else if(args[i].equals("-ca")) {
+                Options.mComplete = true;
             }else if(args[i].equals("-ncsb")) {
                 Options.mAlgo = Algorithm.NCSB;
             }else if(args[i].equals("-nsbc")) {
@@ -92,6 +94,8 @@ public class Main {
                 Options.mAlgo = Algorithm.RANK;
             }else if(args[i].equals("-rmdead")) {
                 Options.mRemoveDead = true;
+            }else if(args[i].equals("-mg")) {
+                Options.mMergeStates = true;
             }
 			
 		}
@@ -126,6 +130,8 @@ public class Main {
 		System.out.println("-lazyb: Delay word distribution to B");
 		System.out.println("-lazyg: Delay word guess to the accepting component");
 		System.out.println("-tarjan: Use Tarjan algorithm");
+		System.out.println("-ca: complete input BA first");
+		System.out.println("-mg: merge states in NSBC");
 		System.out.println("-rabit: Use RABIT tool");
 		System.out.println("-ascc: Use ASCC algorithm (Default)");
 		System.out.println("-ac: Use Antichain optimization");
@@ -277,7 +283,7 @@ public class Main {
 		
 		parser.parse(fileIn.getAbsolutePath());
 		automata.IBuchi buchi = parser.getBuchi();
-//		buchi.makeComplete();
+        if(Options.mComplete) buchi.makeComplete();
 		Complement buchiComplement = null;
 		switch(Options.mAlgo) {
 		case NCSB:
@@ -314,7 +320,7 @@ public class Main {
 		if(fileOut == null || !(task.getResultValue().isNormal())) return;
 		try {
 			PrintStream out = new PrintStream(new FileOutputStream(fileOut));
-			buchiComplement.toBA(out, parser.getAlphabet());
+			buchiComplement.getResult().toBA(out, parser.getAlphabet());
 			out.close();
 		} catch (IOException e) {
 			e.printStackTrace();

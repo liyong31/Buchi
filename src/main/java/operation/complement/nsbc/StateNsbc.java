@@ -13,8 +13,8 @@ import util.UtilISet;
 
 public class StateNsbc extends State {
 
-    private final ComplementNsbc mComplement;
-    private final NSBC mNsbc;
+    protected final ComplementNsbc mComplement;
+    protected final NSBC mNsbc;
     
     public StateNsbc(ComplementNsbc complement, int id, NSBC nsbc) {
         super(id);
@@ -160,6 +160,10 @@ public class StateNsbc extends State {
             return this.mNsbc.equals(other.mNsbc);
         }
         return false;
+    }
+    
+    public boolean isColored() {
+        return this.mNsbc.mColored;
     }
 
 }

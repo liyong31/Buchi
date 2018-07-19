@@ -27,6 +27,11 @@ public class ComplementNsbc extends Complement {
         }
     }
     
+    public void setDetStates(int state) {
+        mDetStates.set(state);
+        mNondetStates.andNot(mDetStates);
+    }
+    
     private TObjectIntMap<StateNsbc> mStateIndices;
     
     @Override
@@ -41,6 +46,17 @@ public class ComplementNsbc extends Complement {
     
     protected StateNsbc getStateNsbc(int id) {
         return (StateNsbc)getState(id);
+    }
+    
+    @Override
+    public IBuchi getResult() {
+        if(Options.mMergeStates) {
+            SimulatorNsbc simulator = new SimulatorNsbc(this);
+            new Explore(simulator);
+            return simulator;
+        }else {
+            return this;
+        }
     }
 
     protected StateNsbc getOrAddState(NSBC nsbc) {
@@ -98,6 +114,81 @@ public class ComplementNsbc extends Complement {
         System.out.println(result.toDot());
         
         System.out.println(result.toBA());
+        
+        
+        buchi = new Buchi(2);
+        
+        buchi.addState();
+        buchi.addState();
+        buchi.addState();
+        
+        buchi.getState(0).addSuccessor(0, 1);
+        buchi.getState(0).addSuccessor(1, 2);
+        buchi.getState(1).addSuccessor(0, 1);
+        buchi.getState(1).addSuccessor(1, 1);
+        
+        buchi.getState(2).addSuccessor(0, 2);
+        buchi.getState(2).addSuccessor(1, 2);
+        
+        buchi.setFinal(1);
+        buchi.setInitial(0);
+        
+        complement = new ComplementNsbc(buchi);
+        complement.setDetStates(2);
+        new Explore(complement);
+        System.out.println(complement.toDot());
+        
+        buchi = new Buchi(2);
+        
+        buchi.addState();
+        buchi.addState();
+        buchi.addState();
+        buchi.addState();
+        buchi.addState();
+        buchi.addState();
+        
+        int q0 = 0;
+        int q0a = 1;
+        int q0b = 2;
+        
+        int q1 = 3;
+        int q1a = 4;
+        int q1b = 5;
+        
+        buchi.getState(q0).addSuccessor(0, q0a);
+        buchi.getState(q0).addSuccessor(1, q0b);
+        buchi.getState(q0).addSuccessor(1, q1);
+        
+        buchi.getState(q1).addSuccessor(0, q1a);
+        buchi.getState(q1).addSuccessor(1, q1b);
+        buchi.getState(q1).addSuccessor(0, q0);
+        
+        buchi.getState(q0a).addSuccessor(0, q0a);
+        buchi.getState(q0a).addSuccessor(1, q0a);
+        
+        buchi.getState(q0b).addSuccessor(0, q0b);
+        buchi.getState(q0b).addSuccessor(1, q0b);
+        
+        buchi.getState(q1a).addSuccessor(0, q1a);
+        buchi.getState(q1a).addSuccessor(1, q1a);
+        
+        buchi.getState(q1b).addSuccessor(0, q1b);
+        buchi.getState(q1b).addSuccessor(1, q1b);
+        
+        
+        
+        buchi.setInitial(q0);
+        buchi.setFinal(q0a);
+        buchi.setFinal(q1b);
+        
+        System.out.println(buchi.toDot());
+        
+        complement = new ComplementNsbc(buchi);
+        complement.setDetStates(q0b);
+        complement.setDetStates(q1a);
+        
+        new Explore(complement);
+        System.out.println(complement.toDot());
         
 
     }

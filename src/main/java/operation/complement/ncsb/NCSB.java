@@ -141,8 +141,8 @@ public class NCSB {
 		           + mBSet.toString() + ")";
 	}
 	
-    private int hashCode;
-    private boolean hasCode = false;
+    protected int hashCode;
+    protected boolean hasCode = false;
 	
 	@Override
 	public int hashCode() {
