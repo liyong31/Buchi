@@ -1,18 +1,18 @@
-package operation.complement.nsbc;
+package operation.quotient;
 
+import automata.IState;
 import automata.State;
 import operation.complement.ncsb.NCSB;
 import util.ISet;
 import util.UtilISet;
 
-public class StateNsbcSimilar extends State {
-
-    QuotientNsbc mQuotient;
-    StateNsbc mRepresentor;
+public class StateSimple extends State {
     
+    QuotientSimple mQuotient;
+    IState mRepresentor;
     ISet mEqualStates;
     
-    public StateNsbcSimilar(QuotientNsbc quotient, int id, StateNsbc state) {
+    public StateSimple(QuotientSimple quotient, int id, IState state) {
        super(id);
        this.mQuotient = quotient;
        this.mRepresentor = state;
@@ -20,11 +20,11 @@ public class StateNsbcSimilar extends State {
        this.mEqualStates.set(state.getId());
     }
     
-    protected void addEqualStates(StateNsbc state) {
+    protected void addEqualStates(IState state) {
         this.mEqualStates.set(state.getId());
     }
     
-    protected boolean contains(StateNsbc state) {
+    protected boolean contains(IState state) {
         return this.mEqualStates.get(state.getId());
     }
     
@@ -37,10 +37,9 @@ public class StateNsbcSimilar extends State {
         }
         mVisitedLetters.set(letter);
         ISet succs = UtilISet.newISet();
-        ComplementNsbc complement = mQuotient.mComplement;
         for(final int state : this.mEqualStates) {
-            for(final int succ : complement.getState(state).getSuccessors(letter)) {
-                StateNsbcSimilar stateSucc = mQuotient.getOrAddState(complement.getStateNsbc(succ));
+            for(final int succ : mQuotient.mOperand.getState(state).getSuccessors(letter)) {
+                StateSimple stateSucc = mQuotient.getOrAddState(mQuotient.mOperand.getState(succ));
                 super.addSuccessor(letter, stateSucc.getId());
                 succs.set(stateSucc.getId());
             }
@@ -58,20 +57,14 @@ public class StateNsbcSimilar extends State {
     public boolean equals(Object obj) {
         if(this == obj) return true;
         if(obj == null) return false;
-        if(!(obj instanceof StateNsbcSimilar)){
+        if(!(obj instanceof StateSimple)){
             return false;
         }
-        StateNsbcSimilar other = (StateNsbcSimilar)obj;
-        if(mRepresentor.isColored() != other.mRepresentor.isColored()) {
-            return false;
-        }
-        if(mQuotient.mComplement.isFinal(mRepresentor.getId()) != mQuotient.mComplement.isFinal(other.mRepresentor.getId())) {
-            return false;
-        }
+        StateSimple other = (StateSimple)obj;
         if(hasSameOutEdges(other.mRepresentor)) {
             return true;
         }
-        return this.mRepresentor.equals(other.mRepresentor);
+        return this.mRepresentor.getId() == other.mRepresentor.getId();
     }
     
     protected boolean hasCode = false;
@@ -88,7 +81,7 @@ public class StateNsbcSimilar extends State {
         return mHashCode;
     }
     
-    private boolean hasSameOutEdges(StateNsbc other) {
+    private boolean hasSameOutEdges(IState other) {
         for(int letter = 0; letter < mQuotient.getAlphabetSize(); letter ++) {
             if(! mRepresentor.getSuccessors(letter).equals(other.getSuccessors(letter))) {
                 return false;

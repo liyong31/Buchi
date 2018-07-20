@@ -6,7 +6,9 @@ import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
 import main.Options;
 import operation.complement.Complement;
+import operation.complement.ncsb.ComplementNcsb;
 import operation.explore.Explore;
+import operation.quotient.QuotientSimple;
 import operation.removal.Remove;
 import util.ISet;
 import util.UtilISet;
@@ -50,13 +52,7 @@ public class ComplementNsbc extends Complement {
     
     @Override
     public IBuchi getResult() {
-        if(Options.mMergeStates) {
-            SimulatorNsbc simulator = new SimulatorNsbc(this);
-            new Explore(simulator);
-            return simulator;
-        }else {
-            return this;
-        }
+        return this;
     }
 
     protected StateNsbc getOrAddState(NSBC nsbc) {
@@ -190,6 +186,9 @@ public class ComplementNsbc extends Complement {
         new Explore(complement);
         System.out.println(complement.toDot());
         
+        ComplementNcsb complementNcsb = new ComplementNcsb(buchi);
+        new Explore(complementNcsb);
+        System.out.println(complementNcsb.toDot());
 
     }
 

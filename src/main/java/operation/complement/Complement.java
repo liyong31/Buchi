@@ -35,7 +35,7 @@ public abstract class Complement extends Buchi implements IUnaryOp<IBuchi, IBuch
     }
     
     public void explore() {
-        new Explore(this);
+        new Explore(getResult());
     }
     
     @Override

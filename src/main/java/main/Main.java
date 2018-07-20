@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import automata.IBuchi;
 import main.Options.Algorithm;
 import operation.complement.Complement;
 import operation.complement.ncsb.ComplementNcsb;
@@ -19,6 +20,8 @@ import operation.complement.ramsey.ComplementRamsey;
 import operation.complement.rank.ComplementRankKV;
 import operation.complement.slice.ComplementSliceVW;
 import operation.complement.tuple.ComplementTuple;
+import operation.explore.Explore;
+import operation.quotient.QuotientSimple;
 import util.PairXX;
 
 import util.parser.ParserType;
@@ -95,7 +98,7 @@ public class Main {
             }else if(args[i].equals("-rmdead")) {
                 Options.mRemoveDead = true;
             }else if(args[i].equals("-mg")) {
-                Options.mMergeStates = true;
+                Options.mDirectSimulation = true;
             }
 			
 		}
@@ -308,7 +311,6 @@ public class Main {
             buchiComplement = new ComplementRankKV(buchi);
             break;
 		}
-        buchiComplement.explore();
 		TaskComplement task = new TaskComplement(fileIn.getName());
 		task.setOperation(buchiComplement);
 		RunTask runTask = new RunTask(task, time);
@@ -316,11 +318,11 @@ public class Main {
 		printTaskBegin(opName, task);
 		runTask.execute();
 		printTaskEnd(task);
-
+		
 		if(fileOut == null || !(task.getResultValue().isNormal())) return;
 		try {
 			PrintStream out = new PrintStream(new FileOutputStream(fileOut));
-			buchiComplement.getResult().toBA(out, parser.getAlphabet());
+			task.getResult().toBA(out, parser.getAlphabet());
 			out.close();
 		} catch (IOException e) {
 			e.printStackTrace();

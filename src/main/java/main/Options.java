@@ -61,5 +61,5 @@ public class Options {
     public static boolean mComplete = false;
     
     // merge states in complement
-    public static boolean mMergeStates = false;
+    public static boolean mDirectSimulation = false;
 }
