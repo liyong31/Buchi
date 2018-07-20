@@ -33,6 +33,10 @@ public class TaskComplement extends GenericUnaryTask {
             QuotientNsbc quotient = new QuotientNsbc(result);
             new Explore(quotient);
             mResult = quotient;
+        }else if(Options.mDirectSimulation) {
+            QuotientSimple quotient = new QuotientSimple(mResult);
+            new Explore(quotient);
+            mResult = quotient;
         }
 		mResultStateSize = mResult.getStateSize();
 		mResultTransSize = mResult.getTransitionSize();

@@ -9,11 +9,12 @@ import operation.explore.Explore;
 import operation.explore.ExploreBuchi;
 
 // only merge states (p, q) which have the same incoming and outgoing transitions
-
+// not correct
 public class QuotientSimple extends Buchi {
     
     protected final IBuchi mOperand;
     private final TObjectIntMap<IState> mStateIndices;
+    protected ExploreBuchi mExplore;
     
     public QuotientSimple(IBuchi operand) {
         super(operand.getAlphabetSize());
@@ -25,7 +26,10 @@ public class QuotientSimple extends Buchi {
     protected void initializeQuotient() {
         // compute initial states
         new Explore(mOperand);
-        for(final int init : mOperand.getInitialStates()) {
+//        mOperand.makeComplete();
+        mExplore = new ExploreBuchi(mOperand);
+        mExplore.explore();
+        for(int init : mOperand.getInitialStates()) {
             StateSimple state = getOrAddState(mOperand.getState(init));
             this.setInitial(state.getId());
         }
@@ -46,6 +50,9 @@ public class QuotientSimple extends Buchi {
             StateSimple representor = getStateSimple(id);
             if(!representor.contains(is)) {
                 representor.addEqualStates(is);
+                if(mOperand.isFinal(is.getId())) {
+                    this.setFinal(id);
+                }
                 System.out.println("N: " + representor + " : " + is);
             }
             return getStateSimple(id);

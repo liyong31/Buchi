@@ -44,7 +44,6 @@ public class StateSimple extends State {
                 succs.set(stateSucc.getId());
             }
         }
-        
         return succs;
     }
     
@@ -61,7 +60,8 @@ public class StateSimple extends State {
             return false;
         }
         StateSimple other = (StateSimple)obj;
-        if(hasSameOutEdges(other.mRepresentor)) {
+        //&& hasSameInEdges(other.mRepresentor)
+        if(hasSameOutEdges(other.mRepresentor) ) {
             return true;
         }
         return this.mRepresentor.getId() == other.mRepresentor.getId();
@@ -78,12 +78,25 @@ public class StateSimple extends State {
         for(int letter = 0; letter < mQuotient.getAlphabetSize(); letter ++) {
             mHashCode = prime * mHashCode + NCSB.hashValue(mRepresentor.getSuccessors(letter));
         }
+//        for(int letter = 0; letter < mQuotient.getAlphabetSize(); letter ++) {
+//            mHashCode = prime * mHashCode + NCSB.hashValue(mQuotient.mExplore.getPredecessors(mRepresentor.getId(), letter));
+//        }
         return mHashCode;
     }
     
     private boolean hasSameOutEdges(IState other) {
         for(int letter = 0; letter < mQuotient.getAlphabetSize(); letter ++) {
             if(! mRepresentor.getSuccessors(letter).equals(other.getSuccessors(letter))) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    private boolean hasSameInEdges(IState other) {
+        for(int letter = 0; letter < mQuotient.getAlphabetSize(); letter ++) {
+            if(! mQuotient.mExplore.getPredecessors(mRepresentor.getId(), letter)
+                    .equals(mQuotient.mExplore.getPredecessors(other.getId(), letter))) {
                 return false;
             }
         }
