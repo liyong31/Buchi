@@ -93,14 +93,14 @@ public class StateSimple extends State {
         return true;
     }
     
-    private boolean hasSameInEdges(IState other) {
-        for(int letter = 0; letter < mQuotient.getAlphabetSize(); letter ++) {
-            if(! mQuotient.mExplore.getPredecessors(mRepresentor.getId(), letter)
-                    .equals(mQuotient.mExplore.getPredecessors(other.getId(), letter))) {
-                return false;
-            }
-        }
-        return true;
-    }
+//    private boolean hasSameInEdges(IState other) {
+//        for(int letter = 0; letter < mQuotient.getAlphabetSize(); letter ++) {
+//            if(! mQuotient.mExplore.getPredecessors(mRepresentor.getId(), letter)
+//                    .equals(mQuotient.mExplore.getPredecessors(other.getId(), letter))) {
+//                return false;
+//            }
+//        }
+//        return true;
+//    }
 
 }

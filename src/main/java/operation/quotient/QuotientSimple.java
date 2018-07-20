@@ -6,15 +6,12 @@ import automata.IState;
 import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
 import operation.explore.Explore;
-import operation.explore.ExploreBuchi;
 
-// only merge states (p, q) which have the same incoming and outgoing transitions
-// not correct
+// only merge states (p, q) which have the same outgoing transitions
 public class QuotientSimple extends Buchi {
     
     protected final IBuchi mOperand;
     private final TObjectIntMap<IState> mStateIndices;
-    protected ExploreBuchi mExplore;
     
     public QuotientSimple(IBuchi operand) {
         super(operand.getAlphabetSize());
@@ -26,9 +23,6 @@ public class QuotientSimple extends Buchi {
     protected void initializeQuotient() {
         // compute initial states
         new Explore(mOperand);
-//        mOperand.makeComplete();
-        mExplore = new ExploreBuchi(mOperand);
-        mExplore.explore();
         for(int init : mOperand.getInitialStates()) {
             StateSimple state = getOrAddState(mOperand.getState(init));
             this.setInitial(state.getId());
@@ -53,7 +47,6 @@ public class QuotientSimple extends Buchi {
                 if(mOperand.isFinal(is.getId())) {
                     this.setFinal(id);
                 }
-                System.out.println("N: " + representor + " : " + is);
             }
             return getStateSimple(id);
         }else {
