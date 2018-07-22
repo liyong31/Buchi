@@ -166,4 +166,26 @@ public class StateNsbc extends State {
         return this.mNsbc.mColored;
     }
 
+    protected boolean isFairlyEqual(StateNsbc other) {
+        if(mNsbc.isColored() != other.mNsbc.isColored()) {
+            return false;
+        }
+        
+        if(!mNsbc.getNSet().equals(other.mNsbc.getNSet())) {
+            return false;
+        }
+        if(mNsbc.isColored()) {
+            if(!mNsbc.getSSet().equals(other.mNsbc.getSSet())) {
+                return false;
+            }
+            ISet union1 = mNsbc.copyBSet();
+            union1.or(mNsbc.getCSet());
+            ISet union2 = other.mNsbc.copyBSet();
+            union2.or(other.mNsbc.getCSet());
+            return union1.equals(union2);
+        }else {
+            return true;
+        }
+        
+    }
 }

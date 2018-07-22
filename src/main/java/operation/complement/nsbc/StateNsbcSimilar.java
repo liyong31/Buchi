@@ -68,7 +68,7 @@ public class StateNsbcSimilar extends State {
         if(mQuotient.mComplement.isFinal(mRepresentor.getId()) != mQuotient.mComplement.isFinal(other.mRepresentor.getId())) {
             return false;
         }
-        if(hasSameOutEdges(other.mRepresentor)) {
+        if(hasEqualOutEdges(other.mRepresentor)) {
             return true;
         }
         return this.mRepresentor.equals(other.mRepresentor);
@@ -82,9 +82,9 @@ public class StateNsbcSimilar extends State {
         hasCode = true;
         final int prime = 31;
         mHashCode = 1;
-        for(int letter = 0; letter < mQuotient.getAlphabetSize(); letter ++) {
-            mHashCode = prime * mHashCode + NCSB.hashValue(mRepresentor.getSuccessors(letter));
-        }
+//        for(int letter = 0; letter < mQuotient.getAlphabetSize(); letter ++) {
+//            mHashCode = prime * mHashCode + NCSB.hashValue(mRepresentor.getSuccessors(letter));
+//        }
         return mHashCode;
     }
     
@@ -92,6 +92,40 @@ public class StateNsbcSimilar extends State {
         for(int letter = 0; letter < mQuotient.getAlphabetSize(); letter ++) {
             if(! mRepresentor.getSuccessors(letter).equals(other.getSuccessors(letter))) {
                 return false;
+            }
+        }
+        return true;
+    }
+    
+    private boolean hasEqualOutEdges(StateNsbc other) {
+        for(int letter = 0; letter < mQuotient.getAlphabetSize(); letter ++) {
+            // first to check whether it has same outgoing states 
+            ISet fstSuccs = mRepresentor.getSuccessors(letter);
+            ISet sndSuccs = other.getSuccessors(letter);
+            boolean result = fstSuccs.equals(sndSuccs);
+            
+            if(! result && other.isColored()) return false;
+            if(! result) {
+                // if they do not have same outgoing states, check more
+                for(final int fstSucc : fstSuccs) {
+                    StateNsbc repSucc = mQuotient.mComplement.getStateNsbc(fstSucc);
+                    if(repSucc.isColored()) {
+                        result = false;
+                        // try to find one state fairly equal to repSucc
+                        for(final int sndSucc : sndSuccs) {
+                            StateNsbc otherSucc = mQuotient.mComplement.getStateNsbc(sndSucc);
+                            if(!otherSucc.isColored()) {
+                                continue;
+                            }
+                            result = repSucc.isFairlyEqual(otherSucc);
+                            if(result) break;
+                        }
+                        // no fairly equal state
+                        if(! result) return false;
+                    }else if(!sndSuccs.get(fstSucc)){
+                        return false;
+                    }
+                }
             }
         }
         return true;
