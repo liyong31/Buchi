@@ -28,12 +28,13 @@ public class TaskComplement extends GenericUnaryTask {
 		mOpTransNum = mComplement.getOperand().getTransitionSize();
 		mAlphabetSize = mComplement.getOperand().getAlphabetSize();
 		mResult = mComplement.getResult();
-		if(Options.mDirectSimulation && (mComplement instanceof ComplementNsbc)) {
-		    ComplementNsbc result = (ComplementNsbc)mResult;
-            QuotientNsbc quotient = new QuotientNsbc(result);
-            new Explore(quotient);
-            mResult = quotient;
-        }else if(Options.mDirectSimulation) {
+//		if(Options.mDirectSimulation && (mComplement instanceof ComplementNsbc)) {
+//		    ComplementNsbc result = (ComplementNsbc)mResult;
+//            QuotientNsbc quotient = new QuotientNsbc(result);
+//            new Explore(quotient);
+//            mResult = quotient;
+//        }else 
+        if(Options.mDirectSimulation) {
             QuotientSimple quotient = new QuotientSimple(mResult);
             new Explore(quotient);
             mResult = quotient;

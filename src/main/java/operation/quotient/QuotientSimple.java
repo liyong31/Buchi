@@ -44,9 +44,6 @@ public class QuotientSimple extends Buchi {
             StateSimple representor = getStateSimple(id);
             if(!representor.contains(is)) {
                 representor.addEqualStates(is);
-                if(mOperand.isFinal(is.getId())) {
-                    this.setFinal(id);
-                }
             }
             return getStateSimple(id);
         }else {
@@ -54,13 +51,13 @@ public class QuotientSimple extends Buchi {
             StateSimple newState = new StateSimple(this, index, is);
             int id = this.addState(newState);
             mStateIndices.put(newState, id);
-            if(mOperand.isFinal(state.getId())) setFinal(index);
+            if(mOperand.isFinal(is.getId())) setFinal(id);
             return newState;
         }
     }
     
     public String getName() {
-        return "SimulationNsbc";
+        return "QuotientSimple";
     }
 
 }
