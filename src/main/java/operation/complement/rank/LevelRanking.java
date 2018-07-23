@@ -42,13 +42,19 @@ public class LevelRanking {
     protected final ISet mOSet;
     protected int mTurn;
     protected final boolean mIsRanked;
+    protected final boolean mIsTurnwised;
     
-    public LevelRanking(boolean isRanked) {
+    /**
+     * set whether it is ranked and turnwised
+     * **/
+    public LevelRanking(boolean isRanked, boolean isTurnwised) {
         mIsRanked = isRanked;
+        mIsTurnwised = isTurnwised;
         mRanks = new TIntIntHashMap();
         mMaxRank = -1;
-        this.mSSet = UtilISet.newISet();
-        this.mOSet = UtilISet.newISet();
+        mTurn = -1;
+        mSSet = UtilISet.newISet();
+        mOSet = UtilISet.newISet();
     }
     
     // for ranked states only
@@ -80,6 +86,18 @@ public class LevelRanking {
         mSSet.or(s);
     }
     
+    public void setTurn(int turn) {
+        if(mIsRanked && mIsTurnwised) {
+            throw new UnsupportedOperationException("setS for unranked states only");
+        }
+        mTurn = turn;
+    }
+    
+    public int getTurn() {
+        assert mIsTurnwised;
+        return mTurn;
+    }
+    
     public int getLevelRank(int state) {
         if(mRanks.containsKey(state)) {
             return mRanks.get(state);
@@ -94,6 +112,12 @@ public class LevelRanking {
         if(obj instanceof LevelRanking) {
             LevelRanking other = (LevelRanking)obj;
             if(mIsRanked != other.isRanked()) {
+                return false;
+            }
+            if(mIsTurnwised != other.isTurnwised()) {
+                return false;
+            }
+            if(mTurn != other.getTurn()) {
                 return false;
             }
             ISet S = copyS();
@@ -118,11 +142,12 @@ public class LevelRanking {
     
     @Override
     public LevelRanking clone() {
-        LevelRanking copy = new LevelRanking(this.mIsRanked);
+        LevelRanking copy = new LevelRanking(this.mIsRanked, this.mIsTurnwised);
         if(this.mIsRanked) {
             for(int state : copyS()) {
                 copy.addLevelRank(state, mRanks.get(state), isInO(state));
             }
+            if(this.isTurnwised()) copy.setTurn(mTurn);
         }else {
             copy.setS(mSSet);
         }
@@ -143,6 +168,10 @@ public class LevelRanking {
     
     public ISet copyO() {
         return mOSet.clone();
+    }
+    
+    public boolean isTurnwised() {
+        return mIsTurnwised;
     }
     
     public boolean isFinal() {
@@ -169,7 +198,11 @@ public class LevelRanking {
     @Override
     public String toString() {
         if(isRanked()) {
-            return "(S=" + mSSet + " ,O =" + mOSet + " f="+ mRanks + ")";   
+            if(isTurnwised()) {
+                return "(f=" + mRanks + " , O=" + mOSet + " "+ mTurn + ")";  
+            }else {
+                return "(f=" + mRanks + " , O=" + mOSet + ")";                  
+            }
         }else {
             return "" + mSSet;
         }
@@ -183,6 +216,7 @@ public class LevelRanking {
             return mHashCode;
         }else {
             mHashCode = mRanks.hashCode();
+            mHashCode = mHashCode * 31 + mTurn + 1;
             mHashCode = mHashCode * 31 + NCSB.hashValue(mSSet);
             mHashCode = mHashCode * 31 + NCSB.hashValue(mOSet);
             return mHashCode;            

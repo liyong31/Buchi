@@ -2,6 +2,7 @@ package operation.complement.rank;
 
 import java.util.Collection;
 
+import main.Options;
 import util.ISet;
 import util.UtilISet;
 
@@ -23,7 +24,7 @@ public class StateRankTight extends StateRank<ComplementRankTight> {
         if(!mLevelRanking.isRanked()) {
             // subset construction
             ISet succs = UtilRank.collectSuccessors(mOperand, mLevelRanking.getS(), letter);
-            LevelRanking lvlSucc = new LevelRanking(false);
+            LevelRanking lvlSucc = new LevelRanking(false, Options.mTurnwise);
             lvlSucc.setS(succs);
             StateRankTight succ = mComplement.getOrAddState(lvlSucc);
             super.addSuccessor(letter, succ.getId());

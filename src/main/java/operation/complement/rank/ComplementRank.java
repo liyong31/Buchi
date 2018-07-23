@@ -23,12 +23,12 @@ public abstract class ComplementRank<S extends State>  extends Complement {
         if(!Options.mTightRank) {
             int n = mOperand.getStateSize();
             int r = mOperand.getFinalStates().cardinality();
-            lvlRnk = new LevelRanking(true);
+            lvlRnk = new LevelRanking(true, false);
             for(final int init : mOperand.getInitialStates()) {
                 lvlRnk.addLevelRank(init, 2*(n - r), false);
             }
         }else {
-            lvlRnk = new LevelRanking(false);
+            lvlRnk = new LevelRanking(false, false);
             lvlRnk.setS(mOperand.getInitialStates());
         }
         S stateLvlRnk = getOrAddState(lvlRnk);

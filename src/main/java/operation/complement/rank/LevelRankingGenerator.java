@@ -66,7 +66,7 @@ public class LevelRankingGenerator extends LevelRankingConstraint {
             S.andNot(O);
             if(!S.isEmpty() && states.isEmpty()) {
                 // we donot do nondeterministic guessing here
-                LevelRanking state = new LevelRanking(true);
+                LevelRanking state = new LevelRanking(true, Options.mTurnwise);
                 for(final int s : S) {
                     state.addLevelRank(s, constraint.getLevelRank(s), false);
                 }
@@ -90,7 +90,7 @@ public class LevelRankingGenerator extends LevelRankingConstraint {
         if(i == 0) {
             states.clear();
             for(final int rank : listOfRanks[i]) {
-                LevelRanking state = new LevelRanking(true);
+                LevelRanking state = new LevelRanking(true, Options.mTurnwise);
                 state.addLevelRank(succStates[i], rank, (isEven(rank) && constraint.isInO(succStates[i])));
                 states.add(state);
             }

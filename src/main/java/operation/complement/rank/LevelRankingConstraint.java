@@ -19,10 +19,12 @@
 
 package operation.complement.rank;
 
+import main.Options;
+
 public class LevelRankingConstraint extends LevelRanking {
     
     public LevelRankingConstraint() {
-        super(true);
+        super(true, Options.mTurnwise);
     }
     
     
