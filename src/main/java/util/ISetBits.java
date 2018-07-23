@@ -149,4 +149,9 @@ public class ISetBits implements ISet {
         return new BitsIterator(this);
     }
 
+    @Override
+    public void set(int from, int to) {
+        mSet.set(from, to + 1);
+    }
+
 }

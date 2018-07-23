@@ -70,6 +70,13 @@ public class ISetTreeSet implements ISet {
 	public void set(int value) {
 		mSet.add(value);
 	}
+	
+    @Override
+    public void set(int from, int to) {
+        for(int i = from; i <= to; i ++) {
+            mSet.add(i);
+        }
+    }
 
 	@Override
 	public boolean isEmpty() {

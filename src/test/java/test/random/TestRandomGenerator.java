@@ -17,7 +17,7 @@ import automata.IState;
 import automata.RandomBuchiGenerator;
 import main.Options;
 import operation.complement.dba.ComplementDBA;
-import operation.complement.ncsb.ComplementNcsb;
+import operation.complement.ncsb.ComplementNcsbOtf;
 import operation.complement.nsbc.ComplementNsbc;
 import operation.complement.slice.ComplementSliceVW;
 import operation.complement.tuple.ComplementTuple;
@@ -263,7 +263,7 @@ public class TestRandomGenerator {
         Options.mAntichain = false;
         while (true) {
             IBuchi ce = RandomBuchiGenerator.getRandomSemideterministicBuchiAutomaton(5, 3, 2, 1, 2);
-            ComplementNcsb complement = new ComplementNcsb(ce);
+            ComplementNcsbOtf complement = new ComplementNcsbOtf(ce);
             new Explore(complement);
             try {
                 complement.testLemma();
@@ -279,7 +279,7 @@ public class TestRandomGenerator {
         Options.mLazyB = false;
         Options.mVerbose = true;
         IBuchi input = BAStore.getA1();
-        ComplementNcsb complement = new ComplementNcsb(input);
+        ComplementNcsbOtf complement = new ComplementNcsbOtf(input);
         complement.explore();
         System.out.println(complement.toDot());
         System.out.println(complement.toBA());
@@ -297,7 +297,7 @@ public class TestRandomGenerator {
         Options.mVerbose = true;
         IBuchi input = BAStore.getF();
         System.out.println(input.toDot());
-        ComplementNcsb complement = new ComplementNcsb(input);
+        ComplementNcsbOtf complement = new ComplementNcsbOtf(input);
         complement.explore();
         System.out.println(complement.toDot());
         System.out.println(complement.toBA());
@@ -337,7 +337,7 @@ public class TestRandomGenerator {
         Options.mLazyB = false;
         Options.mVerbose = true;
         IBuchi input = BAStore.getG();
-        ComplementNcsb complement = new ComplementNcsb(input);
+        ComplementNcsbOtf complement = new ComplementNcsbOtf(input);
         complement.explore();
         System.out.println(complement.toDot());
     }

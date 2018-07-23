@@ -5,7 +5,7 @@ import automata.IBuchi;
 import automata.IGeneralizedBuchi;
 import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
-import operation.complement.ncsb.ComplementNcsb;
+import operation.complement.ncsb.ComplementNcsbOtf;
 import operation.minus.IMminus;
 
 /**
@@ -15,7 +15,7 @@ public class Difference extends GeneralizedBuchi implements IMminus {
     
     private final IGeneralizedBuchi mFstOperand;
     private final IBuchi mSndOperand;
-    private final ComplementNcsb mSndComplement;
+    private final ComplementNcsbOtf mSndComplement;
     private final TObjectIntMap<ProductState> mStateMap;
     private Boolean mIsEmpty;
     
@@ -24,7 +24,7 @@ public class Difference extends GeneralizedBuchi implements IMminus {
         assert fstOperand.getAlphabetSize() == sndOperand.getAlphabetSize();
         this.mFstOperand = fstOperand;
         this.mSndOperand = sndOperand;
-        this.mSndComplement = new ComplementNcsb(sndOperand);
+        this.mSndComplement = new ComplementNcsbOtf(sndOperand);
         this.mStateMap = new TObjectIntHashMap<>();
         this.mAccSize = fstOperand.getAccSize() + 1;
         computeInitialStates();
@@ -71,7 +71,7 @@ public class Difference extends GeneralizedBuchi implements IMminus {
     }
 
     @Override
-    public ComplementNcsb getSecondComplement() {
+    public ComplementNcsbOtf getSecondComplement() {
         return mSndComplement;
     }
     

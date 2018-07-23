@@ -15,6 +15,11 @@ public interface ISet extends Iterable<Integer> {
     boolean get(int value);
 
     void set(int value);
+    
+    /**
+     * set from [inclusive] - to [inclusive] true
+     * */ 
+    void set(int from, int to);
 
     void clear(int value);
 

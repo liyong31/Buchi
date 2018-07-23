@@ -20,20 +20,20 @@
 package operation.complement.ncsb;
 
 import automata.IBuchi;
-import automata.IState;
+//import automata.IState;
 import automata.State;
 import main.Options;
 import util.ISet;
 import util.UtilISet;
 
-public class StateNCSB extends State {
+public class StateNcsbOtf extends State {
 
 	private final NCSB mNCSB;
 	
 	private final IBuchi mOperand;
-	private final ComplementNcsb mComplement;
+	private final ComplementNcsbOtf mComplement;
 	
-	public StateNCSB(ComplementNcsb complement, int id, NCSB ncsb) {
+	public StateNcsbOtf(ComplementNcsbOtf complement, int id, NCSB ncsb) {
 		super(id);
 		this.mComplement = complement;
 		this.mOperand = complement.getOperand();
@@ -53,7 +53,7 @@ public class StateNCSB extends State {
 		}
 		mVisitedLetters.set(letter);
 		// B
-		SuccessorResult succResult = collectSuccessors(mNCSB.getBSet(), letter, true);
+		SuccessorResult succResult = UtilNcsb.collectSuccessors(mOperand, mNCSB.getBSet(), letter, true);
 		if(!succResult.hasSuccessor) return UtilISet.newISet();
 		ISet BSuccs = succResult.mSuccs;
 		ISet minusFSuccs = succResult.mMinusFSuccs;
@@ -62,7 +62,7 @@ public class StateNCSB extends State {
 		// C\B
 		ISet cMinusB = mNCSB.copyCSet();
 		cMinusB.andNot(mNCSB.getBSet());
-		succResult = collectSuccessors(cMinusB, letter, !Options.mLazyS);
+		succResult = UtilNcsb.collectSuccessors(mOperand, cMinusB, letter, !Options.mLazyS);
 		if(!succResult.hasSuccessor) return UtilISet.newISet();
 		ISet CSuccs = succResult.mSuccs;
 		CSuccs.or(BSuccs);
@@ -70,12 +70,12 @@ public class StateNCSB extends State {
 		interFSuccs.or(succResult.mInterFSuccs);
 		
 		// N
-		succResult = collectSuccessors(mNCSB.getNSet(), letter, false);
+		succResult = UtilNcsb.collectSuccessors(mOperand, mNCSB.getNSet(), letter, false);
 		if(!succResult.hasSuccessor) return UtilISet.newISet();
 		ISet NSuccs = succResult.mSuccs;
 
 		// S
-		succResult = collectSuccessors(mNCSB.getSSet(), letter, false);
+		succResult = UtilNcsb.collectSuccessors(mOperand, mNCSB.getSSet(), letter, false);
 		if(!succResult.hasSuccessor) return UtilISet.newISet();
 		ISet SSuccs = succResult.mSuccs;
 		
@@ -85,10 +85,10 @@ public class StateNCSB extends State {
     @Override
 	public boolean equals(Object obj) {
 		if(this == obj) return true;
-		if(!(obj instanceof StateNCSB)) {
+		if(!(obj instanceof StateNcsbOtf)) {
 			return false;
 		}
-		StateNCSB other = (StateNCSB)obj;
+		StateNcsbOtf other = (StateNcsbOtf)obj;
 		return  mNCSB.equals(other.mNCSB);
 	}
 	
@@ -103,35 +103,35 @@ public class StateNCSB extends State {
 		return mNCSB.hashCode();
 	}
 	// -------------------------------------------------
-
-	/**
-	 * If q in C\F or (B\F), then tr(q, a) should not be not empty
-	 * */
-	private boolean noTransitionAssertion_MinusF(int state, ISet succs) {
-//	    if(Options.mLazyS && Options.mAntichain) return true;
-		return !mOperand.isFinal(state) && succs.isEmpty();
-	}
-	
-	private SuccessorResult collectSuccessors(ISet states, int letter, boolean testTrans) {
-		SuccessorResult result = new SuccessorResult();
-		for(final int stateId : states) {
-		    IState state = mOperand.getState(stateId);
-			ISet succs = state.getSuccessors(letter);
-			if (testTrans && noTransitionAssertion_MinusF(stateId, succs)) {
-				result.hasSuccessor = false;
-				return result;
-			}
-			result.mSuccs.or(succs);
-			if(testTrans) {
-				if(mOperand.isFinal(stateId)) {
-					result.mInterFSuccs.or(succs);
-				}else {
-					result.mMinusFSuccs.or(succs);
-				}
-			}
-		}
-		return result;
-	}
+//
+//	/**
+//	 * If q in C\F or (B\F), then tr(q, a) should not be not empty
+//	 * */
+//	protected boolean noTransitionAssertion_MinusF(int state, ISet succs) {
+////	    if(Options.mLazyS && Options.mAntichain) return true;
+//		return !mOperand.isFinal(state) && succs.isEmpty();
+//	}
+//	
+//	private SuccessorResult collectSuccessors(ISet states, int letter, boolean testTrans) {
+//		SuccessorResult result = new SuccessorResult();
+//		for(final int stateId : states) {
+//		    IState state = mOperand.getState(stateId);
+//			ISet succs = state.getSuccessors(letter);
+//			if (testTrans && noTransitionAssertion_MinusF(stateId, succs)) {
+//				result.hasSuccessor = false;
+//				return result;
+//			}
+//			result.mSuccs.or(succs);
+//			if(testTrans) {
+//				if(mOperand.isFinal(stateId)) {
+//					result.mInterFSuccs.or(succs);
+//				}else {
+//					result.mMinusFSuccs.or(succs);
+//				}
+//			}
+//		}
+//		return result;
+//	}
 	
 	private ISet computeSuccessors(NCSB succNCSB, ISet minusFSuccs
 			, ISet interFSuccs, int letter) {
@@ -149,7 +149,7 @@ public class StateNCSB extends State {
 		while(generator.hasNext()) {
 		    NCSB ncsb = generator.next();
 		    if(ncsb == null) continue;
-			StateNCSB succ = mComplement.getOrAddState(ncsb);
+			StateNcsbOtf succ = mComplement.getOrAddState(ncsb);
 			super.addSuccessor(letter, succ.getId());
 			succs.set(succ.getId());
 		}

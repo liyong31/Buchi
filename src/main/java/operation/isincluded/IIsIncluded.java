@@ -21,12 +21,12 @@ package operation.isincluded;
 
 import automata.IBuchi;
 import operation.IBinaryOp;
-import operation.complement.ncsb.ComplementNcsb;
-import operation.complement.ncsb.StateNCSB;
+import operation.complement.ncsb.ComplementNcsbOtf;
+import operation.complement.ncsb.StateNcsbOtf;
 
 public interface IIsIncluded extends IBinaryOp<IBuchi, Boolean>{
-    ComplementNcsb getSecondComplement();
-    StateNCSB getComplementState(int state);
+    ComplementNcsbOtf getSecondComplement();
+    StateNcsbOtf getComplementState(int state);
     default String getName() {
         return "IsIncluded";
     }

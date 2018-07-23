@@ -15,6 +15,7 @@ import automata.IBuchi;
 import main.Options.Algorithm;
 import operation.complement.Complement;
 import operation.complement.ncsb.ComplementNcsb;
+import operation.complement.ncsb.ComplementNcsbOtf;
 import operation.complement.nsbc.ComplementNsbc;
 import operation.complement.ramsey.ComplementRamsey;
 import operation.complement.rank.ComplementRankKV;
@@ -85,6 +86,8 @@ public class Main {
                 Options.mComplete = true;
             }else if(args[i].equals("-ncsb")) {
                 Options.mAlgo = Algorithm.NCSB;
+            }else if(args[i].equals("-ncsbotf")) {
+                Options.mAlgo = Algorithm.NCSBOTF;
             }else if(args[i].equals("-nsbc")) {
                 Options.mAlgo = Algorithm.NSBC;
             }else if(args[i].equals("-slice")) {
@@ -146,7 +149,8 @@ public class Main {
 		System.out.println("-gba: Use generalized Buchi automata");
 		System.out.println("-to k: Limit execution in k seconds (20 secs by default)");
 		System.out.println("-complement <file-out>: Output complement of the last automaton");
-		System.out.println("-ncsb: NCSB complementation");
+		System.out.println("-ncsb: Original NCSB complementation");
+		System.out.println("-ncsbotf: On-the-fly NCSB complementation");
 		System.out.println("-nsbc: NCSB complementation");
 		System.out.println("-ramsey: Ramsey-based complementation");
 		System.out.println("-rank: Rank-based complementation");
@@ -289,8 +293,8 @@ public class Main {
         if(Options.mComplete) buchi.makeComplete();
 		Complement buchiComplement = null;
 		switch(Options.mAlgo) {
-		case NCSB:
-		    buchiComplement = new ComplementNcsb(buchi);
+		case NCSBOTF:
+		    buchiComplement = new ComplementNcsbOtf(buchi);
 		    break;
 		case RANK:
 		    buchiComplement = new ComplementRankKV(buchi);
@@ -307,6 +311,9 @@ public class Main {
 		case NSBC:
 	         buchiComplement = new ComplementNsbc(buchi);
 	         break;
+		case NCSB:
+            buchiComplement = new ComplementNcsb(buchi);
+            break;
         default:
             buchiComplement = new ComplementRankKV(buchi);
             break;
@@ -327,7 +334,7 @@ public class Main {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		if(Options.mVerbose && !buchi.isSemiDeterministic() && Options.mAlgo == Algorithm.NCSB) {
+		if(Options.mVerbose && !buchi.isSemiDeterministic() && Options.mAlgo == Algorithm.NCSBOTF) {
 		    System.err.println("Result may not be correct");
 		}
 	}

@@ -25,11 +25,11 @@ import java.util.List;
 import gnu.trove.iterator.TIntObjectIterator;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
-import operation.complement.ncsb.StateNCSB;
+import operation.complement.ncsb.StateNcsbOtf;
 
 public class Antichain {
     
-    private TIntObjectMap<List<StateNCSB>> mPairMap;
+    private TIntObjectMap<List<StateNcsbOtf>> mPairMap;
     
     public Antichain() {
         mPairMap = new TIntObjectHashMap<>();
@@ -42,18 +42,18 @@ public class Antichain {
         return addAsccPair(pair.getFstState(), pair.getSndComplementState());
     }
     
-    public boolean addAsccPair(int fst, StateNCSB snd) {
+    public boolean addAsccPair(int fst, StateNcsbOtf snd) {
         
-        List<StateNCSB> sndElem = mPairMap.get(fst);
+        List<StateNcsbOtf> sndElem = mPairMap.get(fst);
         
         if(sndElem == null) {
             sndElem = new ArrayList<>();
         }
         
-        List<StateNCSB> copy = new ArrayList<>();
+        List<StateNcsbOtf> copy = new ArrayList<>();
         //avoid to add pairs are covered by other pairs
         for(int i = 0; i < sndElem.size(); i ++) {
-            StateNCSB s = sndElem.get(i);
+            StateNcsbOtf s = sndElem.get(i);
             //pairs covered by the new pair
             //will not be kept in copy
             if(s.getNCSB().coveredBy(snd.getNCSB())) {
@@ -73,12 +73,12 @@ public class Antichain {
     }
     
     public boolean covers(AsccPair pair) {
-        List<StateNCSB> sndElem = mPairMap.get(pair.getFstState());
+        List<StateNcsbOtf> sndElem = mPairMap.get(pair.getFstState());
         if(sndElem == null) return false;
         
-        StateNCSB snd = pair.getSndComplementState();
+        StateNcsbOtf snd = pair.getSndComplementState();
         for(int i = 0; i < sndElem.size(); i ++) {
-            StateNCSB s = sndElem.get(i);
+            StateNcsbOtf s = sndElem.get(i);
             if(snd.getNCSB().coveredBy(s.getNCSB())) { // no need to add it
                 return true;
             }
@@ -92,7 +92,7 @@ public class Antichain {
 //      for(Entry<Integer, List<StateNCSB>> entry : mPairMap.entrySet()) {
 //          sb.append(entry.getKey() + " -> " + entry.getValue() + "\n");
 //      }
-        TIntObjectIterator<List<StateNCSB>> iter = mPairMap.iterator();
+        TIntObjectIterator<List<StateNcsbOtf>> iter = mPairMap.iterator();
         while(iter.hasNext()) {
             iter.advance();
             sb.append(iter.key() + " -> " + iter.value() + "\n");
@@ -105,7 +105,7 @@ public class Antichain {
 //      for(Map.Entry<Integer, List<StateNCSB>> entry : mPairMap.entrySet()) {
 //          num += entry.getValue().size();
 //      }
-        TIntObjectIterator<List<StateNCSB>> iter = mPairMap.iterator();
+        TIntObjectIterator<List<StateNcsbOtf>> iter = mPairMap.iterator();
         while(iter.hasNext()) {
             iter.advance();
             num += iter.value().size();

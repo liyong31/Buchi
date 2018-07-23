@@ -23,7 +23,8 @@ public class Options {
 	public static Algorithm mAlgo = Algorithm.RANK;
 	
 	public static enum Algorithm {
-	    NCSB, // actually NCSB is a special case of RANK-based algorithm 
+	    NCSBOTF, // actually NCSB is a special case of RANK-based algorithm 
+	    NCSB,
 	    RANK,
 	    RAMSEY,
 	    TUPLE,

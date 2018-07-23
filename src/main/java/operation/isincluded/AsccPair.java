@@ -19,18 +19,18 @@
 
 package operation.isincluded;
 
-import operation.complement.ncsb.ComplementNcsb;
-import operation.complement.ncsb.StateNCSB;
+import operation.complement.ncsb.ComplementNcsbOtf;
+import operation.complement.ncsb.StateNcsbOtf;
 
 class AsccPair {
     
     protected int mFstState;
     protected int mSndState;
-    protected ComplementNcsb mSndComplement;
+    protected ComplementNcsbOtf mSndComplement;
     protected int mDfsnum;
     protected boolean mCurrent;
     
-    AsccPair(int fstState, int sndState, ComplementNcsb sndComplement) {
+    AsccPair(int fstState, int sndState, ComplementNcsbOtf sndComplement) {
         mFstState = fstState;
         mSndState = sndState;
         mSndComplement = sndComplement;
@@ -65,14 +65,14 @@ class AsccPair {
         return result;
     }
     
-    protected StateNCSB getSndComplementState() {
-        return (StateNCSB) mSndComplement.getState(mSndState);
+    protected StateNcsbOtf getSndComplementState() {
+        return (StateNcsbOtf) mSndComplement.getState(mSndState);
     }
     
     protected boolean coveredBy(AsccPair other) {
         if(mFstState != other.mFstState) return false;
-        StateNCSB state = this.getSndComplementState();
-        StateNCSB otherState = other.getSndComplementState();
+        StateNcsbOtf state = this.getSndComplementState();
+        StateNcsbOtf otherState = other.getSndComplementState();
         return state.getNCSB().coveredBy(otherState.getNCSB());
     }
     

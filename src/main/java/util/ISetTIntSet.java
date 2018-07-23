@@ -141,4 +141,11 @@ public class ISetTIntSet implements ISet {
 		return new TIntSetIterator(mSet);
 	}
 
+    @Override
+    public void set(int from, int to) {
+        for(int i = from; i <= to; i ++) {
+            mSet.add(i);
+        }
+    }
+
 }

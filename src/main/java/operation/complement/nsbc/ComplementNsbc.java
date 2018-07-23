@@ -6,7 +6,7 @@ import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
 import main.Options;
 import operation.complement.Complement;
-import operation.complement.ncsb.ComplementNcsb;
+import operation.complement.ncsb.ComplementNcsbOtf;
 import operation.explore.Explore;
 import operation.quotient.QuotientSimple;
 import operation.removal.Remove;
@@ -186,7 +186,7 @@ public class ComplementNsbc extends Complement {
         new Explore(complement);
         System.out.println(complement.toDot());
         
-        ComplementNcsb complementNcsb = new ComplementNcsb(buchi);
+        ComplementNcsbOtf complementNcsb = new ComplementNcsbOtf(buchi);
         new Explore(complementNcsb);
         System.out.println(complementNcsb.toDot());
 

@@ -20,7 +20,7 @@
 package operation.minus;
 
 import automata.IBuchi;
-import operation.complement.ncsb.ComplementNcsb;
+import operation.complement.ncsb.ComplementNcsbOtf;
 import operation.intersect.Intersect;
 
 public class Minus implements IMminus{
@@ -36,7 +36,7 @@ public class Minus implements IMminus{
         }
         mFstOperand = fstOperand;
         mSndOperand = sndOperand;
-        mSndComplement = new ComplementNcsb(sndOperand);
+        mSndComplement = new ComplementNcsbOtf(sndOperand);
         mResult = new Intersect(mFstOperand, mSndComplement);
     }
 
