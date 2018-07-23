@@ -26,10 +26,8 @@ import java.io.PrintStream;
 import automata.Buchi;
 import automata.IBuchi;
 import automata.IState;
-import gnu.trove.map.TObjectIntMap;
-import gnu.trove.map.hash.TObjectIntHashMap;
+
 import main.Options;
-import operation.complement.Complement;
 import operation.explore.Explore;
 
 // valid for all nondeterministic Buchi automata
@@ -38,52 +36,26 @@ import operation.explore.Explore;
  * 
  *  Weak alternating automata are not that weak
  *  by  Orna Kupferman and  Moshe Y. Vardi
- *  in ACM Transactions on Computational Logic 
+ *  in ACM Transactions on Computational Logic
+ *  
+ *   A simple implementation for the rank-based complementation
+ *   
  */
 
-public class ComplementRankKV extends Complement {
-
-    private TObjectIntMap<StateRankKV> mStateIndices;
+public class ComplementRankKV extends ComplementRank<StateRankKV> {
     
     public ComplementRankKV(IBuchi operand) {
         super(operand);
     }
-    
-    @Override
-    protected void computeInitialStates() {
-        // compute initial states
-        mStateIndices = new TObjectIntHashMap<>();
-        int n = mOperand.getStateSize();
-        int r = mOperand.getFinalStates().cardinality();
-        LevelRankingState lvlRnk = new LevelRankingState();
-        for(final int init : mOperand.getInitialStates()) {
-            lvlRnk.addLevelRank(init, 2*(n - r), false);
-        }
-        StateRankKV stateLvlRnk = getOrAddState(lvlRnk);
-        this.setInitial(stateLvlRnk.getId());
-    }
-    
-    protected StateRankKV getStateLevelRanking(int id) {
-        return (StateRankKV)getState(id);
-    }
-
-    protected StateRankKV getOrAddState(LevelRankingState lvlRank) {
-        StateRankKV state = new StateRankKV(this, 0, lvlRank);
-        if(mStateIndices.containsKey(state)) {
-            return getStateLevelRanking(mStateIndices.get(state));
-        }else {
-            int index = getStateSize();
-            StateRankKV newState = new StateRankKV(this, index, lvlRank);
-            int id = this.addState(newState);
-            mStateIndices.put(newState, id);
-            if(lvlRank.isOEmpty()) setFinal(index);
-            return newState;
-        }
-    }
 
     @Override
     public String getName() {
-        return "ComplementRank";
+        return "ComplementRankKV";
+    }
+
+    @Override
+    protected StateRankKV makeRankState(int id, LevelRanking lvlRank) {
+        return new StateRankKV(this, id, lvlRank);
     }
     
     public static void main(String[] args) {

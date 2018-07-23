@@ -23,31 +23,42 @@ import gnu.trove.map.TIntIntMap;
 import gnu.trove.map.hash.TIntIntHashMap;
 import gnu.trove.procedure.TIntIntProcedure;
 import gnu.trove.procedure.TIntProcedure;
+import operation.complement.ncsb.NCSB;
 import util.ISet;
 import util.UtilISet;
 
 /**
  * representation for (S, O, f)
+ * 
  * **/
 
-public class LevelRankingState {
+public class LevelRanking {
 
-    protected final TIntIntMap mLevelRankings;
+    protected final TIntIntMap mRanks;
     protected static final int TWO = 2;
     protected static final int ONE = 1;
     protected static final int ZERO = 0;
     protected int mMaxRank;
+    protected final ISet mSSet;
     protected final ISet mOSet;
+    protected int mTurn;
+    protected final boolean mIsRanked;
     
-    public LevelRankingState() {
-        mLevelRankings = new TIntIntHashMap();
+    public LevelRanking(boolean isRanked) {
+        mIsRanked = isRanked;
+        mRanks = new TIntIntHashMap();
         mMaxRank = -1;
+        this.mSSet = UtilISet.newISet();
         this.mOSet = UtilISet.newISet();
     }
     
-    
+    // for ranked states only
     public void addLevelRank(int state, int rank, boolean isInO) {
-        mLevelRankings.put(state, rank);
+        if(! mIsRanked ) {
+            throw new UnsupportedOperationException("addLevelRank for ranked states only");
+        }
+        mRanks.put(state, rank);
+        mSSet.set(state);
         if (mMaxRank < rank) {
             mMaxRank = rank;
         }
@@ -57,14 +68,22 @@ public class LevelRankingState {
     }
     
     public void addToO(int state) {
-        assert mLevelRankings.containsKey(state);
+        assert mRanks.containsKey(state);
         mOSet.set(state);
     }
-
+    
+    // for unranked states only
+    public void setS(ISet s) {
+        if(mIsRanked ) {
+            throw new UnsupportedOperationException("setS for unranked states only");
+        }
+        mSSet.clear();
+        mSSet.or(s);
+    }
     
     public int getLevelRank(int state) {
-        if(mLevelRankings.containsKey(state)) {
-            return mLevelRankings.get(state);
+        if(mRanks.containsKey(state)) {
+            return mRanks.get(state);
         }
         return -1;
     }
@@ -73,56 +92,71 @@ public class LevelRankingState {
     public boolean equals(Object obj) {
         if(obj == null) return false;
         if(this == obj) return true;
-        if(obj instanceof LevelRankingState) {
-            LevelRankingState other = (LevelRankingState)obj;
-            ISet S = getS();
-            ISet otherS = other.getS();
+        if(obj instanceof LevelRanking) {
+            LevelRanking other = (LevelRanking)obj;
+            if(mIsRanked != other.isRanked()) {
+                return false;
+            }
+            ISet S = copyS();
+            ISet otherS = other.copyS();
             if(S.cardinality() != otherS.cardinality()) return false;
             if(!S.equals(otherS)) return false;
-            for(final int state : S) {
-                if(mLevelRankings.get(state)
-                  != other.mLevelRankings.get(state)) {
-                    return false;
+            if(mIsRanked) {
+                for(final int state : S) {
+                    if(mRanks.get(state)
+                      != other.mRanks.get(state)) {
+                        return false;
+                    }
                 }
+                return mOSet.equals(other.mOSet);
+            }else {
+                return true;
             }
-            return mOSet.equals(other.mOSet);
+
         }
         return false;
     }
     
     @Override
-    public LevelRankingState clone() {
-        LevelRankingState copy = new LevelRankingState();
-        TIntIntProcedure procedure = new TIntIntProcedure() {
-            @Override
-            public boolean execute(int state, int rank) {
-                copy.addLevelRank(state, rank, mOSet.get(state));
-                return true;
+    public LevelRanking clone() {
+        LevelRanking copy = new LevelRanking(this.mIsRanked);
+        if(this.mIsRanked) {
+            for(int state : copyS()) {
+                copy.addLevelRank(state, mRanks.get(state), isInO(state));
             }
-        };
-        mLevelRankings.forEachEntry(procedure);
+        }else {
+            copy.setS(mSSet);
+        }
         return copy;
     }
-
+    
     public ISet getS() {
-        ISet keys = UtilISet.newISet();
-        TIntProcedure procedure = new TIntProcedure() {
-            @Override
-            public boolean execute(int state) {
-                keys.set(state);
-                return true;
-            }
-        };
-        mLevelRankings.forEachKey(procedure);
-        return keys;
+        return mSSet;
+    }
+
+    public ISet copyS() {
+        return mSSet.clone();
     }
     
     public ISet getO() {
+        return mOSet;
+    }
+    
+    public ISet copyO() {
         return mOSet.clone();
     }
     
+    public boolean isFinal() {
+        return mRanks.isEmpty();
+    }
+
+    
     boolean isInO(int state) {
         return mOSet.get(state);
+    }
+    
+    boolean isRanked() {
+        return mIsRanked;
     }
     
     boolean isOEmpty() {
@@ -135,26 +169,16 @@ public class LevelRankingState {
     
     @Override
     public String toString() {
-        return "S=" + mLevelRankings + " : O =" + mOSet;
+        return "S=" + mRanks + " : O =" + mOSet;
     }
     
     @Override
     public int hashCode() {
-        int p = mLevelRankings.hashCode();
-        return p * 31 + hashValue(mOSet);
+        int p = mRanks.hashCode();
+        return p * 31 + NCSB.hashValue(mOSet);
     }
     
-    public static int hashValue(ISet set) {
-        final int prime = 31;
-        int result = 1;
-        for(final int n : set) {
-            result = prime * result + n;
-        }
-        return result;
-    }
-    
-    
-    
+    // ------------------------------------------------------------------------
     /**
      * Count the number of ranks occurred in the function
      * */
@@ -169,7 +193,7 @@ public class LevelRankingState {
                 return true;
             }
         };
-        mLevelRankings.forEachValue(procedure);
+        mRanks.forEachValue(procedure);
         return ranks;
     } 
     

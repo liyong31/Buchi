@@ -28,29 +28,15 @@ import util.ISet;
 import util.UtilISet;
 
 /**
- * a representation for a state in rank-based
- * complementation algorithm (S, O, f)
+ * a representation for a state in rank-based complementation algorithm (S, O, f)
  * */
 
-public class StateRankKV extends State {
- 
-    private final ComplementRankKV mComplement;
-    private final IBuchi mOperand;
-    private final LevelRankingState mLevelRanking; // (S, O, f)
+public class StateRankKV extends StateRank<ComplementRankKV> {
     
-    public StateRankKV(ComplementRankKV complement, int id, LevelRankingState lvlRank) {
-        super(id);
-        this.mComplement = complement;
-        this.mOperand = complement.getOperand();
-        this.mLevelRanking = lvlRank;
+    public StateRankKV(ComplementRankKV complement, int id, LevelRanking lvlRank) {
+        super(complement, id, lvlRank);
     }
     
-    public LevelRankingState getLevelRanking() {
-        return mLevelRanking;
-    }
-    
-    private ISet mVisitedLetters = UtilISet.newISet();
-
     @Override
     public ISet getSuccessors(int letter) {
         if(mVisitedLetters.get(letter)) {
@@ -58,44 +44,22 @@ public class StateRankKV extends State {
         }
         mVisitedLetters.set(letter);
         LevelRankingConstraint constraint = new LevelRankingConstraint();
-        ISet S = mLevelRanking.getS();
-        for(final int s : S) {
+        for(final int s : mLevelRanking.getS()) {
             for(final int t : mOperand.getState(s).getSuccessors(letter)) {
                 constraint.addConstraint(t, mLevelRanking.getLevelRank(s), mLevelRanking.isInO(s), mLevelRanking.isOEmpty());
             }
         }
-        LevelRankingGenerator generator = new LevelRankingGenerator(mComplement);
+        LevelRankingGenerator generator = new LevelRankingGenerator(mOperand);
         System.out.println("state=" + this.toString() + " letter=" + letter);
-        Collection<LevelRankingState> lvlRanks = generator.generateLevelRankings(constraint);
+        Collection<LevelRanking> lvlRanks = generator.generateLevelRankings(constraint);
         
-        for(LevelRankingState lvlRank : lvlRanks) {
+        for(LevelRanking lvlRank : lvlRanks) {
             StateRankKV succ = mComplement.getOrAddState(lvlRank);
             super.addSuccessor(letter, succ.getId());
             System.out.println("Successor: " + succ.getId() + " = " + succ);
         }
         
         return super.getSuccessors(letter);
-    }
-    
-    @Override
-    public String toString() {
-        return  mLevelRanking + "";
-    }
-    
-    @Override
-    public int hashCode() {
-        return mLevelRanking.hashCode();
-    }
-    
-    @Override
-    public boolean equals(Object obj) {
-        if(obj == null) return false;
-        if(obj == this) return true;
-        if(obj instanceof StateRankKV) {
-            StateRankKV other = (StateRankKV)obj;
-            return mLevelRanking.equals(other.mLevelRanking);
-        }
-        return false;
     }
 
 }

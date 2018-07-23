@@ -19,18 +19,18 @@
 
 package operation.complement.rank;
 
-public class LevelRankingConstraint extends LevelRankingState {
+public class LevelRankingConstraint extends LevelRanking {
     
     public LevelRankingConstraint() {
-        
+        super(true);
     }
     
     
     protected void addConstraint(final int state, final int predRank, final boolean predIsInO
             , final boolean predOIsEmpty) {
-        final int oldRank = mLevelRankings.get(state);
-        if (oldRank == mLevelRankings.getNoEntryValue() || oldRank > predRank) {
-            mLevelRankings.put(state, predRank);
+        final int oldRank = mRanks.get(state);
+        if (oldRank == mRanks.getNoEntryValue() || oldRank > predRank) {
+            mRanks.put(state, predRank);
         }
         if (mMaxRank < predRank) {
             mMaxRank = predRank;
@@ -41,7 +41,6 @@ public class LevelRankingConstraint extends LevelRankingState {
             addToO(state);
         }
     }
-
     
 
 }
