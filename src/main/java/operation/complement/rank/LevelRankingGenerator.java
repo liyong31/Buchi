@@ -110,6 +110,10 @@ public class LevelRankingGenerator extends LevelRankingConstraint {
         generateLevelRankings(constraint, states, i + 1, succStates, listOfRanks);
     }
     
+    /**
+     * given a maxRank, return all possible rankings
+     * note that final state only have even ranks
+     * **/
     private ISet getPotentialRanks(int maxRank, boolean isFinal) {
         ISet ranks = UtilISet.newISet();
         int low;

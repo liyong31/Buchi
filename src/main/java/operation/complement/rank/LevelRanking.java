@@ -21,8 +21,7 @@ package operation.complement.rank;
 
 import gnu.trove.map.TIntIntMap;
 import gnu.trove.map.hash.TIntIntHashMap;
-import gnu.trove.procedure.TIntIntProcedure;
-import gnu.trove.procedure.TIntProcedure;
+
 import operation.complement.ncsb.NCSB;
 import util.ISet;
 import util.UtilISet;
@@ -186,14 +185,10 @@ public class LevelRanking {
         assert mMaxRank >= 0;
         assert mMaxRank < Integer.MAX_VALUE : "ERROR RANKS";
         final int[] ranks = new int[mMaxRank + 1];
-        TIntProcedure procedure = new TIntProcedure() {
-            @Override
-            public boolean execute(int rank) {
-                ranks[rank]++;
-                return true;
-            }
-        };
-        mRanks.forEachValue(procedure);
+        for(final int s : getS()) {
+            int rank = mRanks.get(s);
+            ranks[rank]++;
+        }
         return ranks;
     } 
     

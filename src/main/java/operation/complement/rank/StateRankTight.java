@@ -1,5 +1,7 @@
 package operation.complement.rank;
 
+import java.util.Collection;
+
 import util.ISet;
 import util.UtilISet;
 
@@ -19,14 +21,37 @@ public class StateRankTight extends StateRank<ComplementRankTight> {
         mVisitedLetters.set(letter);
         // first compute subset state
         ISet succs = UtilRank.collectSuccessors(mOperand, mLevelRanking.getS(), letter);
-        LevelRanking lvlSucc;
+        
         if(!mLevelRanking.isRanked()) {
-            lvlSucc = new LevelRanking(false);
+            LevelRanking lvlSucc = new LevelRanking(false);
             lvlSucc.setS(succs);
             StateRankTight succ = mComplement.getOrAddState(lvlSucc);
             super.addSuccessor(letter, succ.getId());
         }
-        // second compute ranking state
+        LevelRankingConstraint constraint = null;
+        
+        if(mLevelRanking.isRanked()) {
+            
+        }else {
+            constraint =  getUnRankedConstraint(succs);
+        }
+        
+        LevelRankingGenerator generator = new LevelRankingGenerator(mOperand);
+        System.out.println("state=" + this.toString() + " letter=" + letter);
+        Collection<LevelRanking> lvlRanks = generator.generateLevelRankings(constraint);
+        
+        for(LevelRanking lvlRank : lvlRanks) {
+            if(lvlRank.isTight()) continue;
+            StateRankTight succ = mComplement.getOrAddState(lvlRank);
+            super.addSuccessor(letter, succ.getId());
+            System.out.println("Successor: " + succ.getId() + " = " + succ);
+        }
+        
+        return super.getSuccessors(letter);
+    }
+    
+    private LevelRankingConstraint getUnRankedConstraint(ISet succs) {
+     // second compute ranking state
         int maxRank = succs.cardinality();
         for(final int s : succs) {
             if(mOperand.isFinal(s)) {
@@ -42,8 +67,7 @@ public class StateRankTight extends StateRank<ComplementRankTight> {
                 constraint.addConstraint(s, maxRank, false, false);
             }
         }
-        
-        return super.getSuccessors(letter);
+        return constraint;
     }
 
 
