@@ -20,19 +20,20 @@ public class StateRankTight extends StateRank<ComplementRankTight> {
         }
         mVisitedLetters.set(letter);
         // first compute subset state
-        ISet succs = UtilRank.collectSuccessors(mOperand, mLevelRanking.getS(), letter);
-        
         if(!mLevelRanking.isRanked()) {
+            // subset construction
+            ISet succs = UtilRank.collectSuccessors(mOperand, mLevelRanking.getS(), letter);
             LevelRanking lvlSucc = new LevelRanking(false);
             lvlSucc.setS(succs);
             StateRankTight succ = mComplement.getOrAddState(lvlSucc);
             super.addSuccessor(letter, succ.getId());
         }
+        // add ranked states
         LevelRankingConstraint constraint = null;
-        
         if(mLevelRanking.isRanked()) {
-            
+            constraint = getRankedConstraint(letter);
         }else {
+            ISet succs = UtilRank.collectSuccessors(mOperand, mLevelRanking.getS(), letter);
             constraint =  getUnRankedConstraint(succs);
         }
         
@@ -41,7 +42,7 @@ public class StateRankTight extends StateRank<ComplementRankTight> {
         Collection<LevelRanking> lvlRanks = generator.generateLevelRankings(constraint);
         
         for(LevelRanking lvlRank : lvlRanks) {
-            if(lvlRank.isTight()) continue;
+            if(!lvlRank.isTight()) continue;
             StateRankTight succ = mComplement.getOrAddState(lvlRank);
             super.addSuccessor(letter, succ.getId());
             System.out.println("Successor: " + succ.getId() + " = " + succ);
@@ -69,6 +70,16 @@ public class StateRankTight extends StateRank<ComplementRankTight> {
         }
         return constraint;
     }
+    
+    private LevelRankingConstraint getRankedConstraint(int letter) {
+           LevelRankingConstraint constraint = new LevelRankingConstraint();
+           for(final int s : mLevelRanking.getS()) {
+               for(final int t : mOperand.getState(s).getSuccessors(letter)) {
+                   constraint.addConstraint(t, mLevelRanking.getLevelRank(s), mLevelRanking.isInO(s), mLevelRanking.isOEmpty());
+               }
+           }
+           return constraint;
+       }
 
 
 }

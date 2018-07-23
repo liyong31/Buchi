@@ -29,17 +29,15 @@ public class LevelRankingConstraint extends LevelRanking {
     protected void addConstraint(final int state, final int predRank, final boolean predIsInO
             , final boolean predOIsEmpty) {
         final int oldRank = mRanks.get(state);
+        int rank = oldRank;
         if (oldRank == mRanks.getNoEntryValue() || oldRank > predRank) {
-            mRanks.put(state, predRank);
+            rank = predRank;
         }
-        if (mMaxRank < predRank) {
-            mMaxRank = predRank;
-        }
-        
+//        if (mMaxRank < predRank) {
+//            mMaxRank = predRank;
+//        }
         boolean isInO = predIsInO || predOIsEmpty;
-        if(isInO) {
-            addToO(state);
-        }
+        this.addLevelRank(state, rank, isInO);
     }
     
 

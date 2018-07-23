@@ -43,9 +43,11 @@ public class Options {
     // decrease one at a time
     public static boolean mMinusOne = false;
     
-    // only tight rank is allowed
+    // only tight rank is allowed in FKV's paper
     public static boolean mTightRank = false;
     
+    // only turn wise in Sven's paper
+    public static boolean mTurnwise = false;
     
     // deterministic guess for jumping edges
     public static boolean mEnhancedSliceGuess= false;

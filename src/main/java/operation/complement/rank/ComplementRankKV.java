@@ -34,7 +34,7 @@ import operation.explore.Explore;
 
 /**
  * 
- *  Weak alternating automata are not that weak
+ *  "Weak alternating automata are not that weak"
  *  by  Orna Kupferman and  Moshe Y. Vardi
  *  in ACM Transactions on Computational Logic
  *  

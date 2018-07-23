@@ -146,7 +146,7 @@ public class LevelRanking {
     }
     
     public boolean isFinal() {
-        return mRanks.isEmpty();
+        return isRanked() && isOEmpty();
     }
 
     
@@ -168,13 +168,25 @@ public class LevelRanking {
     
     @Override
     public String toString() {
-        return "S=" + mRanks + " : O =" + mOSet;
+        if(isRanked()) {
+            return "(S=" + mSSet + " ,O =" + mOSet + " f="+ mRanks + ")";   
+        }else {
+            return "" + mSSet;
+        }
     }
     
+    protected boolean mHasCode = false;
+    protected int mHashCode ;
     @Override
     public int hashCode() {
-        int p = mRanks.hashCode();
-        return p * 31 + NCSB.hashValue(mOSet);
+        if(mHasCode) {
+            return mHashCode;
+        }else {
+            mHashCode = mRanks.hashCode();
+            mHashCode = mHashCode * 31 + NCSB.hashValue(mSSet);
+            mHashCode = mHashCode * 31 + NCSB.hashValue(mOSet);
+            return mHashCode;            
+        }
     }
     
     // ------------------------------------------------------------------------

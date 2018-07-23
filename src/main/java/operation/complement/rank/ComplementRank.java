@@ -20,7 +20,7 @@ public abstract class ComplementRank<S extends State>  extends Complement {
         // compute initial states
         mStateIndices = new TObjectIntHashMap<>();
         LevelRanking lvlRnk = null;
-        if(Options.mTightRank) {
+        if(!Options.mTightRank) {
             int n = mOperand.getStateSize();
             int r = mOperand.getFinalStates().cardinality();
             lvlRnk = new LevelRanking(true);

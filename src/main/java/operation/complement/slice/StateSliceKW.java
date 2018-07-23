@@ -14,7 +14,7 @@ import util.PowerSet;
 import util.UtilISet;
 
 
-//TODO
+//TODO NOT implemented yet
 public class StateSliceKW extends State {
 
     private final ComplementSliceKW mComplement;
