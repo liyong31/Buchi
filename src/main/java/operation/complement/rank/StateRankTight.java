@@ -20,6 +20,7 @@ public class StateRankTight extends StateRank<ComplementRankTight> {
             return super.getSuccessors(letter);
         }
         mVisitedLetters.set(letter);
+        LevelRankingConstraint constraint = null;
         // first compute subset state
         if(!mLevelRanking.isRanked()) {
             // subset construction
@@ -28,14 +29,9 @@ public class StateRankTight extends StateRank<ComplementRankTight> {
             lvlSucc.setS(succs);
             StateRankTight succ = mComplement.getOrAddState(lvlSucc);
             super.addSuccessor(letter, succ.getId());
-        }
-        // add ranked states
-        LevelRankingConstraint constraint = null;
-        if(mLevelRanking.isRanked()) {
-            constraint = getRankedConstraint(letter);
-        }else {
-            ISet succs = UtilRank.collectSuccessors(mOperand, mLevelRanking.getS(), letter);
             constraint =  getUnRankedConstraint(succs);
+        }else {
+            constraint = UtilRank.getRankedConstraint(mOperand, mLevelRanking, letter);
         }
         
         LevelRankingGenerator generator = new LevelRankingGenerator(mOperand);
@@ -43,7 +39,10 @@ public class StateRankTight extends StateRank<ComplementRankTight> {
         Collection<LevelRanking> lvlRanks = generator.generateLevelRankings(constraint);
         
         for(LevelRanking lvlRank : lvlRanks) {
-            if(!lvlRank.isTight()) continue;
+            if(!isValidTightLevelRanking(lvlRank)) continue;
+            if(Options.mTurnwise ) {
+                lvlRank = getCutpointLevelRanking(lvlRank);
+            }
             StateRankTight succ = mComplement.getOrAddState(lvlRank);
             super.addSuccessor(letter, succ.getId());
             System.out.println("Successor: " + succ.getId() + " = " + succ);
@@ -52,8 +51,15 @@ public class StateRankTight extends StateRank<ComplementRankTight> {
         return super.getSuccessors(letter);
     }
     
+    /**
+     * firstly the successor has to be tight and secondly maximal rank does not change
+     * **/
+    private boolean isValidTightLevelRanking(LevelRanking lvlRank) {
+        return lvlRank.isTight() && (!mLevelRanking.isRanked() || (lvlRank.getMaximalRank() == mLevelRanking.getMaximalRank())); 
+    }
+    
     private LevelRankingConstraint getUnRankedConstraint(ISet succs) {
-     // second compute ranking state
+        // second compute ranking state
         int maxRank = succs.cardinality();
         for(final int s : succs) {
             if(mOperand.isFinal(s)) {
@@ -72,15 +78,36 @@ public class StateRankTight extends StateRank<ComplementRankTight> {
         return constraint;
     }
     
-    private LevelRankingConstraint getRankedConstraint(int letter) {
-           LevelRankingConstraint constraint = new LevelRankingConstraint();
-           for(final int s : mLevelRanking.getS()) {
-               for(final int t : mOperand.getState(s).getSuccessors(letter)) {
-                   constraint.addConstraint(t, mLevelRanking.getLevelRank(s), mLevelRanking.isInO(s), mLevelRanking.isOEmpty());
-               }
-           }
-           return constraint;
-       }
+    private LevelRanking getCutpointLevelRanking(LevelRanking lvlRank) {
+        // rank(f) = rank(f') already satisfied
+        if(mLevelRanking.isOEmpty()) {
+            // O is empty, i' = (i + 2) mod (rank(f') + 1), O' = f'^{-1}(i')
+            int ip = (mLevelRanking.getTurn() + 2) % (lvlRank.getMaximalRank() + 1);
+            LevelRanking lvlSucc = new LevelRanking(true, true);
+            lvlSucc.setTurn(ip);
+            for(final int s : lvlRank.getS()) {
+                boolean isInO = false;
+                if(lvlRank.getLevelRank(s) == ip) {
+                    isInO = true;
+                }
+                lvlSucc.addLevelRank(s, lvlRank.getLevelRank(s), isInO);
+            }
+            return lvlSucc;
+        }else {
+            // O is not empty, i' = i, O' = d(O) /\ f'^{-1}(i')
+            int ip = mLevelRanking.getTurn();
+            LevelRanking lvlSucc = new LevelRanking(true, true);
+            lvlSucc.setTurn(ip);
+            for(final int s : lvlRank.getS()) {
+                boolean isInO = false;
+                if(lvlRank.getLevelRank(s) == ip && lvlRank.getO().get(s)) {
+                    isInO = true;
+                }
+                lvlSucc.addLevelRank(s, lvlRank.getLevelRank(s), isInO);
+            }
+            return lvlSucc;
+        }
+    }
 
 
 }

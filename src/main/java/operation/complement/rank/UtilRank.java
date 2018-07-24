@@ -17,5 +17,16 @@ public class UtilRank {
         }
         return succs;
     }
+    
+    public static LevelRankingConstraint getRankedConstraint(IBuchi buchi, LevelRanking lvlRank, int letter) {
+        LevelRankingConstraint constraint = new LevelRankingConstraint();
+        for (final int s : lvlRank.getS()) {
+            for (final int t : buchi.getState(s).getSuccessors(letter)) {
+                constraint.addConstraint(t, lvlRank.getLevelRank(s), lvlRank.isInO(s),
+                        lvlRank.isOEmpty());
+            }
+        }
+        return constraint;
+    }
 
 }

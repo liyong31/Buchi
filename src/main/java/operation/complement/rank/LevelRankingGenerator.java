@@ -41,7 +41,7 @@ public class LevelRankingGenerator extends LevelRankingConstraint {
         ISet succs = null;
         ISet S = constraint.copyS();
         ISet O = constraint.copyO();
-        if(!Options.mLazyS) {
+        if(!Options.mLazyS ) {
             succs = S;
         }else {
             // only keep guessing the successors in O

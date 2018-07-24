@@ -27,17 +27,25 @@ import util.ISet;
 import util.UtilISet;
 
 /**
- * representation for (S, O, f)
+ * representation for (S, O, f, i)
+ * 
+ * @S the set of states reached from the initial states
+ * 
+ * @O the set of states for breakpoint construction
+ * 
+ * @f the level ranking function
+ * 
+ * @i the turn in Sven's paper for O states
  * 
  * **/
 
 public class LevelRanking {
 
-    protected final TIntIntMap mRanks;
+    protected final TIntIntMap mRanks;   // ranking function
     protected static final int TWO = 2;
     protected static final int ONE = 1;
     protected static final int ZERO = 0;
-    protected int mMaxRank;
+    protected int mMaxRank;             
     protected final ISet mSSet;
     protected final ISet mOSet;
     protected int mTurn;
@@ -52,7 +60,7 @@ public class LevelRanking {
         mIsTurnwised = isTurnwised;
         mRanks = new TIntIntHashMap();
         mMaxRank = -1;
-        mTurn = -1;
+        mTurn = 0;                   // by default 0
         mSSet = UtilISet.newISet();
         mOSet = UtilISet.newISet();
     }
@@ -87,8 +95,8 @@ public class LevelRanking {
     }
     
     public void setTurn(int turn) {
-        if(mIsRanked && mIsTurnwised) {
-            throw new UnsupportedOperationException("setS for unranked states only");
+        if(!mIsRanked || !mIsTurnwised) {
+            throw new UnsupportedOperationException("setTurn for ranked and turnwised states only");
         }
         mTurn = turn;
     }
@@ -135,7 +143,6 @@ public class LevelRanking {
             }else {
                 return true;
             }
-
         }
         return false;
     }
@@ -175,7 +182,8 @@ public class LevelRanking {
     }
     
     public boolean isFinal() {
-        return isRanked() && isOEmpty();
+        return (isRanked() && isOEmpty())
+             || (!isRanked() && mSSet.isEmpty());
     }
 
     
@@ -216,7 +224,7 @@ public class LevelRanking {
             return mHashCode;
         }else {
             mHashCode = mRanks.hashCode();
-            mHashCode = mHashCode * 31 + mTurn + 1;
+            mHashCode = mHashCode * 31 + mTurn;
             mHashCode = mHashCode * 31 + NCSB.hashValue(mSSet);
             mHashCode = mHashCode * 31 + NCSB.hashValue(mOSet);
             return mHashCode;            
