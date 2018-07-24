@@ -19,6 +19,7 @@
 
 package operation.complement.rank;
 
+import automata.IBuchi;
 import gnu.trove.map.TIntIntMap;
 import gnu.trove.map.hash.TIntIntHashMap;
 
@@ -267,10 +268,16 @@ public class LevelRanking {
         return true;
     }
     
-    /*
+    /**
      * Sven's STACS paper 
+     * 
+     * S-tight ranking function f with rank mMaxRank maximal with respect to S
+     * 
+     * 1. all final states in S have rank mMaxRank - 1
+     * 2. exactly one state to every odd rank o < mMaxRank
+     * 3. remaining states have rank mMaxRank 
      * */
-    boolean isMaximallyTight() {
+    boolean isMaximallyTight(IBuchi buchi) {
         assert mMaxRank >= 0;
         assert mMaxRank < Integer.MAX_VALUE : "ERROR RANKS";
         // 
@@ -278,21 +285,30 @@ public class LevelRanking {
             return false;
         }
         final int[] ranks = countRankNumbers();
+        // exactly one state to every odd rank < mMaxRank
+        int num = 0;
         for (int i = 1; i < mMaxRank; i += TWO) {
             if (ranks[i] != 1) {
                 return false;
             }
+            num ++;
         }
-        
+        // we have mMaxRank states
         if (ranks[mMaxRank] == 0) {
             return false;
         }
+        num += ranks[mMaxRank];
+        // no states assigned with all other ranks 
         for (int i = 0; i < mMaxRank - 1; i += TWO) {
             if (ranks[i] != 0) {
                 return false;
             }
         }
-        return true;
+        // check whether there are nonfinal states assigned with even rank
+        ISet fins = buchi.getFinalStates().clone();
+        fins.and(getS());
+        num += fins.cardinality();
+        return num == getS().cardinality();
     }
     
     // static helper functions

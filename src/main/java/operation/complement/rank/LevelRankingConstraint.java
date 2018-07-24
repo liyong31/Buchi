@@ -32,7 +32,7 @@ public class LevelRankingConstraint extends LevelRanking {
             , final boolean predOIsEmpty) {
         final int oldRank = mRanks.get(state);
         int rank = oldRank;
-        if (oldRank == mRanks.getNoEntryValue() || oldRank > predRank) {
+        if (!mRanks.containsKey(state) || oldRank > predRank) {
             rank = predRank;
         }
         boolean isInO = predIsInO || predOIsEmpty;

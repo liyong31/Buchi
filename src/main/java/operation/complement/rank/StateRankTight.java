@@ -20,6 +20,8 @@
 package operation.complement.rank;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 import main.Options;
 import util.ISet;
@@ -45,6 +47,7 @@ public class StateRankTight extends StateRank<ComplementRankTight> {
         // first compute subset state
         if(!mLevelRanking.isRanked()) {
             // subset construction
+            //d1
             ISet succs = UtilRank.collectSuccessors(mOperand, mLevelRanking.getS(), letter);
             LevelRanking lvlSucc = new LevelRanking(false, Options.mTurnwise);
             lvlSucc.setS(succs);
@@ -54,15 +57,39 @@ public class StateRankTight extends StateRank<ComplementRankTight> {
             lvlRanks = generator.generateLevelRankings(constraint);
         }else {
             constraint = UtilRank.getRankedConstraint(mOperand, mLevelRanking, letter);
-            lvlRanks = generator.generateLevelRankings(constraint, Options.mMinusOne);
+            if(Options.mReduceOutdegree) {
+                Set<LevelRanking> tempLvlRanks = new HashSet<>();
+                LevelRanking lvlRank = new LevelRanking(true, Options.mTurnwise);
+                for(final int s : constraint.getS()) {
+                    int rank = constraint.getLevelRank(s);
+                    lvlRank.addLevelRank(s, rank, LevelRanking.isEven(rank) && constraint.isInO(s));
+                }
+                tempLvlRanks.add(lvlRank);
+                lvlRanks = tempLvlRanks;
+            }else {
+                lvlRanks = generator.generateLevelRankings(constraint, Options.mMinusOne);
+            }
         }
         
         System.out.println("state=" + this.toString() + " letter=" + letter);
         
         for(LevelRanking lvlRank : lvlRanks) {
-            if(!isValidTightLevelRanking(lvlRank)) continue;
-            if(Options.mTurnwise ) {
-                lvlRank = getCutpointLevelRanking(lvlRank);
+            // only allow tight level rankings
+            if(! lvlRank.isTight()) {
+                continue;
+            }
+            if(mLevelRanking.isRanked()) {
+                // d3, rank(f) = rank(f')
+                if((lvlRank.getMaximalRank() != mLevelRanking.getMaximalRank())) {
+                    continue;
+                }else {
+                    if(Options.mTurnwise) {
+                        lvlRank = getCutpointLevelRanking(lvlRank);
+                    }
+                }
+            }else if(Options.mReduceOutdegree && ! lvlRank.isMaximallyTight(mOperand)) {
+                // d2 only allow maximal tight level ranking
+                continue;
             }
             StateRankTight succ = mComplement.getOrAddState(lvlRank);
             super.addSuccessor(letter, succ.getId());
@@ -75,7 +102,9 @@ public class StateRankTight extends StateRank<ComplementRankTight> {
     /**
      * firstly the successor has to be tight and secondly maximal rank does not change
      * **/
-    private boolean isValidTightLevelRanking(LevelRanking lvlRank) {
+    private boolean isValidLevelRanking(LevelRanking lvlRank) {
+        // tight, either predecessor is not ranked or the maximum rank should be the same
+        
         return lvlRank.isTight() && (!mLevelRanking.isRanked() || (lvlRank.getMaximalRank() == mLevelRanking.getMaximalRank())); 
     }
     
@@ -123,6 +152,9 @@ public class StateRankTight extends StateRank<ComplementRankTight> {
                 isInO = lvlRank.getLevelRank(s) == iprime && lvlRank.getO().get(s);
             }
             lvlSucc.addLevelRank(s, lvlRank.getLevelRank(s), isInO);
+        }
+        if(Options.mReduceOutdegree) {
+            // do some thing here
         }
         return lvlSucc;
     }

@@ -37,12 +37,19 @@ public class UtilRank {
         return succs;
     }
     
+    /**
+     * the rank of the successor is not larger than its predecessor
+     * **/
     public static LevelRankingConstraint getRankedConstraint(IBuchi buchi, LevelRanking lvlRank, int letter) {
         LevelRankingConstraint constraint = new LevelRankingConstraint();
         for (final int s : lvlRank.getS()) {
             for (final int t : buchi.getState(s).getSuccessors(letter)) {
-                constraint.addConstraint(t, lvlRank.getLevelRank(s), lvlRank.isInO(s),
-                        lvlRank.isOEmpty());
+                int rank = lvlRank.getLevelRank(s);
+                // final state should have even rank
+                if(LevelRanking.isOdd(rank) && buchi.isFinal(t)) {
+                    rank = Math.max(LevelRanking.ZERO, rank - 1);
+                }
+                constraint.addConstraint(t, rank, lvlRank.isInO(s), lvlRank.isOEmpty());
             }
         }
         return constraint;

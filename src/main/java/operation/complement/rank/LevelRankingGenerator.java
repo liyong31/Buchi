@@ -158,6 +158,26 @@ public class LevelRankingGenerator extends LevelRankingConstraint {
         return result;
     }
     
+    /**
+     * Sven's STACS paper 
+     * 
+     * S-tight ranking function f with rank mMaxRank maximal with respect to S
+     * 
+     * 1. all final states in S have rank mMaxRank - 1
+     * 2. exactly one state to every odd rank o < mMaxRank
+     * 3. remaining states have rank mMaxRank 
+     * */
+    public Set<LevelRanking> generateMaximalLevelRankings(LevelRankingConstraint constraint) {
+        // first fix a max rank and then add 
+        Set<LevelRanking> result = new HashSet<>();
+        for(int maxRank = 1; maxRank <= constraint.getMaximalRank(); maxRank += 2) {
+            int evenRank = maxRank - 1;
+            int numStatesSelected = (maxRank + 1) / 2;
+            
+        }
+        return result;
+    }
+    
     
     public static void main(String[] args) {
         Buchi buchi = new Buchi(2);

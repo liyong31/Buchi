@@ -38,6 +38,7 @@ import operation.complement.ncsb.ComplementNcsbOtf;
 import operation.complement.nsbc.ComplementNsbc;
 import operation.complement.ramsey.ComplementRamsey;
 import operation.complement.rank.ComplementRankKV;
+import operation.complement.rank.ComplementRankTight;
 import operation.complement.slice.ComplementSliceVW;
 import operation.complement.tuple.ComplementTuple;
 import operation.explore.Explore;
@@ -121,8 +122,19 @@ public class Main {
                 Options.mRemoveDead = true;
             }else if(args[i].equals("-mg")) {
                 Options.mDirectSimulation = true;
+            }else if(args[i].equals("-tight")) {
+                Options.mAlgo = Algorithm.TIGHT;
+                Options.mTightRank = true;
+            }else if(args[i].equals("-turnwise")) {
+                Options.mAlgo = Algorithm.TIGHT;
+                Options.mTightRank = true;
+                Options.mTurnwise = true;
+            }else if(args[i].equals("-rmdegree")) {
+                Options.mAlgo = Algorithm.TIGHT;
+                Options.mTightRank = true;
+                Options.mTurnwise = true;
+                Options.mReduceOutdegree = true;
             }
-			
 		}
 		time = time * 1_000; // miliseconds
 		if(test) {
@@ -173,6 +185,9 @@ public class Main {
 		System.out.println("-nsbc: NCSB complementation");
 		System.out.println("-ramsey: Ramsey-based complementation");
 		System.out.println("-rank: Rank-based complementation");
+		System.out.println("-tight: Tight ranking-based complementation");
+		System.out.println("-turnwise: Sven's turnwise rank-based complementation ");
+		System.out.println("-rmdegree: Sven's reduce outdegree rank-based complementation");
 		System.out.println("-tuple: Tuple-based complementation");
 		System.out.println("-slice: Slice-based complementation");
 		System.out.println("-rmdead: Remove dead states");
@@ -332,6 +347,9 @@ public class Main {
 	         break;
 		case NCSB:
             buchiComplement = new ComplementNcsb(buchi);
+            break;
+		case TIGHT:
+            buchiComplement = new ComplementRankTight(buchi);
             break;
         default:
             buchiComplement = new ComplementRankKV(buchi);

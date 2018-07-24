@@ -45,6 +45,7 @@ public class Options {
 	    NCSBOTF, // actually NCSB is a special case of RANK-based algorithm 
 	    NCSB,
 	    RANK,
+	    TIGHT,
 	    RAMSEY,
 	    TUPLE,
 	    SLICE,
@@ -67,6 +68,8 @@ public class Options {
     
     // only turn wise in Sven's paper
     public static boolean mTurnwise = false;
+    
+    public static boolean mReduceOutdegree = false;
     
     // deterministic guess for jumping edges
     public static boolean mEnhancedSliceGuess= false;
