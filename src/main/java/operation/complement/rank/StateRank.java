@@ -6,7 +6,6 @@ import util.ISet;
 import util.UtilISet;
 
 public abstract class StateRank<C extends ComplementRank<?>> extends State {
-
     
     protected final C mComplement;
     protected final IBuchi mOperand;

@@ -21,6 +21,8 @@ public class StateRankTight extends StateRank<ComplementRankTight> {
         }
         mVisitedLetters.set(letter);
         LevelRankingConstraint constraint = null;
+        LevelRankingGenerator generator = new LevelRankingGenerator(mOperand);
+        Collection<LevelRanking> lvlRanks;
         // first compute subset state
         if(!mLevelRanking.isRanked()) {
             // subset construction
@@ -30,13 +32,13 @@ public class StateRankTight extends StateRank<ComplementRankTight> {
             StateRankTight succ = mComplement.getOrAddState(lvlSucc);
             super.addSuccessor(letter, succ.getId());
             constraint =  getUnRankedConstraint(succs);
+            lvlRanks = generator.generateLevelRankings(constraint);
         }else {
             constraint = UtilRank.getRankedConstraint(mOperand, mLevelRanking, letter);
+            lvlRanks = generator.generateLevelRankings(constraint, Options.mMinusOne);
         }
         
-        LevelRankingGenerator generator = new LevelRankingGenerator(mOperand);
         System.out.println("state=" + this.toString() + " letter=" + letter);
-        Collection<LevelRanking> lvlRanks = generator.generateLevelRankings(constraint);
         
         for(LevelRanking lvlRank : lvlRanks) {
             if(!isValidTightLevelRanking(lvlRank)) continue;
@@ -78,35 +80,32 @@ public class StateRankTight extends StateRank<ComplementRankTight> {
         return constraint;
     }
     
+    
     private LevelRanking getCutpointLevelRanking(LevelRanking lvlRank) {
         // rank(f) = rank(f') already satisfied
+        assert mLevelRanking.getMaximalRank() == lvlRank.getMaximalRank();
+        int iprime ;
         if(mLevelRanking.isOEmpty()) {
             // O is empty, i' = (i + 2) mod (rank(f') + 1), O' = f'^{-1}(i')
-            int ip = (mLevelRanking.getTurn() + 2) % (lvlRank.getMaximalRank() + 1);
-            LevelRanking lvlSucc = new LevelRanking(true, true);
-            lvlSucc.setTurn(ip);
-            for(final int s : lvlRank.getS()) {
-                boolean isInO = false;
-                if(lvlRank.getLevelRank(s) == ip) {
-                    isInO = true;
-                }
-                lvlSucc.addLevelRank(s, lvlRank.getLevelRank(s), isInO);
-            }
-            return lvlSucc;
+            iprime = (mLevelRanking.getTurn() + 2) % (lvlRank.getMaximalRank() + 1);
         }else {
             // O is not empty, i' = i, O' = d(O) /\ f'^{-1}(i')
-            int ip = mLevelRanking.getTurn();
-            LevelRanking lvlSucc = new LevelRanking(true, true);
-            lvlSucc.setTurn(ip);
-            for(final int s : lvlRank.getS()) {
-                boolean isInO = false;
-                if(lvlRank.getLevelRank(s) == ip && lvlRank.getO().get(s)) {
-                    isInO = true;
-                }
-                lvlSucc.addLevelRank(s, lvlRank.getLevelRank(s), isInO);
-            }
-            return lvlSucc;
+            iprime = mLevelRanking.getTurn();
         }
+        LevelRanking lvlSucc = new LevelRanking(true, true);
+        lvlSucc.setTurn(iprime);
+        for(final int s : lvlRank.getS()) {
+            boolean isInO = false;
+            if(mLevelRanking.isOEmpty()) {
+                // O is empty, i' = (i + 2) mod (rank(f') + 1), O' = f'^{-1}(i')
+                isInO = lvlRank.getLevelRank(s) == iprime;
+            }else {
+                // O is not empty, i' = i, O' = d(O) /\ f'^{-1}(i')
+                isInO = lvlRank.getLevelRank(s) == iprime && lvlRank.getO().get(s);
+            }
+            lvlSucc.addLevelRank(s, lvlRank.getLevelRank(s), isInO);
+        }
+        return lvlSucc;
     }
 
 

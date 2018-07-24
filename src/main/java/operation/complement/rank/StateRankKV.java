@@ -21,11 +21,8 @@ package operation.complement.rank;
 
 import java.util.Collection;
 
-import automata.IBuchi;
-
-import automata.State;
+import main.Options;
 import util.ISet;
-import util.UtilISet;
 
 /**
  * a representation for a state in rank-based complementation algorithm (S, O, f)
@@ -43,16 +40,10 @@ public class StateRankKV extends StateRank<ComplementRankKV> {
             return super.getSuccessors(letter);
         }
         mVisitedLetters.set(letter);
-        LevelRankingConstraint constraint = new LevelRankingConstraint();
-        for(final int s : mLevelRanking.getS()) {
-            for(final int t : mOperand.getState(s).getSuccessors(letter)) {
-                constraint.addConstraint(t, mLevelRanking.getLevelRank(s), mLevelRanking.isInO(s), mLevelRanking.isOEmpty());
-            }
-        }
+        LevelRankingConstraint constraint = UtilRank.getRankedConstraint(mOperand, mLevelRanking, letter);
         LevelRankingGenerator generator = new LevelRankingGenerator(mOperand);
         System.out.println("state=" + this.toString() + " letter=" + letter);
-        Collection<LevelRanking> lvlRanks = generator.generateLevelRankings(constraint);
-        
+        Collection<LevelRanking> lvlRanks = generator.generateLevelRankings(constraint, Options.mMinusOne);
         for(LevelRanking lvlRank : lvlRanks) {
             StateRankKV succ = mComplement.getOrAddState(lvlRank);
             super.addSuccessor(letter, succ.getId());

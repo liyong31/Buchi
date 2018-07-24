@@ -130,12 +130,13 @@ public class LevelRanking {
             }
             ISet S = copyS();
             ISet otherS = other.copyS();
-            if(S.cardinality() != otherS.cardinality()) return false;
+            if(S.cardinality() != otherS.cardinality()) {
+                return false;
+            }
             if(!S.equals(otherS)) return false;
             if(mIsRanked) {
                 for(final int state : S) {
-                    if(mRanks.get(state)
-                      != other.mRanks.get(state)) {
+                    if(mRanks.get(state) != other.mRanks.get(state)) {
                         return false;
                     }
                 }
@@ -256,13 +257,13 @@ public class LevelRanking {
         if (isEven(mMaxRank)) {
             return false;
         }
+        // all odd ranks less than maximal rank should exist
         final int[] ranks = countRankNumbers();
         for (int i = 1; i <= mMaxRank; i += TWO) {
             if (ranks[i] == 0) {
                 return false;
             }
         }
-        // all odd ranks less than maximal rank should exist
         return true;
     }
     

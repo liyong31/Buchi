@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import automata.Buchi;
 import automata.IBuchi;
 import main.Options;
 import util.ISet;
@@ -36,30 +37,30 @@ public class LevelRankingGenerator extends LevelRankingConstraint {
         mOperand = operand;
     }
     
-    public Collection<LevelRanking> generateLevelRankings(LevelRankingConstraint constraint) {
-        //
-        ISet succs = null;
+    public Set<LevelRanking> generateLevelRankings(LevelRankingConstraint constraint) {
+        return generateLevelRankings(constraint, false);
+    }
+    
+    /**
+     * only decrease by one
+     * */
+    public Set<LevelRanking> generateLevelRankings(LevelRankingConstraint constraint, boolean minusOne) {
+        ISet set = null;
         ISet S = constraint.copyS();
-        ISet O = constraint.copyO();
-        if(!Options.mLazyS ) {
-            succs = S;
+        ISet O = constraint.getO();
+        boolean decreaseInS = !Options.mLazyS || O.isEmpty();
+        if(decreaseInS) {
+            set = S;
         }else {
             // only keep guessing the successors in O
-            succs = O;
+            set = O;
         }
-        
-        ISet[] succRanks = new ISet[succs.cardinality()];
-        int [] succStates = new int[succs.cardinality()];
-        int i = 0;
-        for(final int succ : succs) {
-            succStates[i] = succ;
-            succRanks[i] = getPotentialRanks(constraint.getLevelRank(succ), mOperand.isFinal(succ));
-            i ++;
+        LevelRankingConstraint lvlConstraint = new LevelRankingConstraint();
+        for(final int s : set) {
+            lvlConstraint.addConstraint(s, constraint.getLevelRank(s), constraint.isInO(s), false);
         }
-        
-        Set<LevelRanking> states = new HashSet<>();
-        generateLevelRankings(constraint, states, 0, succStates, succRanks);
-        if(!Options.mLazyS) {
+        Set<LevelRanking> states = generateLevelRankingsInner(lvlConstraint, minusOne);
+        if(decreaseInS) {
             return states;
         }else {
             // should also set elements not in O
@@ -84,6 +85,7 @@ public class LevelRankingGenerator extends LevelRankingConstraint {
         
     }
     
+    // NOT USED any more
     private void generateLevelRankings(LevelRankingConstraint constraint
             , Set<LevelRanking> states, int i, int[] succStates, ISet[] listOfRanks) {
         if(i >= listOfRanks.length) return ;
@@ -114,10 +116,10 @@ public class LevelRankingGenerator extends LevelRankingConstraint {
      * given a maxRank, return all possible rankings
      * note that final state only have even ranks
      * **/
-    private ISet getPotentialRanks(int maxRank, boolean isFinal) {
+    private ISet getPotentialRanks(int maxRank, boolean isFinal, boolean minusOne) {
         ISet ranks = UtilISet.newISet();
         int low;
-        if(Options.mMinusOne) {
+        if(minusOne) {
            low = maxRank - 1;
         }else {
            low = 0;
@@ -128,6 +130,60 @@ public class LevelRankingGenerator extends LevelRankingConstraint {
             ranks.set(r);
         }
         return ranks;
+    }
+    
+    // NOT USED
+    private ISet getPotentialRanks(int maxRank, boolean isFinal) {
+        return getPotentialRanks(maxRank, isFinal, false);
+    }
+    
+    private Set<LevelRanking> generateLevelRankingsInner(LevelRankingConstraint constraint, boolean minusOne) {
+        Set<LevelRanking> result = new HashSet<>();
+        result.add(new LevelRanking(true, Options.mTurnwise));
+        for (final int state : constraint.getS()) {
+            // result has no rank definition for state s yet
+            Set<LevelRanking> temp = new HashSet<>();
+            // add possible ranks for state s
+            ISet ranks = getPotentialRanks(constraint.getLevelRank(state), mOperand.isFinal(state), minusOne);
+            for (final int rank : ranks) {
+                for (final LevelRanking lvlRank : result) {
+                    // for every level ranking, add the rank of s
+                    LevelRanking copyLvlRank = lvlRank.clone();
+                    copyLvlRank.addLevelRank(state, rank, isEven(rank) && constraint.isInO(state));
+                    temp.add(copyLvlRank);
+                }
+            }
+            result = temp;
+        }
+        return result;
+    }
+    
+    
+    public static void main(String[] args) {
+        Buchi buchi = new Buchi(2);
+        
+        buchi.addState();
+        buchi.addState();
+        buchi.addState();
+        
+        buchi.setInitial(0);
+        buchi.setFinal(1);
+        
+        LevelRankingGenerator generator = new LevelRankingGenerator(buchi);
+        
+        LevelRankingConstraint constraint = new LevelRankingConstraint();
+        constraint.addConstraint(0, 5, false, false);
+        constraint.addConstraint(1, 5, true, false);
+        constraint.addConstraint(2, 5, false, false);
+        
+        Collection<LevelRanking> hhh = generator.generateLevelRankings(constraint);
+        System.out.println(hhh);
+        Set<LevelRanking> set2 = generator.generateLevelRankings(constraint, false);
+        System.out.println(generator.generateLevelRankings(constraint, false));
+        System.out.println(set2.size() == hhh.size());
+        for(LevelRanking s : hhh) {
+            if(!set2.contains(s)) System.out.println("false");
+        }
     }
 
 }

@@ -1,6 +1,6 @@
 /*
  * Written by Yong Li (liyong@ios.ac.cn)
- * This file is part of the Buchi which is a simple version of SemiBuchi.
+ * This file is part of the Buchi.
  * 
  * Buchi is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published
@@ -35,9 +35,6 @@ public class LevelRankingConstraint extends LevelRanking {
         if (oldRank == mRanks.getNoEntryValue() || oldRank > predRank) {
             rank = predRank;
         }
-//        if (mMaxRank < predRank) {
-//            mMaxRank = predRank;
-//        }
         boolean isInO = predIsInO || predOIsEmpty;
         this.addLevelRank(state, rank, isInO);
     }
