@@ -30,6 +30,7 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -217,9 +218,13 @@ public interface IBuchi {
             }
             rootElement.appendChild(accsElem);
             doc.appendChild(rootElement);
-            out.println(doc.toString());
+
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            final int indent = 2;
+            transformerFactory.setAttribute("indent-number", indent);
             Transformer transformer = transformerFactory.newTransformer();
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             DOMSource source = new DOMSource(doc);
             StreamResult result = new StreamResult(out);
             transformer.transform(source, result);
