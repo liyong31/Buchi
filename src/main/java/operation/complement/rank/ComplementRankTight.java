@@ -23,6 +23,7 @@ import automata.Buchi;
 import automata.IBuchi;
 import main.Options;
 import operation.complement.ncsb.ComplementNcsb;
+import operation.removal.Remove;
 
 /**
  * 
@@ -79,11 +80,12 @@ public class ComplementRankTight extends ComplementRank<StateRankTight> {
 //        Options.mMinusOne = true;
 //        Options.mTurnwise = true;
         Options.mReduceOutdegree = true;
-//        Options.mLazyS = true;
+        Options.mLazyS = true;
         ComplementRankTight complement = new ComplementRankTight(buchi);
         complement.explore();
         System.out.println(complement.toDot());
         System.out.println(complement.toBA());
+        System.out.println((new Remove(complement)).getResult().getStateSize());
         
         ComplementNcsb complementNcsb = new ComplementNcsb(buchi);
         complementNcsb.explore();

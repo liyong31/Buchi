@@ -27,9 +27,22 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
 import util.ISet;
 
 import util.UtilISet;
+import util.parser.gff.GFFFileParser;
 
 /**
  * (generalized) Buchi automata
@@ -140,10 +153,98 @@ public interface IBuchi {
     }
 
     // use this function if automtaton is too large 
+    default public void toGFF(PrintStream out, List<String> alphabet) {
+        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder docBuilder;
+        try {
+            docBuilder = dbFactory.newDocumentBuilder();
+            Document doc = docBuilder.newDocument();
+            //add elements to Document
+            Element rootElement = doc.createElement(GFFFileParser.STRUCTURE);
+            rootElement.setAttribute("label-on", GFFFileParser.TRANSITION);
+            rootElement.setAttribute(GFFFileParser.TYPE, "fa");
+            // alphabet 
+            Element alphaElem = doc.createElement(GFFFileParser.ALPHABET);
+            alphaElem.setAttribute(GFFFileParser.TYPE, GFFFileParser.ALPHABET_TYPE_VALUE);
+            for(String symbol : alphabet) {
+                Element symbolElem = doc.createElement(GFFFileParser.ALPHABET_SYMBOL);
+                symbolElem.setTextContent(symbol);
+                alphaElem.appendChild(symbolElem);
+            }
+            rootElement.appendChild(alphaElem);
+            // states and transitions
+            Element stateSetElem = doc.createElement(GFFFileParser.STATESET);
+            Element transitionSetElem = doc.createElement(GFFFileParser.TRANSITIONSET);
+            int transitionId = 0;
+            for(int i = 0; i < this.getStateSize(); i ++) {
+                Element stateElem = doc.createElement(GFFFileParser.STATE);
+                stateElem.setAttribute(GFFFileParser.STATE_SID, i + "");
+                stateElem.setTextContent("");
+                stateSetElem.appendChild(stateElem);
+                for(int a = 0; a < this.getAlphabetSize(); a ++) {
+                    for(int j : this.getState(i).getSuccessors(a)) {
+                        Element transitionElem = doc.createElement(GFFFileParser.TRANSITION);
+                        transitionElem.setAttribute(GFFFileParser.TRANSITION_ID, "" + transitionId);
+                        Element fromElem = doc.createElement(GFFFileParser.TRANSITION_FROM);
+                        fromElem.setTextContent("" + i);
+                        Element toElem = doc.createElement(GFFFileParser.TRANSITION_TO);
+                        toElem.setTextContent("" + j);
+                        Element readElem = doc.createElement(GFFFileParser.TRANSITION_READ);
+                        readElem.setTextContent("" + alphabet.get(a));
+                        transitionElem.appendChild(fromElem);
+                        transitionElem.appendChild(toElem);
+                        transitionElem.appendChild(readElem);
+                        transitionSetElem.appendChild(transitionElem);
+                        transitionId ++;
+                    }
+                }
+            }
+            rootElement.appendChild(stateSetElem);
+            rootElement.appendChild(transitionSetElem);
+            Element initsElem = doc.createElement(GFFFileParser.INITIALSTATESET);
+            for(int i : this.getInitialStates()) {
+                Element initElem = doc.createElement(GFFFileParser.STATE_ID);
+                initElem.setTextContent("" + i);
+                initsElem.appendChild(initElem);
+            }
+            rootElement.appendChild(initsElem);
+            Element accsElem = doc.createElement(GFFFileParser.ACCSTATESET);
+            accsElem.setAttribute(GFFFileParser.TYPE, GFFFileParser.BUCHI);
+            for(int i : this.getFinalStates()) {
+                Element accElem = doc.createElement(GFFFileParser.STATE_ID);
+                accElem.setTextContent("" + i);
+                accsElem.appendChild(accElem);
+            }
+            rootElement.appendChild(accsElem);
+            doc.appendChild(rootElement);
+            out.println(doc.toString());
+            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            Transformer transformer = transformerFactory.newTransformer();
+            DOMSource source = new DOMSource(doc);
+            StreamResult result = new StreamResult(out);
+            transformer.transform(source, result);
+        } catch (ParserConfigurationException | TransformerException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    
+    default public String toGFF() {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        try {
+            List<String> alphabet = new ArrayList<>();
+            for(int i = 0; i < getAlphabetSize(); i ++) {
+                alphabet.add(i + "");
+            }
+            toGFF(new PrintStream(out), alphabet);
+            return out.toString();
+        } catch (Exception e) {
+            return "ERROR";
+        }
+    }
+    
     default public void toBA(PrintStream out, List<String> alphabet) {
         ISet initialStates = getInitialStates();
-        if(initialStates.cardinality() > 1) 
-            throw new RuntimeException("BA format does not allow multiple initial states...");
         Iterator<Integer> iter = initialStates.iterator();
         out.print("[" + iter.next() + "]\n");
         // output automata in BA (RABIT format)

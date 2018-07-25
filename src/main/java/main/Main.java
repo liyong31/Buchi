@@ -311,13 +311,15 @@ public class Main {
 		File fileIn = null;
 		SingleParser parser = null;
 		for(int i = 0; i < args.length; i ++) {
+		    fileIn = new File(args[i]);
 			if(args[i].endsWith(FILE_EXT)) {
-				fileIn = new File(args[i]);
 				parser = UtilParser.getSinleParser(ParserType.ATS);
 			}
 			if(args[i].endsWith(".ba")) {
-				fileIn = new File(args[i]);
 				parser = UtilParser.getSinleParser(ParserType.BA);
+			}
+			if(args[i].endsWith(".gff")) {
+			    parser = UtilParser.getSinleParser(ParserType.GFF);
 			}
 		}
 		assert parser != null;
