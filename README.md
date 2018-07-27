@@ -1,8 +1,6 @@
 # Buchi
 
-A simple library only for Buchi word automata
-
-Buchi currently implements following complementation algorithms:
+Buchi is a simple library for Büchi word automata. It currently implements following complementation algorithms:
 
 1. Ramsey-based algorithms described by Sistla, Vardi and Wolper [1].
 
