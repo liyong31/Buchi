@@ -53,7 +53,7 @@ import util.parser.ats.ATSFileParser;
 public class Main {
 	
 	private static final String FILE_EXT = "ats";
-	private static final long TIME_LIMIT = 20;
+	private static final long TIME_LIMIT = Integer.MAX_VALUE;
 	public static void main(String[] args) throws IOException {
 		
 		if(args.length < 1) {
@@ -135,7 +135,9 @@ public class Main {
                 Options.mReduceOutdegree = true;
             }
 		}
-		time = time * 1_000; // miliseconds
+		if(time != Integer.MAX_VALUE) {
+		    time = time * 1_000; // miliseconds
+		}
 		if(test) {
 //			testBenchmarks(time);
 		}else if(complement){

@@ -40,6 +40,9 @@ public class StateRankTight extends StateRank<ComplementRankTight> {
         if(mVisitedLetters.get(letter)) {
             return super.getSuccessors(letter);
         }
+        if(letter == 8) {
+            System.out.println("Hello");
+        }
         mVisitedLetters.set(letter);
         Collection<LevelRanking> lvlRankSuccs;
         // first compute subset state
@@ -52,11 +55,11 @@ public class StateRankTight extends StateRank<ComplementRankTight> {
             StateRankTight succ = mComplement.getOrAddState(lvlSucc);
             super.addSuccessor(letter, succ.getId());
             LevelRankingConstraint constraint =  getUnRankedConstraint(succs);
-            //d2
+            //d2, successors should not be empty
             lvlRankSuccs = getUnRankedSuccessorTightLevelRankings(constraint);
         }else {
             // only tight ranked successors
-            //d3
+            //d3, successors should not be empty
             LevelRankingConstraint constraint = UtilRank.getRankedConstraint(mOperand, mLevelRanking, letter);
             lvlRankSuccs = getRankedSuccessorTightLevelRankings(constraint);
         }
@@ -96,9 +99,11 @@ public class StateRankTight extends StateRank<ComplementRankTight> {
      * **/
     private Set<LevelRanking> getUnRankedSuccessorTightLevelRankings(
             LevelRankingConstraint constraint) {
+        Set<LevelRanking> result = new HashSet<>();
+        if(constraint.getS().isEmpty()) return result;
         LevelRankingGenerator generator = new LevelRankingGenerator(mOperand);
         Collection<LevelRanking> lvlRankSuccs = generator.generateLevelRankings(constraint);
-        Set<LevelRanking> result = new HashSet<>();
+        
         for(final LevelRanking lvlRankSucc : lvlRankSuccs) {
             // ignore non-tight level rankings
             boolean valid = false;
@@ -119,8 +124,9 @@ public class StateRankTight extends StateRank<ComplementRankTight> {
      * **/
     private Set<LevelRanking> getRankedSuccessorTightLevelRankings(
             LevelRankingConstraint constraint) {
-        Set<LevelRanking> tightLvlRanks = getTightLevelRankings(constraint);
         Set<LevelRanking> result = new HashSet<>();
+        if(constraint.getS().isEmpty()) return result;
+        Set<LevelRanking> tightLvlRanks = getTightLevelRankings(constraint);
         for(final LevelRanking tightLvlRank : tightLvlRanks) {
             LevelRanking lvlRank = tightLvlRank;
             if(Options.mTurnwise) {
