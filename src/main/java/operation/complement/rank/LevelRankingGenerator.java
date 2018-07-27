@@ -195,7 +195,7 @@ public class LevelRankingGenerator extends LevelRankingConstraint {
      * 3. remaining states have rank mMaxRank 
      * 
      * */
-    public Set<LevelRanking> generateMaximalLevelRankings(LevelRankingConstraint constraint) {
+    public Set<LevelRanking> generateMaximalTightLevelRankings(LevelRankingConstraint constraint) {
         // first fix a max rank and then add 
         Set<LevelRanking> result = new HashSet<>();
         ISet S = constraint.copyS();
@@ -223,7 +223,7 @@ public class LevelRankingGenerator extends LevelRankingConstraint {
                 // all remaining states are assigned with maximal rank
                 lvlRankTemplate.addLevelRank(t, 2 * n + 1, false);
             }
-            result.addAll(generateMaximalLevelRankingsInner(lvlRankTemplate, states, fset, remaining));
+            result.addAll(generateMaximalTightLevelRankingsInner(lvlRankTemplate, states, fset, remaining));
         }
         return result;
     }
@@ -231,7 +231,7 @@ public class LevelRankingGenerator extends LevelRankingConstraint {
     /**
      * FIX a set of states to be assigned with odd rankings 
      * **/
-    private Set<LevelRanking> generateMaximalLevelRankingsInner(
+    private Set<LevelRanking> generateMaximalTightLevelRankingsInner(
             LevelRanking lvlRankTemplate, ISet states, ISet fset, ISet remaining) {
         // first fix a max rank and then add 
         Set<LevelRanking> result = new HashSet<>();
