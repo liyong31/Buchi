@@ -117,7 +117,7 @@ public class ComplementNsbc extends Complement {
         
         System.out.println(buchi.toDot());
         System.out.println(buchi.getDetStatesAfterFinals());
-        Options.mEnhancedSliceGuess = true;
+        Options.mEagerGuess = true;
         ComplementNsbc complement = new ComplementNsbc(buchi);
         new Explore(complement);
         System.out.println(complement.toDot());
@@ -203,11 +203,14 @@ public class ComplementNsbc extends Complement {
         complement.setDetStates(q1a);
         
         new Explore(complement);
+        System.out.println(complement.toBA());
         System.out.println(complement.toDot());
+        IBuchi temp = (new Remove(complement)).getResult();
+        System.out.println(complement.toBA());
         
         ComplementNcsbOtf complementNcsb = new ComplementNcsbOtf(buchi);
         new Explore(complementNcsb);
-        System.out.println(complementNcsb.toDot());
+        System.out.println(complementNcsb.toBA());
 
     }
 

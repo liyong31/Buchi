@@ -19,12 +19,16 @@
 
 package operation.complement.nsbc;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import automata.IBuchi;
 import automata.State;
 import main.Options;
 import util.ISet;
 import util.PairXX;
 import util.PairXY;
+import util.PowerSet;
 import util.UtilISet;
 
 /**
@@ -76,43 +80,80 @@ public class StateNsbc extends State {
             return super.getSuccessors(letter);
         }
         mVisitedLetters.set(letter);
-        IBuchi operand = this.mComplement.getOperand();
         StateNsbc nextState;
-        ISet nextSuccs = UtilISet.newISet();
-        ISet fset = operand.getFinalStates();
-        ISet N , S, B, C;
         PairXY<ISet, PairXX<ISet>> result;
-        NSBC nextNsbc;
+        Set<NSBC> nextNsbcs = null;
         if(! mNsbc.isColored()) {
             result = computeSuccessors(mNsbc.getNSet(), letter);
             ISet NP = result.getFirst();
-            nextNsbc = new NSBC(NP);
+            NSBC nextNsbc = new NSBC(NP);
             nextState = mComplement.getOrAddState(nextNsbc);
             super.addSuccessor(letter, nextState.getId());
-            nextSuccs.set(nextState.getId());     
             // since current state is not colored, we will see it as
+            nextNsbcs = getUncoloredSuccessors(letter);
+        }else {
+            nextNsbcs = new HashSet<>();
+            nextNsbcs.add(getColoredSuccessor(mNsbc, letter));
+        }
+        
+        for(final NSBC nextNsbc : nextNsbcs) {
+            nextState = mComplement.getOrAddState(nextNsbc);
+            super.addSuccessor(letter, nextState.getId());
+        }
+        
+        return super.getSuccessors(letter);
+    }
+    
+    private Set<NSBC> getUncoloredSuccessors(int letter) {
+        Set<NSBC> result = new HashSet<>();
+        ISet N, S, B, C;
+        ISet fset = mComplement.getOperand().getFinalStates();
+        // N
+        N = mNsbc.copyNSet();
+        N.and(mComplement.mNondetStates);
+        
+        S = mComplement.mDetStates.clone();
+        S.and(mNsbc.getNSet());
+        B = S.clone();
+        // not F
+        S.andNot(fset);
+        
+        C = UtilISet.newISet();
+        if(!Options.mEagerGuess) {
+            // inter F
+            B.and(fset);
+            NSBC succ = getColoredSuccessor(new NSBC(N, S, B, C), letter);
+            result.add(succ);
+        }else {
+            // we make nondeterministic jumps
             N = mNsbc.copyNSet();
             N.and(mComplement.mNondetStates);
             
-            // not F
-            S = mComplement.mDetStates.clone();
-            S.and(mNsbc.getNSet());
-            B = S.clone();
-            S.andNot(fset);
-            
-            // inter F
-            B.and(fset);
-            
-            C = UtilISet.newISet();
-        }else {
-            N = mNsbc.getNSet();
-            S = mNsbc.getSSet();
-            B = mNsbc.getBSet();
-            C = mNsbc.getCSet();
+            ISet mayInS = S;
+            ISet mayInB = B;
+            PowerSet ps = new PowerSet(mayInS);
+            while(ps.hasNext()) {
+                S = ps.next();
+                B = mayInB.clone();
+                B.andNot(S);
+                NSBC succ = getColoredSuccessor(new NSBC(N, S, B, C), letter);
+                if(succ != null) {
+                    result.add(succ);
+                }
+            }
         }
-        
+        return result;
+    }
+    
+    private NSBC getColoredSuccessor(NSBC nsbc, int letter) {
         // Q1 is nondeterministic state set, Q2 is deterministic state set
         // consider successors of N
+        ISet N = nsbc.getNSet();
+        ISet S = nsbc.getSSet();
+        ISet B = nsbc.getBSet();
+        ISet C = nsbc.getCSet();
+        PairXY<ISet, PairXX<ISet>> result;
+        
         result = computeSuccessors(N, letter);
         ISet NP = result.getFirst().clone(); //all successors
         NP.and(mComplement.mNondetStates); // get only nondeterministic part
@@ -126,7 +167,11 @@ public class StateNsbc extends State {
         // only keep nonfinal states in SP
         ISet SP = result.getSecond().getSecond();
         ISet SPInterF = result.getSecond().getFirst();
-        
+        if(Options.mEagerGuess && !SPInterF.isEmpty()) {
+            // successor of S must not contain final states
+            // if we have nondeterministic jump from first part 
+            return null;
+        }
         // now consider successors of C
         result = computeSuccessors(C, letter);
         ISet CP = result.getFirst().clone();
@@ -152,12 +197,8 @@ public class StateNsbc extends State {
             CP.andNot(BP); // remove successors of B
         }
         
-        nextNsbc = new NSBC(NP, SP, BP, CP);
-        nextState = mComplement.getOrAddState(nextNsbc);
-        super.addSuccessor(letter, nextState.getId());
-        nextSuccs.set(nextState.getId());   
-        
-        return nextSuccs;
+        NSBC nextNsbc = new NSBC(NP, SP, BP, CP);
+        return nextNsbc;
     }
     
     @Override

@@ -52,9 +52,11 @@ public class StateRankTight extends StateRank<ComplementRankTight> {
             StateRankTight succ = mComplement.getOrAddState(lvlSucc);
             super.addSuccessor(letter, succ.getId());
             LevelRankingConstraint constraint =  getUnRankedConstraint(succs);
+            //d2
             lvlRankSuccs = getUnRankedSuccessorTightLevelRankings(constraint);
         }else {
             // only tight ranked successors
+            //d3
             LevelRankingConstraint constraint = UtilRank.getRankedConstraint(mOperand, mLevelRanking, letter);
             lvlRankSuccs = getRankedSuccessorTightLevelRankings(constraint);
         }

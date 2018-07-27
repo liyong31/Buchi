@@ -87,4 +87,7 @@ public class Options {
     
     // merge states in complement
     public static boolean mDirectSimulation = false;
+    
+    // for NSBC
+    public static boolean mEagerGuess = false;
 }
