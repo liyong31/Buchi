@@ -21,12 +21,15 @@ package operation.complement.rank;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import automata.Buchi;
 import automata.IBuchi;
 import main.Options;
 import util.ISet;
+import util.PowerSet;
 import util.UtilISet;
 
 public class LevelRankingGenerator extends LevelRankingConstraint {
@@ -159,24 +162,103 @@ public class LevelRankingGenerator extends LevelRankingConstraint {
     }
     
     /**
+     * efficient algorithm to generate tight level rankings with rank maxRank
+     * */
+    public Set<LevelRanking> generateTightLevelRankings(LevelRankingConstraint constraint, int maxRank, boolean minusOne) {
+        Set<LevelRanking> result = new HashSet<>();
+        result.add(new LevelRanking(true, Options.mTurnwise));
+        for (final int state : constraint.getS()) {
+            // result has no rank definition for state s yet
+            Set<LevelRanking> temp = new HashSet<>();
+            // add possible ranks for state s
+            ISet ranks = getPotentialRanks(constraint.getLevelRank(state), mOperand.isFinal(state), minusOne);
+            for (final int rank : ranks) {
+                for (final LevelRanking lvlRank : result) {
+                    // for every level ranking, add the rank of s
+                    LevelRanking copyLvlRank = lvlRank.clone();
+                    copyLvlRank.addLevelRank(state, rank, isEven(rank) && constraint.isInO(state));
+                    temp.add(copyLvlRank);
+                }
+            }
+            result = temp;
+        }
+        return result;
+    }
+    
+    /**
      * Sven's STACS paper 
      * 
      * S-tight ranking function f with rank mMaxRank maximal with respect to S
      * 
      * 1. all final states in S have rank mMaxRank - 1
-     * 2. exactly one state to every odd rank o < mMaxRank
+     * 2. exactly one state to every odd rank o < mMaxRank (first select all those states)
      * 3. remaining states have rank mMaxRank 
+     * 
      * */
     public Set<LevelRanking> generateMaximalLevelRankings(LevelRankingConstraint constraint) {
         // first fix a max rank and then add 
         Set<LevelRanking> result = new HashSet<>();
-        for(int maxRank = 1; maxRank <= constraint.getMaximalRank(); maxRank += 2) {
-            int evenRank = maxRank - 1;
-            int numStatesSelected = (maxRank + 1) / 2;
-            
+        ISet S = constraint.copyS();
+        ISet fset = UtilISet.newISet();
+        for(final int s : S) {
+            if(LevelRanking.isEven(constraint.getLevelRank(s))) {
+                fset.set(s);
+            }
+        }
+        S.andNot(fset);
+        PowerSet ps = new PowerSet(S);
+        while(ps.hasNext()) {
+            // first select all states which have rank from 1 to maxRank
+            ISet states = ps.next();
+            if(states.isEmpty()) continue;
+            ISet remaining = S.clone();
+            remaining.andNot(states);
+            int n = states.cardinality();
+            LevelRanking lvlRankTemplate = new LevelRanking(true, Options.mTurnwise);
+            for(final int t : fset) {
+                // all final states are assigned with maximal rank
+                lvlRankTemplate.addLevelRank(t, 2 * n, false);
+            }
+            for(final int t : remaining) {
+                // all remaining states are assigned with maximal rank
+                lvlRankTemplate.addLevelRank(t, 2 * n + 1, false);
+            }
+            result.addAll(generateMaximalLevelRankingsInner(lvlRankTemplate, states, fset, remaining));
         }
         return result;
     }
+    
+    /**
+     * FIX a set of states to be assigned with odd rankings 
+     * **/
+    private Set<LevelRanking> generateMaximalLevelRankingsInner(
+            LevelRanking lvlRankTemplate, ISet states, ISet fset, ISet remaining) {
+        // first fix a max rank and then add 
+        Set<LevelRanking> result = new HashSet<>();
+        // the number of states should 
+        int n = states.cardinality();
+        int[] stateList = new int[n];
+        int i = 0;
+        for(final int state : states) {
+            stateList[i ++ ] = state;
+        }
+        // now we compute the permutation of states
+        LinkedList<int[]> perms = UtilRank.permute(stateList);
+        for(final int[] perm : perms) {
+            LevelRanking lvlRank = lvlRankTemplate.clone();
+            // every odd rank should be assigned to exactly one state
+            for(int j = 0; j < perm.length; j ++) {
+                lvlRank.addLevelRank(perm[j], 2 * j + 1, false);
+            }
+            result.add(lvlRank);
+        }
+        
+        return result;
+    }
+    
+
+    
+    
     
     
     public static void main(String[] args) {
@@ -204,6 +286,22 @@ public class LevelRankingGenerator extends LevelRankingConstraint {
         for(LevelRanking s : hhh) {
             if(!set2.contains(s)) System.out.println("false");
         }
+        
+        final int n = 3;
+        int[] array = new int[n];
+        for(int i = 0; i < n; i ++) {
+            array[i] = i;
+        }
+        LinkedList<int[]> perm = UtilRank.permute(array);
+        for(int[] arr : perm) {
+            System.out.print("[ ");
+            for(int i = 0; i < arr.length; i ++) {
+                System.out.print(arr[i] + ",");
+            }
+            System.out.println("] ");
+            
+        }
+       
     }
 
 }

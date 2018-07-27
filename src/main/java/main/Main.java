@@ -133,6 +133,8 @@ public class Main {
                 Options.mAlgo = Algorithm.TIGHT;
                 Options.mTightRank = true;
                 Options.mReduceOutdegree = true;
+            }else if(args[i].equals("-reduce1")) {
+                Options.mMinusOne = true;
             }
 		}
 		if(time != Integer.MAX_VALUE) {
@@ -192,6 +194,7 @@ public class Main {
 		System.out.println("-tuple: Tuple-based complementation");
 		System.out.println("-slice: Slice-based complementation");
 		System.out.println("-rmdead: Remove dead states");
+		System.out.println("-reduce1: Decrease 1 for Rank-based complementation");
 		
 	}
 	

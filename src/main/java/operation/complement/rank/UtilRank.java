@@ -19,6 +19,8 @@
 
 package operation.complement.rank;
 
+import java.util.LinkedList;
+
 import automata.IBuchi;
 import util.ISet;
 import util.UtilISet;
@@ -54,5 +56,45 @@ public class UtilRank {
         }
         return constraint;
     }
+    
+    /**
+     * compute permutation of an array 
+     * **/
+    
+    public static LinkedList<int[]> permute(int[] array) {
+        LinkedList<int[]> perms = new LinkedList<int[]>();
+        int[] prefix = new int[0];
+        permute(perms, prefix, array);
+        return perms;
+    }
+    
+    private static void permute(LinkedList<int[]> permutation, int[] prefix, int[] array) {
+        int n = array.length;
+        if(n == 0) {
+            permutation.addFirst(prefix);
+        } else {
+            for(int i = 0; i < n; i ++) {
+                int[] newPrefix = new int[prefix.length + 1];
+                for(int j = 0; j < prefix.length; j ++) {
+                    newPrefix[j] = prefix[j];
+                }
+                // get ith number
+                newPrefix[prefix.length] = array[i];
+                // remove ith number in the array
+                int[] newArray = new int[n - 1];
+                for(int j = 0; j < i; j ++) {
+                    newArray[j] = array[j];
+                }
+                for(int j = i + 1; j < n; j ++) {
+                    newArray[j-1] = array[j];
+                }
+                // put the ith number in array as the first element,
+                // compute the permuation of remaining numbers
+                permute(permutation, newPrefix, newArray);
+            }
+        }
+    }
+    
+    
 
 }

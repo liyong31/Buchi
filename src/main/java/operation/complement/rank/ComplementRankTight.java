@@ -77,10 +77,10 @@ public class ComplementRankTight extends ComplementRank<StateRankTight> {
         
         System.out.println(buchi.toDot());
         Options.mTightRank = true;
-//        Options.mMinusOne = true;
-        Options.mTurnwise = true;
-//        Options.mReduceOutdegree = true;
-//        Options.mLazyS = true;
+        Options.mMinusOne = true;
+//        Options.mTurnwise = true;
+        Options.mReduceOutdegree = true;
+        Options.mLazyS = true;
         ComplementRankTight complement = new ComplementRankTight(buchi);
         complement.explore();
         System.out.println(complement.toDot());

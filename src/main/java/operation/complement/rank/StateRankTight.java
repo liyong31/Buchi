@@ -40,11 +40,9 @@ public class StateRankTight extends StateRank<ComplementRankTight> {
         if(mVisitedLetters.get(letter)) {
             return super.getSuccessors(letter);
         }
-        if(letter == 8) {
-            System.out.println("Hello");
-        }
         mVisitedLetters.set(letter);
         Collection<LevelRanking> lvlRankSuccs;
+        System.out.println("Computing successors for letter " + letter);
         // first compute subset state
         if(!mLevelRanking.isRanked()) {
             // subset construction
@@ -70,7 +68,8 @@ public class StateRankTight extends StateRank<ComplementRankTight> {
             super.addSuccessor(letter, succ.getId());
             System.out.println("Successor: " + succ.getId() + " = " + succ);
         }
-        
+        System.out.println("Finished for state " + this.getId());
+
         return super.getSuccessors(letter);
     }
     
