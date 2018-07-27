@@ -99,7 +99,6 @@ public class GFFFileParser implements SingleParser {
         NodeList symbols = alphaElem.getElementsByTagName(GFFFileParser.ALPHABET_SYMBOL);
         for(int item = 0; item < symbols.getLength(); item ++) {
             String symbol = symbols.item(item).getTextContent().trim();
-            System.out.println(":" + symbol);
             int index = this.mAlphabet.size();
             this.mAlphabet.add(symbol);
             this.mAlphabetMap.put(symbol, index);
@@ -110,7 +109,6 @@ public class GFFFileParser implements SingleParser {
     
     private void parseStateSet(Document doc) {
         assert doc != null;
-        // first check alphabet: classical
         Element stateSet = getElementByTagName(doc, GFFFileParser.STATESET);
         NodeList states = stateSet.getElementsByTagName(GFFFileParser.STATE);
         for(int item = 0; item < states.getLength(); item ++) {
@@ -127,7 +125,6 @@ public class GFFFileParser implements SingleParser {
     
     private void parseTransitionSet(Document doc) {
         assert doc != null;
-        // first check alphabet: classical
         Element transitionSet = getElementByTagName(doc, GFFFileParser.TRANSITIONSET);
         NodeList transitions = transitionSet.getElementsByTagName(GFFFileParser.TRANSITION);
         for(int item = 0; item < transitions.getLength(); item ++) {
@@ -150,7 +147,6 @@ public class GFFFileParser implements SingleParser {
     
     private void parseInitialStates(Document doc) {
         assert doc != null;
-        // first check alphabet: classical
         Element stateSet = getElementByTagName(doc, GFFFileParser.INITIALSTATESET);
         NodeList states = stateSet.getElementsByTagName(GFFFileParser.STATE_ID);
         for(int item = 0; item < states.getLength(); item ++) {
@@ -164,7 +160,7 @@ public class GFFFileParser implements SingleParser {
     
     private void parseAccStates(Document doc) {
         assert doc != null;
-        // first check alphabet: classical
+        // have to check acceptance buchi
         Element stateSet = getElementByTagName(doc, GFFFileParser.ACCSTATESET);
         if(!stateSet.getAttribute(GFFFileParser.TYPE).equals(GFFFileParser.BUCHI)) {
             throw new UnsupportedOperationException("Not buchi acceptance: " + stateSet.getAttribute(GFFFileParser.TYPE));

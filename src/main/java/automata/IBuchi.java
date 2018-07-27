@@ -221,9 +221,10 @@ public interface IBuchi {
 
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
             final int indent = 2;
-            transformerFactory.setAttribute("indent-number", indent);
+//            transformerFactory.setAttribute("indent-number", indent);
             Transformer transformer = transformerFactory.newTransformer();
-            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+            final String url = "{http://xml.apache.org/xslt}indent-amount";
+            transformer.setOutputProperty(url, "" + indent);
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             DOMSource source = new DOMSource(doc);
             StreamResult result = new StreamResult(out);

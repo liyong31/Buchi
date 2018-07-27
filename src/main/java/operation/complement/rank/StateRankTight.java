@@ -41,9 +41,7 @@ public class StateRankTight extends StateRank<ComplementRankTight> {
             return super.getSuccessors(letter);
         }
         mVisitedLetters.set(letter);
-        LevelRankingConstraint constraint = null;
-        LevelRankingGenerator generator = new LevelRankingGenerator(mOperand);
-        Collection<LevelRanking> lvlRanks;
+        Collection<LevelRanking> lvlRankSuccs;
         // first compute subset state
         if(!mLevelRanking.isRanked()) {
             // subset construction
@@ -53,59 +51,22 @@ public class StateRankTight extends StateRank<ComplementRankTight> {
             lvlSucc.setS(succs);
             StateRankTight succ = mComplement.getOrAddState(lvlSucc);
             super.addSuccessor(letter, succ.getId());
-            constraint =  getUnRankedConstraint(succs);
-            lvlRanks = generator.generateLevelRankings(constraint);
+            LevelRankingConstraint constraint =  getUnRankedConstraint(succs);
+            lvlRankSuccs = getUnRankedSuccessorTightLevelRankings(constraint);
         }else {
-            constraint = UtilRank.getRankedConstraint(mOperand, mLevelRanking, letter);
-            if(Options.mReduceOutdegree) {
-                Set<LevelRanking> tempLvlRanks = new HashSet<>();
-                LevelRanking lvlRank = new LevelRanking(true, Options.mTurnwise);
-                for(final int s : constraint.getS()) {
-                    int rank = constraint.getLevelRank(s);
-                    lvlRank.addLevelRank(s, rank, LevelRanking.isEven(rank) && constraint.isInO(s));
-                }
-                tempLvlRanks.add(lvlRank);
-                lvlRanks = tempLvlRanks;
-            }else {
-                lvlRanks = generator.generateLevelRankings(constraint, Options.mMinusOne);
-            }
+            // only tight ranked successors
+            LevelRankingConstraint constraint = UtilRank.getRankedConstraint(mOperand, mLevelRanking, letter);
+            lvlRankSuccs = getRankedSuccessorTightLevelRankings(constraint);
         }
-        
         System.out.println("state=" + this.toString() + " letter=" + letter);
-        
-        for(LevelRanking lvlRank : lvlRanks) {
+        for(LevelRanking lvlRank : lvlRankSuccs) {
             // only allow tight level rankings
-            if(! lvlRank.isTight()) {
-                continue;
-            }
-            if(mLevelRanking.isRanked()) {
-                // d3, rank(f) = rank(f')
-                if((lvlRank.getMaximalRank() != mLevelRanking.getMaximalRank())) {
-                    continue;
-                }else {
-                    if(Options.mTurnwise) {
-                        lvlRank = getCutpointLevelRanking(lvlRank);
-                    }
-                }
-            }else if(Options.mReduceOutdegree && ! lvlRank.isMaximallyTight(mOperand)) {
-                // d2 only allow maximal tight level ranking
-                continue;
-            }
             StateRankTight succ = mComplement.getOrAddState(lvlRank);
             super.addSuccessor(letter, succ.getId());
             System.out.println("Successor: " + succ.getId() + " = " + succ);
         }
         
         return super.getSuccessors(letter);
-    }
-    
-    /**
-     * firstly the successor has to be tight and secondly maximal rank does not change
-     * **/
-    private boolean isValidLevelRanking(LevelRanking lvlRank) {
-        // tight, either predecessor is not ranked or the maximum rank should be the same
-        
-        return lvlRank.isTight() && (!mLevelRanking.isRanked() || (lvlRank.getMaximalRank() == mLevelRanking.getMaximalRank())); 
     }
     
     private LevelRankingConstraint getUnRankedConstraint(ISet succs) {
@@ -126,6 +87,89 @@ public class StateRankTight extends StateRank<ComplementRankTight> {
             }
         }
         return constraint;
+    }
+    
+    /**
+     * tight level ranking for successors of unranked states 
+     * **/
+    private Set<LevelRanking> getUnRankedSuccessorTightLevelRankings(
+            LevelRankingConstraint constraint) {
+        LevelRankingGenerator generator = new LevelRankingGenerator(mOperand);
+        Collection<LevelRanking> lvlRankSuccs = generator.generateLevelRankings(constraint);
+        Set<LevelRanking> result = new HashSet<>();
+        for(final LevelRanking lvlRankSucc : lvlRankSuccs) {
+            // ignore non-tight level rankings
+            boolean valid = false;
+            if(Options.mReduceOutdegree) {
+                // d2 only allow maximal tight level ranking
+                valid = lvlRankSucc.isMaximallyTight(mOperand);
+            }else {
+                valid = lvlRankSucc.isTight();
+            }
+            if(valid) {
+                result.add(lvlRankSucc);
+            }
+        }
+        return result;
+    }
+    /**
+     * tight level ranking for successors of ranked states 
+     * **/
+    private Set<LevelRanking> getRankedSuccessorTightLevelRankings(
+            LevelRankingConstraint constraint) {
+        Set<LevelRanking> tightLvlRanks = getTightLevelRankings(constraint);
+        Set<LevelRanking> result = new HashSet<>();
+        for(final LevelRanking tightLvlRank : tightLvlRanks) {
+            LevelRanking lvlRank = tightLvlRank;
+            if(Options.mTurnwise) {
+                lvlRank = getCutpointLevelRanking(tightLvlRank);
+            }
+            if(lvlRank != null) {
+                result.add(lvlRank);
+            }
+        }
+        return result;
+    }
+    
+    /**
+     * Gamma 3 transitions, get maximal rankings
+     * */
+    private Set<LevelRanking> getMaximalSuccessorTightLevelRanking(
+            LevelRankingConstraint constraint) {
+        Set<LevelRanking> resultLvlRanks = new HashSet<>();
+        LevelRanking lvlRank = new LevelRanking(true, Options.mTurnwise);
+        for(final int s : constraint.getS()) {
+            int rank = constraint.getLevelRank(s);
+            lvlRank.addLevelRank(s, rank, LevelRanking.isEven(rank) && constraint.isInO(s));
+        }
+        // should be tight
+        if(lvlRank.isTight()) {
+            resultLvlRanks.add(lvlRank);
+        }
+        return resultLvlRanks;
+    }
+    
+    private Set<LevelRanking> getTightLevelRankings(
+            LevelRankingConstraint constraint) {
+        if(Options.mReduceOutdegree) {
+            // if now it is in ReduceOutdegree, get the maximal 
+            return getMaximalSuccessorTightLevelRanking(constraint);
+        }else {
+            LevelRankingGenerator generator = new LevelRankingGenerator(mOperand);
+            // now we have to generate all kinds of tight level rankings
+            Collection<LevelRanking> lvlRankSuccs = generator.generateLevelRankings(constraint, Options.mMinusOne);
+            Set<LevelRanking> result = new HashSet<>();
+            for(LevelRanking lvlRank : lvlRankSuccs) {
+                // d3, rank(f) = rank(f')
+                boolean valid = lvlRank.getMaximalRank() == mLevelRanking.getMaximalRank();
+                // has to be tight level ranking
+                valid = valid && lvlRank.isTight();
+                if(valid) {
+                    result.add(lvlRank);
+                }
+            }
+            return result;
+        }
     }
     
     
@@ -153,10 +197,32 @@ public class StateRankTight extends StateRank<ComplementRankTight> {
             }
             lvlSucc.addLevelRank(s, lvlRank.getLevelRank(s), isInO);
         }
+        //TODO check
         if(Options.mReduceOutdegree) {
-            // do some thing here
+            lvlSucc = getMaximalFinalSuccessorLevelRanking(lvlRank);
         }
         return lvlSucc;
+    }
+    
+    /**
+     * Gamma 4 transitions
+     * i' /= 0 \/ O is empty, then O' = empty and g'(q) = g(q) - 1 for every state in O
+     * 
+     * otherwise no successor
+     * 
+     * */ 
+    private LevelRanking getMaximalFinalSuccessorLevelRanking(LevelRanking lvlRank) {
+        LevelRanking lvlSucc = lvlRank.clone();
+        lvlSucc.getO().clear();
+        if(lvlRank.getTurn() != 0 || lvlRank.isOEmpty()) {
+            for(int s : lvlRank.getO()) {
+                int rank = Integer.max(LevelRanking.ZERO, lvlRank.getLevelRank(s) - 1);
+                lvlSucc.addLevelRank(s, rank, false);
+            }
+        }else {
+            lvlSucc = null;
+        }
+        return lvlRank;
     }
 
 

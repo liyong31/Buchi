@@ -132,7 +132,6 @@ public class Main {
             }else if(args[i].equals("-rmdegree")) {
                 Options.mAlgo = Algorithm.TIGHT;
                 Options.mTightRank = true;
-                Options.mTurnwise = true;
                 Options.mReduceOutdegree = true;
             }
 		}

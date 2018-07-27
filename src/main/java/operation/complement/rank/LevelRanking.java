@@ -209,7 +209,7 @@ public class LevelRanking {
     public String toString() {
         if(isRanked()) {
             if(isTurnwised()) {
-                return "(f=" + mRanks + " , O=" + mOSet + " "+ mTurn + ")";  
+                return "(f=" + mRanks + " , O=" + mOSet + ", "+ mTurn + ")";  
             }else {
                 return "(f=" + mRanks + " , O=" + mOSet + ")";                  
             }
