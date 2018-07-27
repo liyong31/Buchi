@@ -167,9 +167,11 @@ public class StateNsbc extends State {
         // only keep nonfinal states in SP
         ISet SP = result.getSecond().getSecond();
         ISet SPInterF = result.getSecond().getFirst();
-        if(Options.mEagerGuess && !SPInterF.isEmpty()) {
+        if(Options.mEagerGuess && (!SPInterF.isEmpty() || 
+           SP.cardinality() != S.cardinality())) {
             // successor of S must not contain final states
             // if we have nondeterministic jump from first part 
+            // and the number of runs will not decrease
             return null;
         }
         // now consider successors of C

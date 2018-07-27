@@ -27,7 +27,6 @@ import main.Options;
 import operation.complement.Complement;
 import operation.complement.ncsb.ComplementNcsbOtf;
 import operation.explore.Explore;
-import operation.quotient.QuotientSimple;
 import operation.removal.Remove;
 import util.ISet;
 import util.UtilISet;
