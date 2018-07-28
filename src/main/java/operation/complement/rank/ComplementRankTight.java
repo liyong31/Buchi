@@ -46,7 +46,9 @@ public class ComplementRankTight extends ComplementRank<StateRankTight> {
 
     @Override
     public String getName() {
-        return "ComplementRankTight";
+        return "ComplementRankTight" + 
+                (Options.mTurnwise ? "+turnwise" : "") +
+                (Options.mReduceOutdegree? "+rmdegree" : "");
     }
 
     @Override

@@ -92,7 +92,7 @@ public class GFFFileParser implements SingleParser {
         assert doc != null;
         // first check alphabet: classical
         Element alphaElem = getElementByTagName(doc, GFFFileParser.ALPHABET);
-        System.out.println(alphaElem.toString());
+//        System.out.println(alphaElem.toString());
         if(!alphaElem.getAttribute(GFFFileParser.TYPE).equals(GFFFileParser.ALPHABET_TYPE_VALUE)) {
             throw new UnsupportedOperationException("Not classical alphabet: " + alphaElem.getAttribute(GFFFileParser.TYPE));
         }
