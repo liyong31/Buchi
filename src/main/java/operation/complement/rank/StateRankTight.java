@@ -101,7 +101,13 @@ public class StateRankTight extends StateRank<ComplementRankTight> {
         Set<LevelRanking> result = new HashSet<>();
         if(constraint.getS().isEmpty()) return result;
         LevelRankingGenerator generator = new LevelRankingGenerator(mOperand);
-        Collection<LevelRanking> lvlRankSuccs = generator.generateLevelRankings(constraint);
+        Collection<LevelRanking> lvlRankSuccs = null;
+        
+        if(Options.mReduceOutdegree) {
+            lvlRankSuccs = generator.generateMaximalTightLevelRankings(constraint);
+        }else {
+            lvlRankSuccs = generator.generateLevelRankings(constraint);
+        }
         
         for(final LevelRanking lvlRankSucc : lvlRankSuccs) {
             // ignore non-tight level rankings

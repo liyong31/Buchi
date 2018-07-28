@@ -214,14 +214,16 @@ public class LevelRankingGenerator extends LevelRankingConstraint {
             ISet remaining = S.clone();
             remaining.andNot(states);
             int n = states.cardinality();
+            int maxEvenRank = 2 * n - 2;
+            int maxOddRank = 2 * n - 1;
             LevelRanking lvlRankTemplate = new LevelRanking(true, Options.mTurnwise);
             for(final int t : fset) {
-                // all final states are assigned with maximal rank
-                lvlRankTemplate.addLevelRank(t, 2 * n, false);
+                // all final states are assigned with maximal even rank
+                lvlRankTemplate.addLevelRank(t, maxEvenRank, false);
             }
             for(final int t : remaining) {
                 // all remaining states are assigned with maximal rank
-                lvlRankTemplate.addLevelRank(t, 2 * n + 1, false);
+                lvlRankTemplate.addLevelRank(t, maxOddRank, false);
             }
             result.addAll(generateMaximalTightLevelRankingsInner(lvlRankTemplate, states, fset, remaining));
         }
