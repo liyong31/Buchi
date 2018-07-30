@@ -23,10 +23,9 @@ import automata.Buchi;
 import automata.IBuchi;
 import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
-import main.Options;
+
 import operation.complement.Complement;
 import operation.complement.ncsb.ComplementNcsb;
-import operation.complement.rank.ComplementRankTight;
 import operation.removal.Remove;
 import util.ISet;
 

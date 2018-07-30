@@ -61,7 +61,6 @@ public class RetrospectiveRank {
     public RetrospectiveRank toRank(ISet fset) {
         if(! this.mHasRanked) {
             RetrospectiveRank retroRank = new RetrospectiveRank(true);
-            // now 
             int num = 0;
             for(int i = 0; i < mOrdSets.getOrderedSets().size(); i ++) {
                 ISet states = mOrdSets.getSet(i);
@@ -100,7 +99,7 @@ public class RetrospectiveRank {
                 // no states with odd rank i
                 if(rankNumbers[i] <= 0 ) continue;
                 rankMap.put(i, num);
-                rankMap.put(i - 1, num); // for odd numbers
+                rankMap.put(i - 1, num); // for even ranks
                 num ++;
             }
             for(final int s : mLvlRank.getS()) {
