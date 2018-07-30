@@ -49,7 +49,8 @@ public class Options {
 	    RAMSEY,
 	    TUPLE,
 	    SLICE,
-	    NSBC
+	    NSBC,
+	    RETRO
 	}
 
 	   // whether to enable optimized version of NCSB

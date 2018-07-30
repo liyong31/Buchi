@@ -39,6 +39,7 @@ import operation.complement.nsbc.ComplementNsbc;
 import operation.complement.ramsey.ComplementRamsey;
 import operation.complement.rank.ComplementRankKV;
 import operation.complement.rank.ComplementRankTight;
+import operation.complement.retrorank.ComplementRetrorank;
 import operation.complement.slice.ComplementSliceVW;
 import operation.complement.tuple.ComplementTuple;
 import operation.explore.Explore;
@@ -135,6 +136,8 @@ public class Main {
                 Options.mReduceOutdegree = true;
             }else if(args[i].equals("-reduce1")) {
                 Options.mMinusOne = true;
+            }else if(args[i].equals("-retro")) {
+                Options.mAlgo = Algorithm.RETRO;
             }
 		}
 		if(time != Integer.MAX_VALUE) {
@@ -193,6 +196,7 @@ public class Main {
 		System.out.println("-rmdegree: Sven's reduce outdegree rank-based complementation");
 		System.out.println("-tuple: Tuple-based complementation");
 		System.out.println("-slice: Slice-based complementation");
+		System.out.println("-retro: Retrospective rank-based complementation");
 		System.out.println("-rmdead: Remove dead states");
 		System.out.println("-reduce1: Decrease 1 for Rank-based complementation");
 		
@@ -356,6 +360,9 @@ public class Main {
             break;
 		case TIGHT:
             buchiComplement = new ComplementRankTight(buchi);
+            break;
+        case RETRO:
+            buchiComplement = new ComplementRetrorank(buchi);
             break;
         default:
             buchiComplement = new ComplementRankKV(buchi);

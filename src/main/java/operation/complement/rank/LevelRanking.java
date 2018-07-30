@@ -43,9 +43,9 @@ import util.UtilISet;
 public class LevelRanking {
 
     protected final TIntIntMap mRanks;   // ranking function
-    protected static final int TWO = 2;
-    protected static final int ONE = 1;
-    protected static final int ZERO = 0;
+    public static final int TWO = 2;
+    public static final int ONE = 1;
+    public static final int ZERO = 0;
     protected int mMaxRank;             
     protected final ISet mSSet;
     protected final ISet mOSet;
@@ -189,7 +189,7 @@ public class LevelRanking {
     }
 
     
-    boolean isInO(int state) {
+    public boolean isInO(int state) {
         return mOSet.get(state);
     }
     
@@ -197,7 +197,7 @@ public class LevelRanking {
         return mIsRanked;
     }
     
-    boolean isOEmpty() {
+    public boolean isOEmpty() {
         return mOSet.isEmpty();
     }
     
@@ -237,7 +237,7 @@ public class LevelRanking {
     /**
      * Count the number of ranks occurred in the function
      * */
-    private int[] countRankNumbers() {
+    public int[] countRankNumbers() {
         assert mMaxRank >= 0;
         assert mMaxRank < Integer.MAX_VALUE : "ERROR RANKS";
         final int[] ranks = new int[mMaxRank + 1];

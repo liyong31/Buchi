@@ -163,6 +163,7 @@ public class LevelRankingGenerator extends LevelRankingConstraint {
     
     /**
      * efficient algorithm to generate tight level rankings with rank maxRank
+     * TODO
      * */
     public Set<LevelRanking> generateTightLevelRankings(LevelRankingConstraint constraint, int maxRank, boolean minusOne) {
         Set<LevelRanking> result = new HashSet<>();
