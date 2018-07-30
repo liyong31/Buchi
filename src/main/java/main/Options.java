@@ -50,7 +50,8 @@ public class Options {
 	    TUPLE,
 	    SLICE,
 	    NSBC,
-	    RETRO
+	    RETRO,
+	    RNSBC
 	}
 
 	   // whether to enable optimized version of NCSB

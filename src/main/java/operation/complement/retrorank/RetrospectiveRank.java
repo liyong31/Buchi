@@ -1,7 +1,5 @@
 package operation.complement.retrorank;
 
-import gnu.trove.map.TIntIntMap;
-import gnu.trove.map.hash.TIntIntHashMap;
 import main.Options;
 import operation.complement.rank.LevelRanking;
 import operation.complement.tuple.Color;
@@ -23,6 +21,12 @@ public class RetrospectiveRank {
             this.mLvlRank = null;
         }
         this.mHasRanked = hasRanked;
+    }
+    
+    public RetrospectiveRank(LevelRanking lvlRank) {
+        this.mLvlRank = lvlRank;
+        this.mOrdSets = null;
+        this.mHasRanked = true;
     }
     
     public void add(ISet oset) {
@@ -91,27 +95,8 @@ public class RetrospectiveRank {
      * **/
     public RetrospectiveRank tighten(ISet fset) {
         if(this.mHasRanked) {
-            RetrospectiveRank retroRank = new RetrospectiveRank(true);
-            int[] rankNumbers = mLvlRank.countRankNumbers();
-            TIntIntMap rankMap = new TIntIntHashMap();
-            int num = 0;
-            for(int i = 1; i <= mLvlRank.getMaximalRank(); i += 2) {
-                // no states with odd rank i
-                if(rankNumbers[i] <= 0 ) continue;
-                rankMap.put(i, num);
-                rankMap.put(i - 1, num); // for even ranks
-                num ++;
-            }
-            for(final int s : mLvlRank.getS()) {
-                int rank;
-                if(fset.get(s)) {
-                    rank = 2 * rankMap.get(mLvlRank.getLevelRank(s));
-                }else {
-                    rank = 2 * rankMap.get(mLvlRank.getLevelRank(s)) + 1;
-                }
-                retroRank.addRank(s, rank, LevelRanking.isEven(rank) && mLvlRank.isInO(s));
-            }
-            return retroRank;
+            LevelRanking lvlRank = UtilRetrorank.tighten(mLvlRank, fset);
+            return new RetrospectiveRank(lvlRank);
         }else {
             throw new UnsupportedOperationException("Ordered sets cannot use tighten");
         }

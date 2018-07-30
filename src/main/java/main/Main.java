@@ -36,6 +36,7 @@ import operation.complement.Complement;
 import operation.complement.ncsb.ComplementNcsb;
 import operation.complement.ncsb.ComplementNcsbOtf;
 import operation.complement.nsbc.ComplementNsbc;
+import operation.complement.nsbc.ComplementRankNsbc;
 import operation.complement.ramsey.ComplementRamsey;
 import operation.complement.rank.ComplementRankKV;
 import operation.complement.rank.ComplementRankTight;
@@ -138,6 +139,8 @@ public class Main {
                 Options.mMinusOne = true;
             }else if(args[i].equals("-retro")) {
                 Options.mAlgo = Algorithm.RETRO;
+            }else if(args[i].equals("-rnsbc")) {
+                Options.mAlgo = Algorithm.RNSBC;
             }
 		}
 		if(time != Integer.MAX_VALUE) {
@@ -188,7 +191,8 @@ public class Main {
 		System.out.println("-complement <file-out>: Output complement of the last automaton");
 		System.out.println("-ncsb: Original NCSB complementation");
 		System.out.println("-ncsbotf: On-the-fly NCSB complementation");
-		System.out.println("-nsbc: NCSB complementation");
+		System.out.println("-nsbc: NSBC complementation");
+		System.out.println("-rnsbc: Rank-based NSBC complementation");
 		System.out.println("-ramsey: Ramsey-based complementation");
 		System.out.println("-rank: Rank-based complementation");
 		System.out.println("-tight: Tight ranking-based complementation");
@@ -355,6 +359,9 @@ public class Main {
 		case NSBC:
 	         buchiComplement = new ComplementNsbc(buchi);
 	         break;
+		case RNSBC:
+            buchiComplement = new ComplementRankNsbc(buchi);
+            break;
 		case NCSB:
             buchiComplement = new ComplementNcsb(buchi);
             break;

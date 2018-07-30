@@ -6,6 +6,7 @@ import operation.complement.rank.LevelRanking;
 import operation.complement.rank.LevelRankingConstraint;
 import operation.complement.rank.StateRank;
 import operation.complement.rank.UtilRank;
+import operation.complement.retrorank.UtilRetrorank;
 import util.ISet;
 
 public class StateRankNsbc extends StateRank<ComplementRankNsbc> {
@@ -20,7 +21,6 @@ public class StateRankNsbc extends StateRank<ComplementRankNsbc> {
             return super.getSuccessors(letter);
         }
         mVisitedLetters.set(letter);
-        System.out.println("Computing successors for letter " + letter);
         // first compute subset state
         if(!mLevelRanking.isRanked()) {
             // subset construction
@@ -67,7 +67,8 @@ public class StateRankNsbc extends StateRank<ComplementRankNsbc> {
                 lvlRank.addLevelRank(s, LevelRanking.ONE, false);
             }
         }else {
-            // now if rankOne is empty
+            // now if rankOne is empty, then no non-accepting states will visit 
+            // the deterministic part
             if(rankOne.isEmpty()) {
                 for(final int s : rankThree) {
                     lvlRank.addLevelRank(s, LevelRanking.ONE, false);
@@ -99,7 +100,8 @@ public class StateRankNsbc extends StateRank<ComplementRankNsbc> {
             int rank = constraint.getLevelRank(s);
             lvlRank.addLevelRank(s, rank, LevelRanking.isEven(rank) && constraint.isInO(s));
         }
-        return lvlRank;
+        // tighten
+        return UtilRetrorank.tighten(lvlRank, operand.getFinalStates());
     }
     
     
