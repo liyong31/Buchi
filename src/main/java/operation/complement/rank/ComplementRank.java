@@ -61,7 +61,7 @@ public abstract class ComplementRank<S extends State>  extends Complement {
     
     protected abstract S makeRankState(int id, LevelRanking lvlRank);
 
-    protected S getOrAddState(LevelRanking lvlRank) {
+    public S getOrAddState(LevelRanking lvlRank) {
         S state = makeRankState(0, lvlRank);
         if(mStateIndices.containsKey(state)) {
             return getStateLevelRanking(mStateIndices.get(state));

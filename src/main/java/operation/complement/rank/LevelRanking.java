@@ -43,6 +43,7 @@ import util.UtilISet;
 public class LevelRanking {
 
     protected final TIntIntMap mRanks;   // ranking function
+    public static final int THREE = 3;
     public static final int TWO = 2;
     public static final int ONE = 1;
     public static final int ZERO = 0;
@@ -193,7 +194,7 @@ public class LevelRanking {
         return mOSet.get(state);
     }
     
-    boolean isRanked() {
+    public boolean isRanked() {
         return mIsRanked;
     }
     
@@ -251,7 +252,7 @@ public class LevelRanking {
     /**
      * the tight definition is in FKV paper
      * **/
-    boolean isTight() {
+    public boolean isTight() {
         assert mMaxRank >= 0;
         assert mMaxRank < Integer.MAX_VALUE : "ERROR RANKS";
         // maximal rank should be odd
@@ -277,7 +278,7 @@ public class LevelRanking {
      * 2. exactly one state to every odd rank o < mMaxRank
      * 3. remaining states have rank mMaxRank 
      * */
-    boolean isMaximallyTight(IBuchi buchi) {
+    public boolean isMaximallyTight(IBuchi buchi) {
         assert mMaxRank >= 0;
         assert mMaxRank < Integer.MAX_VALUE : "ERROR RANKS";
         // 

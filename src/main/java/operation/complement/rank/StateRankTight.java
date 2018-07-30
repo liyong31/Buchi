@@ -33,8 +33,6 @@ public class StateRankTight extends StateRank<ComplementRankTight> {
         super(complement, id, lvlRank);
     }
     
-    private ISet mVisitedLetters = UtilISet.newISet();
-
     @Override
     public ISet getSuccessors(int letter) {
         if(mVisitedLetters.get(letter)) {
