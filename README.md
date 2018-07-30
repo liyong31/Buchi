@@ -8,9 +8,11 @@ Buchi is a simple library for Büchi word automata. It currently implements foll
 
 3. Slice-based algorithms described by Vardi and Wilke [4] and later improved by Tsai et al. [5].
 
-4. Tuple-based algorithm described by Allred and Ultes-Nitsche [6] which is consistent with the one in [5].
+4. Retrospective rank-based complementation algorithms described by Fogarty et al. [6].
 
-5. NCSB complementation algorithms described by Blahoudek et al. [7] and later improved by Chen et al. [8].
+5. Tuple-based algorithm described by Allred and Ultes-Nitsche [7] which is consistent with the one in [5].
+
+6. NCSB complementation algorithms described by Blahoudek et al. [8] and later improved by Chen et al. [9].
 
 
 # References
@@ -24,8 +26,10 @@ Buchi is a simple library for Büchi word automata. It currently implements foll
 
 [5] Ming-Hsien Tsai, Seth Fogarty, Moshe Y. Vardi, and Yih-Kuen Tsay. "State of Büchi Complementation". In Logical Method in Computer Science, Vol. 10(4:13)2014, pp. 1–27.
 
-[6] Joel Allred and Ulrich Ultes-Nitsche. "Complementing Buchi Automata with a Subset-tuple Construction".
+[6] Seth Fogarty, Orna Kupferman, Thomas Wilke and Moshe Y. Vardi. "Unifying Büchi Complementation Constuctions". In Logical Method in Computer Science, Vol. 9(1:13) 2013.
 
-[7] František Blahoudek, Matthias Heizmann, Sven Schewe, Jan Strejček and Ming-Hsien Tsai. "Complementing Semi-deterministic Büchi Automata". In TACAS 2016, pp 770-787.
+[7] Joel Allred and Ulrich Ultes-Nitsche. "Complementing Büchi Automata with a Subset-tuple Construction".
 
-[8] Yu-Fang Chen, Matthias Heizmann, Ondřej Lengál, Yong Li, Ming-Hsien Tsai, Andrea Turrini and Lijun Zhang. "Advanced Automata-based Algorithms for Program Termination Checking". In PLDI, pp 135-150. 
+[8] František Blahoudek, Matthias Heizmann, Sven Schewe, Jan Strejček and Ming-Hsien Tsai. "Complementing Semi-deterministic Büchi Automata". In TACAS 2016, pp 770-787.
+
+[9] Yu-Fang Chen, Matthias Heizmann, Ondřej Lengál, Yong Li, Ming-Hsien Tsai, Andrea Turrini and Lijun Zhang. "Advanced Automata-based Algorithms for Program Termination Checking". In PLDI, pp 135-150. 
