@@ -30,5 +30,10 @@ public class PairXY<X, Y> {
     public int hashCode(){
       return x.hashCode() + 31*y.hashCode();
     }   
+    
+    @Override
+    public String toString() {
+        return "(" + x + ", " + y + ")";
+    }
 
 }
