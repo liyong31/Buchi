@@ -77,7 +77,7 @@ public class IsIncludedExplore {
         return mEmpty;
     }
     
-    public PairXX<List<Integer>> getCounterexample() {
+    public PairXX<int[]> getCounterexample() {
         if(!mEmpty) {
             int lastState = mRun.getLastState();
             List<Integer> prefix = new ArrayList<>();
@@ -95,7 +95,16 @@ public class IsIncludedExplore {
                 period.add(mRun.getLetterAt(breakIndex));
                 breakIndex ++;
             }
-            return new PairXX<>(prefix, period);
+            
+            int[] x = new int[prefix.size()];
+            for(int i = 0; i < prefix.size(); i ++) {
+                x[i] = prefix.get(i);
+            }
+            int[] y = new int[period.size()];
+            for(int i = 0; i < period.size(); i ++) {
+                y[i] = period.get(i);
+            }
+            return new PairXX<>(x, y);
         }
         return null;
     }
@@ -315,6 +324,15 @@ public class IsIncludedExplore {
         
         IsIncludedExplore nn = new IsIncludedExplore(A, B);
         System.out.println(nn.isIncluded());
+        PairXX<int[]> ce = nn.getCounterexample();
+        int[] cel = ce.getFirst();
+        for(int i = 0; i < cel.length; i ++) {
+            System.out.println(cel[i]);
+        }
+        int[] cer = ce.getSecond();
+        for(int i = 0; i < cer.length; i ++) {
+            System.out.println(cer[i]);
+        }
         System.out.println(nn.getCounterexample());
     }
     
