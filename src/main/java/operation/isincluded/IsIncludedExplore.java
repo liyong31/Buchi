@@ -28,14 +28,18 @@ import java.util.Stack;
 import automata.IBuchi;
 import gnu.trove.map.TIntIntMap;
 import gnu.trove.map.hash.TIntIntHashMap;
+import operation.complement.Complement;
+import operation.complement.dba.ComplementDBA;
 import operation.complement.ncsb.ComplementNcsbOtf;
-import operation.semideterminize.Semideterminize;
-import test.BAStore;
+import operation.complement.retrorank.ComplementRetrorank;
+import util.ISet;
+import util.parser.ba.BAFileParser;
+import util.parser.gff.GFFFileParser;
 
 public class IsIncludedExplore {
     
     protected final IBuchi mFstOperand;
-    protected final ComplementNcsbOtf mSndComplement;
+    protected final Complement mSndComplement;
 //    protected int mFstFinalState;
 //    protected int mSndFinalState;
 //    protected IBuchi mProduct;
@@ -43,14 +47,26 @@ public class IsIncludedExplore {
     
     public IsIncludedExplore(IBuchi fstOperand, IBuchi sndOperand) {
         mFstOperand = fstOperand;
-        boolean isSemiDet = sndOperand.isSemiDeterministic();
-        IBuchi semiOperand = null;
-        if(isSemiDet) {
-            semiOperand = sndOperand;
-        }else {
-            semiOperand = new Semideterminize(sndOperand);
+        ISet inits = sndOperand.getInitialStates();
+        boolean isDet = false;
+        
+        if(inits.cardinality() == 1) {
+            int initState = inits.iterator().next();
+            isDet = sndOperand.isDeterministic(initState);
         }
-        mSndComplement = new ComplementNcsbOtf(semiOperand);
+        if(isDet) {
+            // has to make complete
+            mSndComplement = new ComplementDBA(sndOperand);
+        }else {
+            boolean isSemiDet = sndOperand.isSemiDeterministic();
+            if(isSemiDet) {
+                System.out.println("SDBA");
+                mSndComplement = new ComplementNcsbOtf(sndOperand);
+            }else {
+                System.out.println("NBA");
+                mSndComplement = new ComplementRetrorank(sndOperand);
+            }
+        }
         new AsccExplore();
     }
     
@@ -58,7 +74,7 @@ public class IsIncludedExplore {
         return mEmpty;
     }
     
-    private class ProductState {
+    protected class ProductState {
         int mFstState;
         int mSndState;
         int mResState;
@@ -121,7 +137,6 @@ public class IsIncludedExplore {
             numStates = 0;
             mEmpty = true;
             Set<ProductState> inits = initialize();
-            
             for(ProductState init : inits) {
                 if(! mEmpty) break;
                 strongConnect(init);
@@ -208,8 +223,15 @@ public class IsIncludedExplore {
     }
     
     public static void main(String[] args) {
-
         
+        BAFileParser gffParser =  new BAFileParser();
+        gffParser.parse("/home/liyong/Downloads/RABIT244/Examples/mcsA.ba");
+        IBuchi A = gffParser.getBuchi();
+        gffParser.parse("/home/liyong/Downloads/RABIT244/Examples/mcsB.ba");
+        IBuchi B = gffParser.getBuchi();
+        
+        IsIncludedExplore nn = new IsIncludedExplore(A, B);
+        System.out.println(nn.isIncluded());
     }
     
 }

@@ -31,6 +31,9 @@ import operation.removal.Remove;
 import util.ISet;
 import util.UtilISet;
 
+/**
+ * TODO we could also remove the states in the first stage which cannot reach themselves
+ * */
 public class ComplementNsbc extends Complement {
 
     protected final ISet mDetStates;

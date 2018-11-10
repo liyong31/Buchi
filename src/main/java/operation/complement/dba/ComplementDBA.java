@@ -46,6 +46,7 @@ public class ComplementDBA extends Complement {
     
     @Override
     protected void computeInitialStates() {
+        mOperand.makeComplete();
         mStateIndices = new TObjectIntHashMap<>();
         ISet inits = mOperand.getInitialStates();
         if(inits.cardinality() > 1) {
@@ -73,7 +74,7 @@ public class ComplementDBA extends Complement {
             StateDBA newState = new StateDBA(this, index, st, label);
             int id = this.addState(newState);
             mStateIndices.put(newState, id);
-            if(!mOperand.isFinal(st) && label) setFinal(index);
+            if(!mOperand.isFinal(st) && label) setFinal(id);
             return newState;
         }
     }
