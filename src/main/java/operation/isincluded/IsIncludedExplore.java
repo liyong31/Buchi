@@ -28,25 +28,30 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
+import automata.Buchi;
 import automata.IBuchi;
+import automata.RandomBuchiGenerator;
 import automata.Run;
 import gnu.trove.map.TIntIntMap;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntIntHashMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
+import main.Options;
 import operation.complement.Complement;
 import operation.complement.dba.ComplementDBA;
 import operation.complement.ncsb.ComplementNcsbOtf;
-import operation.complement.retrorank.ComplementRetrorank;
+
+import operation.complement.tuple.ComplementTuple;
 import util.ISet;
 import util.PairXX;
-import util.parser.ba.BAFileParser;
 
 public class IsIncludedExplore {
     
     protected final IBuchi mFstOperand;
     protected final Complement mSndComplement;
     protected boolean mEmpty;
+    protected int mFstState;
+    protected int mSndState;
     private final int SHARP = -1;
     private Run mRun;
     
@@ -61,13 +66,20 @@ public class IsIncludedExplore {
         }
         if(isDet) {
             // has to make complete
+            System.out.println("DBA");
             mSndComplement = new ComplementDBA(sndOperand);
         }else {
             boolean isSemiDet = sndOperand.isSemiDeterministic();
             if(isSemiDet) {
+                System.out.println("SDBA");
                 mSndComplement = new ComplementNcsbOtf(sndOperand);
             }else {
-                mSndComplement = new ComplementRetrorank(sndOperand);
+                System.out.println("NBA");
+//                Options.mEnhancedSliceGuess = true;
+//                mSndComplement = new ComplementBreakpoint(sndOperand);
+//                mSndComplement = new ComplementRetrorank(sndOperand);
+                Options.mMergeAdjacentSets = true;
+                mSndComplement = new ComplementTuple(sndOperand);
             }
         }
         new AsccExplore();
@@ -253,6 +265,12 @@ public class IsIncludedExplore {
                                 Elem p = mSCCs.pop();
                                 u = p.mState;
                                 B |= p.mLabel;
+                                if((p.mLabel & 1) == 1) {
+                                    mFstState = p.mState.mResState;
+                                }
+                                if((p.mLabel & 2) == 2) {
+                                    mSndState = p.mState.mResState;
+                                }
                                 if(B == 3) {
                                     mEmpty = false;
                                     extractRun(u.mResState);
@@ -316,24 +334,79 @@ public class IsIncludedExplore {
     
     public static void main(String[] args) {
         
-        BAFileParser gffParser =  new BAFileParser();
-        gffParser.parse("/home/liyong/Downloads/RABIT244/Examples/mcsA.ba");
-        IBuchi A = gffParser.getBuchi();
-        gffParser.parse("/home/liyong/Downloads/RABIT244/Examples/mcsB.ba");
-        IBuchi B = gffParser.getBuchi();
+//        BAFileParser gffParser =  new BAFileParser();
+//        gffParser.parse("/home/liyong/Downloads/RABIT244/Examples/phils.1.1.c.ba");
+//        IBuchi A = gffParser.getBuchi();
+//        gffParser =  new BAFileParser();
+//        gffParser.parse("/home/liyong/Downloads/RABIT244/Examples/phils.2.c.ba");
+//        IBuchi B = gffParser.getBuchi();
+////        System.out.println(B.toString());
+//        long time = System.currentTimeMillis();
+//        IsIncludedExplore nn = new IsIncludedExplore(A, B);
+//        boolean result = nn.isIncluded();
+//        System.out.println(nn.isIncluded());
+//        time = System.currentTimeMillis() - time;
+//        System.out.println("Time: " + (time / 1000.0) + " s");
+//        if(!result) {
+//            PairXX<int[]> ce = nn.getCounterexample();
+//            int[] cel = ce.getFirst();
+//            for(int i = 0; i < cel.length; i ++) {
+//                System.out.println(cel[i]);
+//            }
+//            int[] cer = ce.getSecond();
+//            for(int i = 0; i < cer.length; i ++) {
+//                System.out.println(cer[i]);
+//            }
+//            System.out.println(nn.getCounterexample());
+//        }
         
-        IsIncludedExplore nn = new IsIncludedExplore(A, B);
+        IBuchi buchi = new Buchi(2);
+        
+        buchi.addState();
+        buchi.addState();
+        buchi.addState();
+        
+        buchi.getState(0).addSuccessor(0, 1);
+        buchi.getState(0).addSuccessor(1, 2);
+        
+        buchi.getState(1).addSuccessor(0, 2);
+        
+        buchi.getState(2).addSuccessor(1, 0);
+        buchi.getState(2).addSuccessor(1, 1);
+        
+        buchi.setFinal(1);
+        buchi.setInitial(0);
+        buchi.makeComplete();
+        IsIncludedExplore nn = new IsIncludedExplore(buchi, buchi);
+        boolean result = nn.isIncluded();
         System.out.println(nn.isIncluded());
-        PairXX<int[]> ce = nn.getCounterexample();
-        int[] cel = ce.getFirst();
-        for(int i = 0; i < cel.length; i ++) {
-            System.out.println(cel[i]);
+        long time = System.currentTimeMillis();
+        time = System.currentTimeMillis() - time;
+        System.out.println("Time: " + (time / 1000.0) + " s");
+        if(!result) {
+            PairXX<int[]> ce = nn.getCounterexample();
+            int[] cel = ce.getFirst();
+            for(int i = 0; i < cel.length; i ++) {
+                System.out.println(cel[i] );
+            }
+            System.out.println(" ---- \n");
+            int[] cer = ce.getSecond();
+            for(int i = 0; i < cer.length; i ++) {
+                System.out.println(cer[i]);
+            }
+            System.out.println(nn.getCounterexample());
         }
-        int[] cer = ce.getSecond();
-        for(int i = 0; i < cer.length; i ++) {
-            System.out.println(cer[i]);
+        
+        while(true) {
+            buchi = RandomBuchiGenerator.getRandomBuchiAutomaton(3, 2, 1, 1.3);
+            nn = new IsIncludedExplore(buchi, buchi);
+            result = nn.isIncluded();
+            if(!result) {
+                System.out.println(buchi.toDot());
+                break;
+            }
         }
-        System.out.println(nn.getCounterexample());
+
     }
     
 }

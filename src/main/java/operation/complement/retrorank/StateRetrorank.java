@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import automata.IBuchi;
 import automata.State;
 import operation.complement.rank.LevelRanking;
+import operation.complement.rank.LevelRankingConstraint;
 import operation.complement.tuple.OrderedSetsGenerator;
 import util.ISet;
 import util.UtilISet;
@@ -64,6 +65,7 @@ public class StateRetrorank extends State {
             super.addSuccessor(letter, nextState.getId());
         }else {
             // now we compute the successor of ranked states
+            LevelRankingConstraint constraint = new LevelRankingConstraint();
             RetrospectiveRank nextRetroRank = new RetrospectiveRank(true);
             for (final int s : mRetroRank.mLvlRank.getS()) {
                 for (final int t : operand.getState(s).getSuccessors(letter)) {
@@ -72,10 +74,12 @@ public class StateRetrorank extends State {
                     if(LevelRanking.isOdd(rank) && operand.isFinal(t)) {
                         rank = Math.max(LevelRanking.ZERO, rank - 1);
                     }
-                    nextRetroRank.addRank(t, rank, mRetroRank.mLvlRank.isInO(s) || mRetroRank.mLvlRank.isOEmpty());
+                    // has predecessors in O or pred O is empty
+                    constraint.addConstraint(t, rank, mRetroRank.mLvlRank.isInO(s), mRetroRank.mLvlRank.isOEmpty());
+//                    nextRetroRank.addRank(t, rank, mRetroRank.mLvlRank.isInO(s) || mRetroRank.mLvlRank.isOEmpty());
                 }
             }
-            nextRetroRank = nextRetroRank.tighten(operand.getFinalStates());
+            nextRetroRank = nextRetroRank.tighten(constraint, operand.getFinalStates());
             StateRetrorank nextState = mComplement.getOrAddState(nextRetroRank);
             super.addSuccessor(letter, nextState.getId());
         }

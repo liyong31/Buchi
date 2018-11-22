@@ -2,6 +2,7 @@ package operation.complement.retrorank;
 
 import main.Options;
 import operation.complement.rank.LevelRanking;
+import operation.complement.rank.LevelRankingConstraint;
 import operation.complement.tuple.Color;
 import operation.complement.tuple.OrderedSets;
 import util.ISet;
@@ -75,6 +76,7 @@ public class RetrospectiveRank {
                     rank = 2 * num + 1;
                     num ++;
                 }
+//                boolean isInO = (rank & 1) == 0;
                 for(final int s : states) {
                     retroRank.addRank(s, rank, false);
                 }
@@ -93,9 +95,9 @@ public class RetrospectiveRank {
      * 
      * Gamma(q) be the number of odd ranks in f lower than f(q)
      * **/
-    public RetrospectiveRank tighten(ISet fset) {
+    public RetrospectiveRank tighten(LevelRankingConstraint constraint, ISet fset) {
         if(this.mHasRanked) {
-            LevelRanking lvlRank = UtilRetrorank.tighten(mLvlRank, fset);
+            LevelRanking lvlRank = UtilRetrorank.tighten(constraint, fset);
             return new RetrospectiveRank(lvlRank);
         }else {
             throw new UnsupportedOperationException("Ordered sets cannot use tighten");

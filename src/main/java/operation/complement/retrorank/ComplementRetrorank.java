@@ -50,6 +50,7 @@ public class ComplementRetrorank extends Complement {
     
     @Override
     protected void computeInitialStates() {
+        mOperand.makeComplete();
         // compute initial states
         mStateIndices = new TObjectIntHashMap<>();
         ISet inits = mOperand.getInitialStates().clone();
@@ -118,6 +119,68 @@ public class ComplementRetrorank extends Complement {
         complementNcsb.explore();
         System.out.println(complementNcsb.toDot());
         System.out.println(complementNcsb.toBA());
+        
+        
+        buchi = new Buchi(2);
+        
+        buchi.addState();
+        buchi.addState();
+        buchi.addState();
+        
+        buchi.getState(0).addSuccessor(0, 1);
+        buchi.getState(0).addSuccessor(1, 2);
+        
+        buchi.getState(1).addSuccessor(0, 2);
+        
+        buchi.getState(2).addSuccessor(1, 0);
+        buchi.getState(2).addSuccessor(1, 1);
+        
+        buchi.setFinal(1);
+        buchi.setInitial(0);
+        
+        System.out.println(buchi.toDot() + "\n");
+        complement = new ComplementRetrorank(buchi);
+        complement.explore();
+        System.out.println(complement.toDot());
+        
+        buchi = new Buchi(2);
+        
+        buchi.addState();
+        buchi.addState();
+        
+        buchi.getState(0).addSuccessor(0, 1);
+        buchi.getState(0).addSuccessor(0, 0);
+        buchi.getState(1).addSuccessor(0, 0);
+        
+        buchi.setFinal(1);
+        buchi.setInitial(0);
+        buchi.makeComplete();
+        System.out.println(buchi.toDot() + "\n");
+        complement = new ComplementRetrorank(buchi);
+        complement.explore();
+        System.out.println(complement.toDot());
+        
+        buchi = new Buchi(2);
+        
+        buchi.addState();
+        buchi.addState();
+        buchi.addState();
+        
+        buchi.getState(0).addSuccessor(1, 1);
+        buchi.getState(1).addSuccessor(1, 1);
+        buchi.getState(1).addSuccessor(1, 0);
+        
+        buchi.getState(0).addSuccessor(0, 2);
+        buchi.getState(1).addSuccessor(0, 2);
+        buchi.getState(2).addSuccessor(0, 2);
+        buchi.getState(2).addSuccessor(1, 2);
+        
+        buchi.setFinal(0);
+        buchi.setInitial(0);
+        System.out.println(buchi.toDot() + "\n");
+        complement = new ComplementRetrorank(buchi);
+        complement.explore();
+        System.out.println(complement.toDot());
         
     }
 

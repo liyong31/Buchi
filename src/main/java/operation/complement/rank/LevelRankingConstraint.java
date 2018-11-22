@@ -28,7 +28,7 @@ public class LevelRankingConstraint extends LevelRanking {
     }
     
     
-    protected void addConstraint(final int state, final int predRank, final boolean predIsInO
+    public void addConstraint(final int state, final int predRank, final boolean predIsInO
             , final boolean predOIsEmpty) {
         final int oldRank = mRanks.get(state);
         int rank = oldRank;
