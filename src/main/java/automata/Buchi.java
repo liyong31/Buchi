@@ -122,4 +122,11 @@ public class Buchi implements IBuchi {
         return toDot();
     }
 
+    @Override
+    public boolean forwardCovers(int s1, int s2) {
+        State state1 = (State) getState(s1);
+        State state2 = (State) getState(s1);
+        return state1.forwardCovers(state2);
+    }
+
 }

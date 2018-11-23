@@ -13,13 +13,14 @@ import util.ISet;
 
 /**
  * This construction is flawed, and only gets an overapproximation of the complement language
+ * should add another set to record the sets need to be cut later  
  * **/
 
-public class ComplementBreakpoint extends Complement {
+public class ComplementCutpoint extends Complement {
 
-    private TObjectIntMap<StateBreakpoint> mStateIndices;
+    private TObjectIntMap<StateCutpoint> mStateIndices;
     
-    public ComplementBreakpoint(IBuchi operand) {
+    public ComplementCutpoint(IBuchi operand) {
         super(operand);
     }
 
@@ -37,28 +38,28 @@ public class ComplementBreakpoint extends Complement {
         pset1.and(inits);
         ISet pset2 = inits;
         pset2.andNot(pset1);
-        OrderedSetsBreakpoint osets = new OrderedSetsBreakpoint(false);
+        OrderedSetsCutpoint osets = new OrderedSetsCutpoint(false);
         if(!pset1.isEmpty()) {
             osets.addSet(pset1);
         }
         if(!pset2.isEmpty()) {
             osets.addSet(pset2);
         }
-        StateBreakpoint stateSlice = getOrAddState(osets);
+        StateCutpoint stateSlice = getOrAddState(osets);
         this.setInitial(stateSlice.getId());
     }
     
-    protected StateBreakpoint getStateBreakpoint(int id) {
-        return (StateBreakpoint)getState(id);
+    protected StateCutpoint getStateBreakpoint(int id) {
+        return (StateCutpoint)getState(id);
     }
 
-    protected StateBreakpoint getOrAddState(OrderedSetsBreakpoint osets) {
-        StateBreakpoint state = new StateBreakpoint(this, 0, osets);
+    protected StateCutpoint getOrAddState(OrderedSetsCutpoint osets) {
+        StateCutpoint state = new StateCutpoint(this, 0, osets);
         if(mStateIndices.containsKey(state)) {
             return getStateBreakpoint(mStateIndices.get(state));
         }else {
             int index = getStateSize();
-            StateBreakpoint newState = new StateBreakpoint(this, index, osets);
+            StateCutpoint newState = new StateCutpoint(this, index, osets);
             int id = this.addState(newState);
             mStateIndices.put(newState, id);
             if(osets.isFinal()) setFinal(index);
@@ -89,7 +90,7 @@ public class ComplementBreakpoint extends Complement {
         
         System.out.println(buchi.toDot());
         
-        ComplementBreakpoint complement = new ComplementBreakpoint(buchi);
+        ComplementCutpoint complement = new ComplementCutpoint(buchi);
         new Explore(complement);
         System.out.println(complement.toDot());
         
@@ -120,7 +121,7 @@ public class ComplementBreakpoint extends Complement {
         buchi.setInitial(0);
         
         System.out.println(buchi.toDot());
-        complement = new ComplementBreakpoint(buchi);
+        complement = new ComplementCutpoint(buchi);
         new Explore(complement);
         System.out.println(complement.toDot());
         

@@ -1,6 +1,8 @@
 package util;
 
-public class PairXY<X, Y> {
+import java.util.Comparator;
+
+public class PairXY<X, Y> implements Comparator<PairXY<X, Y>>{
     
     private X x;
     private Y y;
@@ -34,6 +36,12 @@ public class PairXY<X, Y> {
     @Override
     public String toString() {
         return "(" + x + ", " + y + ")";
+    }
+
+    @Override
+    public int compare(PairXY<X, Y> arg0, PairXY<X, Y> arg1) {
+        
+        return 0;
     }
 
 }

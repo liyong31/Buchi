@@ -8,41 +8,44 @@ import operation.complement.tuple.OrderedSets;
 import util.ISet;
 import util.UtilISet;
 
-public class StateBreakpoint extends State {
-    protected final ComplementBreakpoint mComplement;
-    protected final OrderedSetsBreakpoint mOSetBkpoint;
+public class StateCutpoint extends State {
+    protected final ComplementCutpoint mComplement;
+    protected final OrderedSetsCutpoint mOSetCutpoint;
     
-    public StateBreakpoint(ComplementBreakpoint complement, int id, OrderedSetsBreakpoint osets) {
+    public StateCutpoint(ComplementCutpoint complement, int id, OrderedSetsCutpoint osets) {
         super(id);
         this.mComplement = complement;
-        this.mOSetBkpoint = osets;
+        this.mOSetCutpoint = osets;
     }
     
     private final ISet mVisitedLetters = UtilISet.newISet();
     
+    /**
+     * TOP labeled components should last
+     * BOT labeled components should be die out
+     * **/ 
     @Override
     public ISet getSuccessors(int letter) {
         if(mVisitedLetters.get(letter)) {
             return super.getSuccessors(letter);
         }
         mVisitedLetters.set(letter);
-        ISet succs = UtilISet.newISet();
         IBuchi operand = mComplement.getOperand();
-        OrderedSets ordSets = mOSetBkpoint.getOrderedSets();
+        OrderedSets ordSets = mOSetCutpoint.getOrderedSets();
         List<ISet> listOfordSets = ordSets.getOrderedSets();
-        boolean jumped = mOSetBkpoint.hasJumped();
+        boolean jumped = mOSetCutpoint.hasJumped();
         ISet leftSuccs = UtilISet.newISet();
-        ISet indexPreds = mOSetBkpoint.getBreakpoint();
+        ISet predCutpoint = mOSetCutpoint.getCutpoint();
         ISet indexSuccs = UtilISet.newISet(); 
         // successors
         boolean hasFinalsInPreds = false;
         // two possible successors
-        OrderedSetsBreakpoint ordSetsBkSuccNotJumped = null, ordSetsBkSuccJumped;
+        OrderedSetsCutpoint ordSetsCutSuccNotJumped = null, ordSetsCutSuccJumped;
         // jumped successor
-        ordSetsBkSuccJumped = new OrderedSetsBreakpoint(true);
+        ordSetsCutSuccJumped = new OrderedSetsCutpoint(true);
         if(!jumped) {
             // not jumped one
-            ordSetsBkSuccNotJumped = new OrderedSetsBreakpoint(false);
+            ordSetsCutSuccNotJumped = new OrderedSetsCutpoint(false);
         }
         int index = 0;
         ISet indexFinalsSuccs = UtilISet.newISet();
@@ -74,24 +77,24 @@ public class StateBreakpoint extends State {
             if(!finalSuccs.isEmpty()) {
                 // either it is in indicePreds (in accepting component)
                 // or in initial component (finals are current sets) 
-                if((jumped && indexPreds.get(i)) || (!jumped && hasFinalInPredLocal)) {
+                if((jumped && predCutpoint.get(i)) || (!jumped && hasFinalInPredLocal)) {
                     indexSuccs.set(index);
                 }
                 // final index for successors
                 indexFinalsSuccs.set(index);
-                ordSetsBkSuccJumped.addSet(finalSuccs);
+                ordSetsCutSuccJumped.addSet(finalSuccs);
                 if(!jumped) {
-                    ordSetsBkSuccNotJumped.addSet(finalSuccs);
+                    ordSetsCutSuccNotJumped.addSet(finalSuccs);
                 }
                 index ++;
             }
             if(!nonFinalSuccs.isEmpty()) {
-                if((jumped && indexPreds.get(i)) || (!jumped && hasFinalInPredLocal)) {
+                if((jumped && predCutpoint.get(i)) || (!jumped && hasFinalInPredLocal)) {
                       indexSuccs.set(index);
                 }
-                ordSetsBkSuccJumped.addSet(nonFinalSuccs);
+                ordSetsCutSuccJumped.addSet(nonFinalSuccs);
                 if(!jumped) {
-                    ordSetsBkSuccNotJumped.addSet(nonFinalSuccs);
+                    ordSetsCutSuccNotJumped.addSet(nonFinalSuccs);
                 }
                 index ++;
             }
@@ -101,26 +104,26 @@ public class StateBreakpoint extends State {
         }
         
         // now if it is in the initial component
-        StateBreakpoint newState;
+        StateCutpoint newState;
         if(!jumped) {
-            newState = mComplement.getOrAddState(ordSetsBkSuccNotJumped);
+            newState = mComplement.getOrAddState(ordSetsCutSuccNotJumped);
             super.addSuccessor(letter, newState.getId());
             // 
             if(hasFinalsInPreds) {
-                ordSetsBkSuccJumped.setBreakpoint(indexSuccs);
+                ordSetsCutSuccJumped.setCutpoint(indexSuccs);
             }else {
-                ordSetsBkSuccJumped.setBreakpoint(indexFinalsSuccs);
+                ordSetsCutSuccJumped.setCutpoint(indexFinalsSuccs);
             }
-            newState = mComplement.getOrAddState(ordSetsBkSuccJumped);
+            newState = mComplement.getOrAddState(ordSetsCutSuccJumped);
             super.addSuccessor(letter, newState.getId());
         }else {
             // jumped, breakpoint construction
-            if(!indexPreds.isEmpty()) {
-                ordSetsBkSuccJumped.setBreakpoint(indexSuccs);
+            if(!predCutpoint.isEmpty()) {
+                ordSetsCutSuccJumped.setCutpoint(indexSuccs);
             }else {
-                ordSetsBkSuccJumped.setBreakpoint(indexFinalsSuccs);
+                ordSetsCutSuccJumped.setCutpoint(indexFinalsSuccs);
             }
-            newState = mComplement.getOrAddState(ordSetsBkSuccJumped);
+            newState = mComplement.getOrAddState(ordSetsCutSuccJumped);
             super.addSuccessor(letter, newState.getId());
         }
         return super.getSuccessors(letter);
@@ -128,12 +131,12 @@ public class StateBreakpoint extends State {
     
     @Override
     public String toString() {
-        return mOSetBkpoint.toString();
+        return mOSetCutpoint.toString();
     }
     
     @Override
     public int hashCode() {
-        return mOSetBkpoint.hashCode();
+        return mOSetCutpoint.hashCode();
     }
     
     @Override
@@ -141,8 +144,8 @@ public class StateBreakpoint extends State {
         if(obj == null) return false;
         if(obj == this) return true;
         if(this.getClass().isInstance(obj)) {
-            StateBreakpoint other = (StateBreakpoint)obj;
-            return mOSetBkpoint.equals(other.mOSetBkpoint);
+            StateCutpoint other = (StateCutpoint)obj;
+            return mOSetCutpoint.equals(other.mOSetCutpoint);
         }
         return false;
     }

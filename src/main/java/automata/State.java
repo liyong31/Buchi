@@ -81,6 +81,15 @@ public class State implements IState, Comparable<State> {
         return otherState.mId == this.mId;
     }
     
+    public boolean forwardCovers(State other) {
+        for(int letter : other.getEnabledLetters()) {
+            if(!mSuccessors.containsKey(letter)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
     @Override
     public int hashCode() {
         return mId;

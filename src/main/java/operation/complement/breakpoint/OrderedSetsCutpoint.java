@@ -1,24 +1,25 @@
 package operation.complement.breakpoint;
 
-import java.util.List;
-
 import operation.complement.tuple.Color;
 import operation.complement.tuple.OrderedSets;
 import util.ISet;
 import util.UtilISet;
 
-public class OrderedSetsBreakpoint {
+public class OrderedSetsCutpoint {
     
-    protected final OrderedSets mOrdSets; // left most are successors of final states
-    protected ISet mBotSets;        //
-    private final boolean mJumped;        // 
+    protected final OrderedSets mOrdSets;   // left most are successors of final states
+    protected ISet mCutSets;                // runs in cut set should die out eventually 
+    protected ISet mTodoSets;               // list of indices of sets need to be cut
+    private final boolean mJumped;          // has jumped to the second stage 
     
-    public OrderedSetsBreakpoint(boolean jumped) {
+    public OrderedSetsCutpoint(boolean jumped) {
         this.mJumped = jumped;
         if(this.mJumped) {
-            this.mBotSets = UtilISet.newISet();
+            this.mCutSets = UtilISet.newISet();
+            this.mTodoSets = UtilISet.newISet();
         }else {
-            this.mBotSets = null; 
+            this.mCutSets = null; 
+            this.mTodoSets = null;
         }
         this.mOrdSets = new OrderedSets(false);
     }
@@ -27,8 +28,12 @@ public class OrderedSetsBreakpoint {
         mOrdSets.addSet(oset, Color.NONE);
     }
     
-    public void setBreakpoint(ISet set) {
-        mBotSets = set.clone();
+    public void setCutpoint(ISet set) {
+        mCutSets = set.clone();
+    }
+    
+    public void setTodoSet(ISet set) {
+        mTodoSets = set.clone();
     }
     
     protected boolean hasJumped() {
@@ -36,15 +41,15 @@ public class OrderedSetsBreakpoint {
     }
     
     public boolean isFinal() {
-        return this.mJumped && mBotSets.isEmpty();
+        return this.mJumped && mCutSets.isEmpty();
     }
     
     public OrderedSets getOrderedSets() {
         return mOrdSets;
     }
     
-    public ISet getBreakpoint() {
-        return mBotSets;
+    public ISet getCutpoint() {
+        return mCutSets;
     }
     
     @Override
@@ -52,7 +57,8 @@ public class OrderedSetsBreakpoint {
         StringBuilder builder = new StringBuilder();
         builder.append("(" + mOrdSets.toString());
         if(this.mJumped) {
-            builder.append(", " + mBotSets.toString());
+            builder.append(", " + mTodoSets.toString());
+            builder.append(", " + mCutSets.toString());
         }
         builder.append(")");
         return builder.toString();
@@ -64,7 +70,8 @@ public class OrderedSetsBreakpoint {
             // "jumpted"
             final int prime = 31;
             int result = prime  + mOrdSets.hashCode();
-            result = result * prime + mBotSets.hashCode();
+            result = result * prime + mTodoSets.hashCode();
+            result = result * prime + mCutSets.hashCode();
             return result;
         }else {
             return mOrdSets.hashCode();
@@ -76,13 +83,13 @@ public class OrderedSetsBreakpoint {
         if(obj == null) return false;
         if(obj == this) return true;
         if(this.getClass().isInstance(obj)) {
-            OrderedSetsBreakpoint other = (OrderedSetsBreakpoint)obj;
+            OrderedSetsCutpoint other = (OrderedSetsCutpoint)obj;
             if(this.hasJumped() != other.hasJumped()) {
                 return false;
             }
             boolean eq = mOrdSets.equals(other.mOrdSets);
             if(this.hasJumped()) {
-                return eq && mBotSets.equals(other.mBotSets);
+                return eq && mTodoSets.equals(other.mTodoSets) && mCutSets.equals(other.mCutSets);
             }else {
                 return eq;
             }

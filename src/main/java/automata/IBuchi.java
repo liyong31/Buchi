@@ -97,6 +97,8 @@ public interface IBuchi {
     default public boolean isFinal(IState s) {
         return isFinal(s.getId());
     }
+    
+    boolean forwardCovers(int s1, int s2); 
 
     boolean isFinal(int id);
 
