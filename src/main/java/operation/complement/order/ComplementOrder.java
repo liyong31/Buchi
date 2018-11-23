@@ -1,4 +1,4 @@
-package operation.complement.breakpoint;
+package operation.complement.order;
 
 import automata.Buchi;
 import automata.IBuchi;
@@ -16,17 +16,17 @@ import util.ISet;
  * should add another set to record the sets need to be cut later  
  * **/
 
-public class ComplementCutpoint extends Complement {
+public class ComplementOrder extends Complement {
 
-    private TObjectIntMap<StateCutpoint> mStateIndices;
+    private TObjectIntMap<StateOrder> mStateIndices;
     
-    public ComplementCutpoint(IBuchi operand) {
+    public ComplementOrder(IBuchi operand) {
         super(operand);
     }
 
     @Override
     public String getName() {
-        return "ComplementBreakpoint";
+        return "ComplementOrder";
     }
     
     @Override
@@ -34,32 +34,22 @@ public class ComplementCutpoint extends Complement {
         // compute initial states
         mStateIndices = new TObjectIntHashMap<>();
         ISet inits = mOperand.getInitialStates().clone();
-        ISet pset1 = mOperand.getFinalStates().clone();
-        pset1.and(inits);
-        ISet pset2 = inits;
-        pset2.andNot(pset1);
-        OrderedSetsCutpoint osets = new OrderedSetsCutpoint(false);
-        if(!pset1.isEmpty()) {
-            osets.addSet(pset1);
-        }
-        if(!pset2.isEmpty()) {
-            osets.addSet(pset2);
-        }
-        StateCutpoint stateSlice = getOrAddState(osets);
+        OrderedRuns runs = new OrderedRuns(inits);        
+        StateOrder stateSlice = getOrAddState(runs);
         this.setInitial(stateSlice.getId());
     }
     
-    protected StateCutpoint getStateBreakpoint(int id) {
-        return (StateCutpoint)getState(id);
+    protected StateOrder getStateOrder(int id) {
+        return (StateOrder)getState(id);
     }
 
-    protected StateCutpoint getOrAddState(OrderedSetsCutpoint osets) {
-        StateCutpoint state = new StateCutpoint(this, 0, osets);
+    protected StateOrder getOrAddState(OrderedRuns osets) {
+        StateOrder state = new StateOrder(this, 0, osets);
         if(mStateIndices.containsKey(state)) {
-            return getStateBreakpoint(mStateIndices.get(state));
+            return getStateOrder(mStateIndices.get(state));
         }else {
             int index = getStateSize();
-            StateCutpoint newState = new StateCutpoint(this, index, osets);
+            StateOrder newState = new StateOrder(this, index, osets);
             int id = this.addState(newState);
             mStateIndices.put(newState, id);
             if(osets.isFinal()) setFinal(index);
@@ -90,7 +80,7 @@ public class ComplementCutpoint extends Complement {
         
         System.out.println(buchi.toDot());
         
-        ComplementCutpoint complement = new ComplementCutpoint(buchi);
+        ComplementOrder complement = new ComplementOrder(buchi);
         new Explore(complement);
         System.out.println(complement.toDot());
         
@@ -121,7 +111,7 @@ public class ComplementCutpoint extends Complement {
         buchi.setInitial(0);
         
         System.out.println(buchi.toDot());
-        complement = new ComplementCutpoint(buchi);
+        complement = new ComplementOrder(buchi);
         new Explore(complement);
         System.out.println(complement.toDot());
         

@@ -1,4 +1,4 @@
-package operation.complement.breakpoint;
+package operation.complement.cutpoint;
 
 import operation.complement.tuple.Color;
 import operation.complement.tuple.OrderedSets;
@@ -50,6 +50,10 @@ public class OrderedSetsCutpoint {
     
     public ISet getCutpoint() {
         return mCutSets;
+    }
+    
+    public ISet getTodoSets() {
+        return mTodoSets;
     }
     
     @Override

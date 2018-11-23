@@ -98,8 +98,6 @@ public interface IBuchi {
         return isFinal(s.getId());
     }
     
-    boolean forwardCovers(int s1, int s2); 
-
     boolean isFinal(int id);
 
     default public void setInitial(IState s) {

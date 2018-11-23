@@ -1,4 +1,4 @@
-package operation.complement.breakpoint;
+package operation.complement.cutpoint;
 
 import java.util.List;
 
@@ -36,7 +36,9 @@ public class StateCutpoint extends State {
         boolean jumped = mOSetCutpoint.hasJumped();
         ISet leftSuccs = UtilISet.newISet();
         ISet predCutpoint = mOSetCutpoint.getCutpoint();
-        ISet indexSuccs = UtilISet.newISet(); 
+        ISet predTodo = mOSetCutpoint.getTodoSets();
+        ISet cutpointSuccs = UtilISet.newISet(); 
+        ISet todoSuccs = UtilISet.newISet();
         // successors
         boolean hasFinalsInPreds = false;
         // two possible successors
@@ -78,7 +80,10 @@ public class StateCutpoint extends State {
                 // either it is in indicePreds (in accepting component)
                 // or in initial component (finals are current sets) 
                 if((jumped && predCutpoint.get(i)) || (!jumped && hasFinalInPredLocal)) {
-                    indexSuccs.set(index);
+                    cutpointSuccs.set(index);
+                }
+                if(jumped && predTodo.get(i)) {
+                    todoSuccs.set(index);
                 }
                 // final index for successors
                 indexFinalsSuccs.set(index);
@@ -90,7 +95,7 @@ public class StateCutpoint extends State {
             }
             if(!nonFinalSuccs.isEmpty()) {
                 if((jumped && predCutpoint.get(i)) || (!jumped && hasFinalInPredLocal)) {
-                      indexSuccs.set(index);
+                      cutpointSuccs.set(index);
                 }
                 ordSetsCutSuccJumped.addSet(nonFinalSuccs);
                 if(!jumped) {
@@ -110,7 +115,7 @@ public class StateCutpoint extends State {
             super.addSuccessor(letter, newState.getId());
             // 
             if(hasFinalsInPreds) {
-                ordSetsCutSuccJumped.setCutpoint(indexSuccs);
+                ordSetsCutSuccJumped.setCutpoint(cutpointSuccs);
             }else {
                 ordSetsCutSuccJumped.setCutpoint(indexFinalsSuccs);
             }
@@ -119,7 +124,7 @@ public class StateCutpoint extends State {
         }else {
             // jumped, breakpoint construction
             if(!predCutpoint.isEmpty()) {
-                ordSetsCutSuccJumped.setCutpoint(indexSuccs);
+                ordSetsCutSuccJumped.setCutpoint(cutpointSuccs);
             }else {
                 ordSetsCutSuccJumped.setCutpoint(indexFinalsSuccs);
             }

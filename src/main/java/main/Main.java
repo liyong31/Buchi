@@ -37,6 +37,7 @@ import operation.complement.ncsb.ComplementNcsb;
 import operation.complement.ncsb.ComplementNcsbOtf;
 import operation.complement.nsbc.ComplementNsbc;
 import operation.complement.nsbc.ComplementRankNsbc;
+import operation.complement.order.ComplementOrder;
 import operation.complement.ramsey.ComplementRamsey;
 import operation.complement.rank.ComplementRankKV;
 import operation.complement.rank.ComplementRankTight;
@@ -139,6 +140,8 @@ public class Main {
                 Options.mMinusOne = true;
             }else if(args[i].equals("-retro")) {
                 Options.mAlgo = Algorithm.RETRO;
+            }if(args[i].equals("-order")) {
+                Options.mAlgo = Algorithm.ORDER;
             }else if(args[i].equals("-rnsbc")) {
                 Options.mAlgo = Algorithm.RNSBC;
             }
@@ -370,6 +373,9 @@ public class Main {
             break;
         case RETRO:
             buchiComplement = new ComplementRetrorank(buchi);
+            break;
+        case ORDER:
+            buchiComplement = new ComplementOrder(buchi);
             break;
         default:
             buchiComplement = new ComplementRankKV(buchi);
