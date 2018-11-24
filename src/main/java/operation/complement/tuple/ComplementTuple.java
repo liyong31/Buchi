@@ -25,6 +25,7 @@ import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
 import main.Options;
 import operation.complement.Complement;
+import operation.complement.order.ComplementOrder;
 import operation.explore.Explore;
 import util.ISet;
 
@@ -127,6 +128,24 @@ public class ComplementTuple extends Complement {
         System.out.println(complement.toDot());
         
         System.out.println(complement.toBA());
+        
+        buchi = new Buchi(2);
+        
+        buchi.addState();
+        buchi.addState();
+        
+        buchi.getState(0).addSuccessor(1, 0);
+        buchi.getState(0).addSuccessor(1, 1);
+        
+        buchi.getState(1).addSuccessor(1, 0);
+        
+        buchi.setFinal(1);
+        buchi.setInitial(0);
+        
+        System.out.println(buchi.toDot());
+        complement = new ComplementTuple(buchi);
+        new Explore(complement);
+        System.out.println(complement.toDot());
 
     }
 

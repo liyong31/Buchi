@@ -40,7 +40,7 @@ import main.Options;
 import operation.complement.Complement;
 import operation.complement.dba.ComplementDBA;
 import operation.complement.ncsb.ComplementNcsbOtf;
-
+import operation.complement.order.ComplementOrder;
 import operation.complement.tuple.ComplementTuple;
 import util.ISet;
 import util.PairXX;
@@ -78,8 +78,8 @@ public class IsIncludedExplore {
 //                Options.mEnhancedSliceGuess = true;
 //                mSndComplement = new ComplementBreakpoint(sndOperand);
 //                mSndComplement = new ComplementRetrorank(sndOperand);
-                Options.mMergeAdjacentSets = true;
-                mSndComplement = new ComplementTuple(sndOperand);
+//                Options.mMergeAdjacentSets = true;
+                mSndComplement = new ComplementOrder(sndOperand);
             }
         }
         new AsccExplore();
@@ -91,6 +91,7 @@ public class IsIncludedExplore {
     
     public PairXX<int[]> getCounterexample() {
         if(!mEmpty) {
+            System.out.println(mSndComplement.toDot());
             int lastState = mRun.getLastState();
             List<Integer> prefix = new ArrayList<>();
             List<Integer> period = new ArrayList<>();
@@ -403,6 +404,17 @@ public class IsIncludedExplore {
             result = nn.isIncluded();
             if(!result) {
                 System.out.println(buchi.toDot());
+                PairXX<int[]> ce = nn.getCounterexample();
+                int[] cel = ce.getFirst();
+                for(int i = 0; i < cel.length; i ++) {
+                    System.out.println(cel[i] );
+                }
+                System.out.println(" ---- \n");
+                int[] cer = ce.getSecond();
+                for(int i = 0; i < cer.length; i ++) {
+                    System.out.println(cer[i]);
+                }
+                System.out.println(nn.getCounterexample());
                 break;
             }
         }
