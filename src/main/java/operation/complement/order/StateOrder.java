@@ -1,12 +1,10 @@
 package operation.complement.order;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import automata.IBuchi;
 import automata.State;
 import main.Options;
-import operation.complement.tuple.OrderedSets;
 import util.ISet;
 import util.UtilISet;
 
@@ -24,7 +22,7 @@ public class StateOrder extends State {
     
     /**
      * TOP labeled components should last
-     * BOT labeled components should be die out
+     * BOT labeled components should die out
      * **/ 
     @Override
     public ISet getSuccessors(int letter) {

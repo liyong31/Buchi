@@ -7,10 +7,10 @@ import util.UtilISet;
 
 public class OrderedRuns {
 
-    protected final ArrayList<Integer> mOrds; // ordered states    
-    protected final ISet mTodos; //
-    protected final ISet mBreakpoint; //
-    protected final boolean mJumped;
+    protected final ArrayList<Integer> mOrds; // ordered runs/states    
+    protected final ISet mTodos;              // runs waiting to be moved to breakpoint
+    protected final ISet mBreakpoint;         // runs which should die out
+    protected final boolean mJumped;          // is in the second stage
     
     public OrderedRuns(boolean jumped) {
         this.mJumped = jumped;
