@@ -22,7 +22,7 @@ package automata;
 /**
  * Deterministic Omega Automata
  * */
-public interface IDA extends IA {
+public interface IDA extends IAutomata {
     int getInitialState();
     int getSuccessor(int state, int letter);
 }
