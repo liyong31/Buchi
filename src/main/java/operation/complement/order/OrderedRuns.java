@@ -20,7 +20,7 @@ public class OrderedRuns {
     }
     
     public OrderedRuns() {
-        this.mNondets = UtilISet.newISet();
+        this.mNondets = null;
         this.mTodos = UtilISet.newISet();
         this.mBreakpoint = UtilISet.newISet();
         this.mOrds = new ArrayList<>();
@@ -32,7 +32,6 @@ public class OrderedRuns {
     
     public void addOrdState(int state) {
         assert this.mOrds != null;
-        this.mNondets.set(state);
         this.mOrds.add(state);
     }
     
