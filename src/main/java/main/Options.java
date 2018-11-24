@@ -79,7 +79,7 @@ public class Options {
     
     
     // merge adjacent sets with same colors
-    public static boolean mMergeAdjacentSets = false;
+    public static boolean mMergeAdjacentSets = true;
     
     // merge adjacent sets with 1 and 2 colors
     public static boolean mMergeAdjacentColoredSets = false;

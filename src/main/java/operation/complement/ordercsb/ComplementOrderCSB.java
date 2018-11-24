@@ -1,4 +1,4 @@
-package operation.complement.order;
+package operation.complement.ordercsb;
 
 import automata.Buchi;
 import automata.IBuchi;
@@ -7,25 +7,31 @@ import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
 import main.Options;
 import operation.complement.Complement;
+import operation.complement.ncsb.NCSB;
+import operation.complement.ncsb.StateNcsb;
 import operation.complement.tuple.ComplementTuple;
 import operation.explore.Explore;
 import util.ISet;
+import util.PowerSet;
+import util.UtilISet;
 
 /**
- * This construction uses ordering to organize states
+ * This construction is flawed
+ * 
+ *   apply NCSB algorithm to ordered runs
  * **/
 
-public class ComplementOrder extends Complement {
+public class ComplementOrderCSB extends Complement {
 
-    private TObjectIntMap<StateOrder> mStateIndices;
+    private TObjectIntMap<StateOrderCSB> mStateIndices;
     
-    public ComplementOrder(IBuchi operand) {
+    public ComplementOrderCSB(IBuchi operand) {
         super(operand);
     }
 
     @Override
     public String getName() {
-        return "ComplementOrder";
+        return "ComplementOrderCSB";
     }
     
     @Override
@@ -35,7 +41,7 @@ public class ComplementOrder extends Complement {
         ISet inits = mOperand.getInitialStates().clone();
         ISet temp = inits.clone();
         temp.and(mOperand.getFinalStates());
-        OrderedRuns runs = new OrderedRuns(false);
+        OrderedCSB runs = new OrderedCSB();
         for(int s : temp) {
             runs.addOrdState(s);
         }
@@ -43,21 +49,31 @@ public class ComplementOrder extends Complement {
             if(temp.get(s)) continue;
             runs.addOrdState(s);
         }
-        StateOrder stateSlice = getOrAddState(runs);
-        this.setInitial(stateSlice.getId());
+        // powerset
+        PowerSet ps = new PowerSet(temp);
+        while(ps.hasNext()) {
+            ISet B = ps.next();
+            ISet C = inits.clone();
+            C.andNot(B);
+            OrderedCSB newRuns = runs.clone();
+            newRuns.setC(C);
+            newRuns.setB(C);
+            StateOrderCSB state = getOrAddState(newRuns);
+            this.setInitial(state.getId());
+        }
     }
     
-    protected StateOrder getStateOrder(int id) {
-        return (StateOrder)getState(id);
+    protected StateOrderCSB getStateOrder(int id) {
+        return (StateOrderCSB)getState(id);
     }
 
-    protected StateOrder getOrAddState(OrderedRuns osets) {
-        StateOrder state = new StateOrder(this, 0, osets);
+    protected StateOrderCSB getOrAddState(OrderedCSB osets) {
+        StateOrderCSB state = new StateOrderCSB(this, 0, osets);
         if(mStateIndices.containsKey(state)) {
             return getStateOrder(mStateIndices.get(state));
         }else {
             int index = getStateSize();
-            StateOrder newState = new StateOrder(this, index, osets);
+            StateOrderCSB newState = new StateOrderCSB(this, index, osets);
             int id = this.addState(newState);
             mStateIndices.put(newState, id);
             if(osets.isFinal()) setFinal(index);
@@ -88,7 +104,7 @@ public class ComplementOrder extends Complement {
         
         System.out.println(buchi.toDot());
         
-        ComplementOrder complement = new ComplementOrder(buchi);
+        ComplementOrderCSB complement = new ComplementOrderCSB(buchi);
         new Explore(complement);
         System.out.println(complement.toDot());
         
@@ -115,7 +131,7 @@ public class ComplementOrder extends Complement {
         buchi.setInitial(0);
         
         System.out.println(buchi.toDot());
-        complement = new ComplementOrder(buchi);
+        complement = new ComplementOrderCSB(buchi);
         new Explore(complement);
         System.out.println(complement.toDot());
         
@@ -133,7 +149,7 @@ public class ComplementOrder extends Complement {
         buchi.setInitial(0);
         
         System.out.println(buchi.toDot());
-        complement = new ComplementOrder(buchi);
+        complement = new ComplementOrderCSB(buchi);
         new Explore(complement);
         System.out.println(complement.toDot());
         
