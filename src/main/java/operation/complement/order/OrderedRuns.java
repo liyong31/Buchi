@@ -6,28 +6,21 @@ import util.ISet;
 import util.UtilISet;
 
 public class OrderedRuns {
-    
-    protected final ISet mNondets; // subset construction
+
+    protected final ArrayList<Integer> mOrds; // ordered states    
     protected final ISet mTodos; //
     protected final ISet mBreakpoint; //
-    protected final ArrayList<Integer> mOrds; // ordered states
+    protected final boolean mJumped;
     
-    public OrderedRuns(ISet nondets) {
-        this.mNondets = nondets;
-        this.mTodos = null;
-        this.mBreakpoint = null;
-        this.mOrds = null;
-    }
-    
-    public OrderedRuns() {
-        this.mNondets = null;
+    public OrderedRuns(boolean jumped) {
+        this.mJumped = jumped;
         this.mTodos = UtilISet.newISet();
         this.mBreakpoint = UtilISet.newISet();
         this.mOrds = new ArrayList<>();
     }
     
     public boolean hasJumped() {
-        return this.mOrds != null;
+        return mJumped;
     }
     
     public void addOrdState(int state) {
@@ -47,14 +40,6 @@ public class OrderedRuns {
         this.mBreakpoint.or(set);
     }
     
-    public ISet getNondetStates() {
-        return mNondets;
-    }
-    
-    public ISet getOrdStates() {
-        return mNondets;
-    }
-    
     public ISet getBreakpoint() {
         return mBreakpoint;
     }
@@ -68,9 +53,9 @@ public class OrderedRuns {
     }
     
     protected boolean isFinal() {
-        if(mOrds == null && mNondets.isEmpty()) {
+        if(!mJumped && mOrds.isEmpty()) {
             return true;
-        }else if(mOrds != null && mBreakpoint.isEmpty()){
+        }else if(mJumped && mBreakpoint.isEmpty()){
             return true;
         }
         return false;
@@ -78,19 +63,14 @@ public class OrderedRuns {
     
     @Override
     public boolean equals(Object other) {
-        if(this == other) return true;
-        if(! (other instanceof OrderedRuns)) {
+        if (this == other)
+            return true;
+        if (!(other instanceof OrderedRuns)) {
             return false;
         }
-        OrderedRuns otherRuns = (OrderedRuns)other;
-        if(this.mOrds == null && otherRuns.mOrds == null) {
-            return this.mNondets.equals(otherRuns.mNondets);
-        }else if (this.mOrds != null && otherRuns.mOrds != null){
-            return  this.mOrds.equals(otherRuns.mOrds) &&
-                    this.mTodos.equals(otherRuns.mTodos) &&
-                    this.mBreakpoint.equals(otherRuns.mBreakpoint);
-        }
-        return false;
+        OrderedRuns otherRuns = (OrderedRuns) other;
+        return this.mOrds.equals(otherRuns.mOrds) && this.mTodos.equals(otherRuns.mTodos)
+                && this.mBreakpoint.equals(otherRuns.mBreakpoint);
     }
     
     public static int hashValue(ISet set) {
@@ -106,27 +86,20 @@ public class OrderedRuns {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        if(mOrds == null) {
-            result = prime * result + hashValue(mNondets);
-        }else {
-            for(final int state : mOrds) {
-                result = prime * result + state;
-            }
-            result = prime * result + mTodos.hashCode();
-            result = prime * result + mBreakpoint.hashCode();
+        for(final int state : mOrds) {
+            result = prime * result + state;
         }
+        result = prime * result + mTodos.hashCode();
+        result = prime * result + mBreakpoint.hashCode();
         return result;
     }
     
     @Override
     public String toString() {
-        if(this.mOrds == null) {
-            return mNondets.toString();
+        if(!mJumped) {
+            return this.mOrds + "";
         }else {
             return "<" + this.mOrds + ", " + this.mTodos + ", " + this.mBreakpoint + ">";
         }
     }
-
-    
-
 }

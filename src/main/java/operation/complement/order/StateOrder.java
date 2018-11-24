@@ -35,89 +35,76 @@ public class StateOrder extends State {
         IBuchi operand = mComplement.getOperand();
         boolean jumped = this.mOrderedRuns.hasJumped();
         StateOrder newState;
-        OrderedRuns runSuccs;
+        OrderedRuns runSuccsNotJumped = null, runSuccsJumped = new OrderedRuns(true);
+        ArrayList<Integer> ordStates = mOrderedRuns.getOrdDetStates();
+        ISet fSuccs = UtilISet.newISet();
+        ISet leftSuccs = UtilISet.newISet();
+        ISet bkSuccs = UtilISet.newISet();
+        ISet todoSuccs = UtilISet.newISet();
+        
         if(!jumped) {
-            ISet succs = UtilISet.newISet();
-            
-            for(int s : this.mOrderedRuns.getNondetStates()) {
-                succs.or(operand.getState(s).getSuccessors(letter));
+            runSuccsNotJumped = new OrderedRuns(false);
+        }
+
+        for(int i = 0; i < ordStates.size(); i ++) {
+            int s = ordStates.get(i);
+            boolean inBkpoint = mOrderedRuns.getBreakpoint().get(s);
+            boolean inTodos = mOrderedRuns.getTodos().get(s);
+            ISet succs = operand.getState(s).getSuccessors(letter).clone();
+            // remove all states appeared
+            succs.andNot(leftSuccs);
+            ISet temp = succs.clone();
+            temp.and(operand.getFinalStates());
+            fSuccs.or(temp);
+            // first deal with final states
+            for(int t : temp) {
+                runSuccsJumped.addOrdState(t);
+                if(!jumped) {
+                    runSuccsNotJumped.addOrdState(t);
+                }
             }
-            // now we create states
-            runSuccs = new OrderedRuns(succs);
-            newState = mComplement.getOrAddState(runSuccs);
+            // nonfinal
+            for(int t : succs) {
+                if(temp.get(t)) continue;
+                runSuccsJumped.addOrdState(t);
+                if(!jumped) {
+                    runSuccsNotJumped.addOrdState(t);
+                }
+            }
+            if(inBkpoint) {
+                bkSuccs.or(succs);
+            }
+            if(inTodos) {
+                todoSuccs.or(succs);
+            }
+            leftSuccs.or(succs);
+        }
+        if(!jumped) {
+            newState = mComplement.getOrAddState(runSuccsNotJumped);
             super.addSuccessor(letter, newState.getId());
-            if(!this.mOrderedRuns.getNondetStates().isEmpty()) {
-                // ordered states for nonempty set
-                ISet temp = succs.clone();
-                temp.and(operand.getFinalStates());
-                runSuccs = new OrderedRuns();
-                runSuccs.setBreakpoint(temp);
-                // first those states
-                for(int s : temp) {
-                    runSuccs.addOrdState(s);
-                }
-                // nonfinal
-                for(int s : succs) {
-                    if(temp.get(s)) continue;
-                    runSuccs.addOrdState(s);
-                }
-                newState = mComplement.getOrAddState(runSuccs);
-                super.addSuccessor(letter, newState.getId());
-            }
+            //set breakpoint
+            runSuccsJumped.setBreakpoint(fSuccs);
+            
         }else {
-            // first ordered states
-            ArrayList<Integer> ordStates = mOrderedRuns.getOrdDetStates();
-            ISet fSuccs = UtilISet.newISet();
-            ISet leftSuccs = UtilISet.newISet();
-            ISet bkSuccs = UtilISet.newISet();
-            ISet todoSuccs = UtilISet.newISet();
-            runSuccs = new OrderedRuns();
-            for(int i = 0; i < ordStates.size(); i ++) {
-                int s = ordStates.get(i);
-                boolean inBkpoint = mOrderedRuns.getBreakpoint().get(s);
-                boolean inTodos = mOrderedRuns.getTodos().get(s);
-                ISet succs = operand.getState(s).getSuccessors(letter).clone();
-                // remove all states appeared
-                succs.andNot(leftSuccs);
-                ISet temp = succs.clone();
-                temp.and(operand.getFinalStates());
-                fSuccs.or(temp);
-                // first deal with final states
-                for(int t : temp) {
-                    runSuccs.addOrdState(t);
-                }
-                // nonfinal
-                for(int t : succs) {
-                    if(temp.get(t)) continue;
-                    runSuccs.addOrdState(t);
-                }
-                if(inBkpoint) {
-                    bkSuccs.or(succs);
-                }
-                if(inTodos) {
-                    todoSuccs.or(succs);
-                }
-                leftSuccs.or(succs);
-            }
             // decide to set breakpoint and other things
             if(mOrderedRuns.getBreakpoint().isEmpty()) {
                 if(Options.mLazyB) {
                    fSuccs.andNot(todoSuccs);
-                   runSuccs.setTodos(fSuccs);
+                   runSuccsJumped.setTodos(fSuccs);
                 }else {
                    todoSuccs.or(fSuccs);
                 }
-                runSuccs.setBreakpoint(todoSuccs);
+                runSuccsJumped.setBreakpoint(todoSuccs);
             }else {
-                runSuccs.setBreakpoint(bkSuccs);
+                runSuccsJumped.setBreakpoint(bkSuccs);
                 fSuccs.andNot(bkSuccs);
                 // add new comers
                 todoSuccs.or(fSuccs);
-                runSuccs.setTodos(todoSuccs);
+                runSuccsJumped.setTodos(todoSuccs);
             }
-            newState = mComplement.getOrAddState(runSuccs);
-            super.addSuccessor(letter, newState.getId());
         }
+        newState = mComplement.getOrAddState(runSuccsJumped);
+        super.addSuccessor(letter, newState.getId());
         return super.getSuccessors(letter);
     }
     

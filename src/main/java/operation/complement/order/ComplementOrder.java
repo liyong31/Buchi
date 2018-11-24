@@ -34,7 +34,16 @@ public class ComplementOrder extends Complement {
         // compute initial states
         mStateIndices = new TObjectIntHashMap<>();
         ISet inits = mOperand.getInitialStates().clone();
-        OrderedRuns runs = new OrderedRuns(inits);        
+        ISet temp = inits.clone();
+        temp.and(mOperand.getFinalStates());
+        OrderedRuns runs = new OrderedRuns(false);
+        for(int s : temp) {
+            runs.addOrdState(s);
+        }
+        for(int s : inits) {
+            if(temp.get(s)) continue;
+            runs.addOrdState(s);
+        }
         StateOrder stateSlice = getOrAddState(runs);
         this.setInitial(stateSlice.getId());
     }
