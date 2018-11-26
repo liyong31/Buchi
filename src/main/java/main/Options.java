@@ -75,14 +75,14 @@ public class Options {
     public static boolean mReduceOutdegree = false;
     
     // deterministic guess for jumping edges
-    public static boolean mEnhancedSliceGuess= false;
+    public static boolean mEnhancedSliceGuess= true;
     
     
     // merge adjacent sets with same colors
     public static boolean mMergeAdjacentSets = true;
     
     // merge adjacent sets with 1 and 2 colors
-    public static boolean mMergeAdjacentColoredSets = false;
+    public static boolean mMergeAdjacentColoredSets = true;
     
     public static boolean mRemoveDead = false;
     

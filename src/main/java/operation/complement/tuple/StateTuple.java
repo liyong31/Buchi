@@ -103,9 +103,12 @@ public class StateTuple extends State  {
                 osets.addSet(nextOrdSets.get(i)
                         , decideColor(nextOrdSets.get(i), predMap.get(i), fset));
             }
-            // merge 1-colored followed by a 2-colored
+            if(Options.mMergeAdjacentSets) {
+                osets = osets.mergeAdjacentSets();
+            }
+            // merge 1-colored following a 2-colored
             if(Options.mMergeAdjacentColoredSets) {
-                osets.mergeAdjacentColoredSets();
+                osets = osets.mergeAdjacentColoredSets();
             }
             nextState = mComplement.getOrAddState(osets);
             super.addSuccessor(letter, nextState.getId());
@@ -124,7 +127,16 @@ public class StateTuple extends State  {
             && !sjp.overlap(fset)) {
                 return Color.ZERO; 
             }else {
-                return Color.TWO;
+                if(Options.mLazyB) {
+                    // those which have just visited final states will stay ONE
+                    if(mOSets.getColor(jpred) == Color.ZERO && sjp.overlap(fset)) {
+                        return Color.ONE;
+                    }else {
+                        return Color.TWO;
+                    }
+                }else {
+                    return Color.TWO;
+                }
             }
         }else {
             if (mOSets.getColor(jpred) == Color.ZERO

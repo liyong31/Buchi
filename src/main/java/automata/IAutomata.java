@@ -26,6 +26,10 @@ import java.util.Collection;
 
 import java.util.List;
 
+/**
+ * currently only supports state-based acceptance
+ * 
+ * */
 public interface IAutomata {
     
     IAcc getAcceptance();

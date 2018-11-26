@@ -91,8 +91,10 @@ public class RunTask {
 			try {
 				mTask.runTask();
 			}catch (final OutOfMemoryError | StackOverflowError e) {
+			    e.printStackTrace();
 	            throw e;
 	        }catch (final Exception e) {
+	            e.printStackTrace();
 	        	throw e;
 	        }
 			return mTask.getResultValue();

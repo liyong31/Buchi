@@ -22,8 +22,6 @@ package operation.complement.tuple;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import main.Options;
 import util.ISet;
 
 public class OrderedSets {
@@ -38,35 +36,48 @@ public class OrderedSets {
         this.mIsColored = colored;
     }
     
-    public void addSet(ISet oset, Color color) {
+    public int addSet(ISet oset, Color color) {
+        int index = mOSets.size();
         if(! this.mIsColored) {
             mOSets.add(oset);
-        }else {
-            addOrMergeAdjacentSets(oset, color);
-        }
-    }
-    
-    protected void addOrMergeAdjacentSets(ISet oset, Color color) {
-        // have to merge states
-        int index = mColors.size() - 1;
-        Color lastColor = getColor(index);
-        boolean canMerge = false;
-        // we have same mergeable colored sets
-        if(isMergeableColor(color) && lastColor == color) {
-            canMerge = true;
-        }
-        
-        canMerge = canMerge && Options.mMergeAdjacentSets;
-        if(canMerge) {
-            assert index == this.mOSets.size() - 1;
-            ISet mergeSet = this.mOSets.get(index);
-            mergeSet.or(oset);
-            this.mOSets.set(index, mergeSet);
-            this.mColors.set(index, color);
         }else {
             this.mOSets.add(oset);
             this.mColors.add(color);
         }
+        return index;
+    }
+    
+    /**
+     * 
+     * (..., (Si, 1), (Sj, 1), ...) -> (..., (Si U Sj, 1), ...)
+     * (..., (Si, 2), (Sj, 2), ...) -> (..., (Si U Sj, 2), ...)
+     * 
+     * merge adjacent sets which have same color
+     * **/
+    protected OrderedSets mergeAdjacentSets() {
+        // we have same mergeable colored sets
+        OrderedSets merged = new OrderedSets(true);
+        Color predColor = Color.NONE;
+        for(int index = 0; index < mOSets.size(); index ++) {
+            Color currColor = getColor(index);
+            ISet set = mOSets.get(index);
+            if(currColor == Color.NONE) {
+                merged.addSet(set, Color.NONE);
+                continue;
+            }else {
+                if(currColor != predColor) {
+                    merged.addSet(set, currColor);
+                    predColor = currColor;
+                }else {
+                    int otherIndex = merged.mOSets.size() - 1;
+                    // must clone this set, other wise may affect other states
+                    ISet mergedSet = merged.mOSets.get(otherIndex).clone();
+                    mergedSet.or(set);
+                    merged.mOSets.set(otherIndex, mergedSet);
+                }
+            }
+        }
+        return merged;
     }
     
     public List<ISet> getOrderedSets() {
@@ -135,21 +146,16 @@ public class OrderedSets {
         return result;
     }
     
-    private boolean mHasCode = false;
-    private int mHashCode;
+
     @Override
     public int hashCode() {
-        if(mHasCode) return mHashCode;
-        mHasCode = true;
         final int prime = 31;
         int result = 1;
+        result = prime * result + (this.mIsColored ? 1 : 0);
         for(int i = 0; i < mOSets.size(); i ++) {
             result = prime * result + hashValue(mOSets.get(i));
-            if(this.mIsColored) {
-                result = prime * result + mColors.get(i).hashCode();
-            }
+            result = prime * result + (this.mIsColored ? mColors.get(i).hashCode() : 0);
         }
-        mHashCode = result;
         return result;
     }
     
@@ -176,35 +182,30 @@ public class OrderedSets {
     }
     
     /**
-     * merge 2-colored sets preceded by 1-colored
+     * 
+     * (..., (S[j], 2), (S[j+1], 1), ... ,(S[j+n], 1), (S[j+n+1], not 1)...) -> (..., (S[j] U .. U S[j+n], 2), ...)
+     * 
+     * merge 1-colored sets directly following a 2-colored set
      * **/
-    public void mergeAdjacentColoredSets() {
-        if(this.mIsColored) {
-            ArrayList<Color> newColors = new ArrayList<>();
-            ArrayList<ISet> newOSets = new ArrayList<>();
-            int index = 0;
-            Color lastColor = Color.NONE;
-            while(index < this.mOSets.size()) {
-                Color color = this.mColors.get(index);
-                // 1-colored set followed by 2-colored set
-                if(lastColor == Color.ONE && color == Color.TWO) {
-                    ISet jointSet = newOSets.get(index);
-                    jointSet.or(this.mOSets.get(index)); // same object
-                    newOSets.set(index, jointSet);
-                    newColors.set(index, color);
-                    lastColor = color;
-                 }else {
-                    newOSets.add(this.mOSets.get(index));
-                    newColors.add(color);
-                    lastColor = color;
-                }
-                index ++;
+    protected OrderedSets mergeAdjacentColoredSets() {
+        OrderedSets merged = new OrderedSets(true);
+        Color predColor = Color.NONE;
+        for (int index = 0; index < mOSets.size(); index++) {
+            Color currColor = getColor(index);
+            ISet set = mOSets.get(index);
+            if(predColor == Color.TWO && currColor == Color.ONE){
+                // merge 2-colored sets with the following 1-colored sets
+                int otherIndex = merged.mOSets.size() - 1;
+                // must clone this set, other wise may affect other states
+                ISet mergedSet = merged.getSet(otherIndex).clone();
+                mergedSet.or(set);
+                merged.mOSets.set(otherIndex, mergedSet);
+            }else {
+                merged.addSet(set, currColor);
+                predColor = currColor;
             }
-            this.mOSets.clear();
-            this.mColors.clear();
-            this.mColors.addAll(newColors);
-            this.mOSets.addAll(newOSets);
         }
+        return merged;
     }
    
 }
