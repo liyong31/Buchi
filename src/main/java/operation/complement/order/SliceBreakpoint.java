@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import main.Options;
 import operation.complement.tuple.Color;
-import operation.complement.tuple.OrderedSets;
 import util.ISet;
 import util.UtilISet;
 
@@ -34,11 +32,25 @@ public class SliceBreakpoint {
         mTodos.set(index);
     }
     
+    public void setTodo(ISet set) {
+        mTodos.clear();
+        mTodos.or(set);
+    }
+    
     public void setBreakpoint(int index) {
         mBreakpoint.set(index);
     }
     
-    protected SliceBreakpoint mergeAdjacentSetsWithSameColor() {
+    public void setBreakpoint(ISet set) {
+        mBreakpoint.clear();
+        mBreakpoint.or(set);
+    }
+    
+    /**
+     * Merge adjacent states with same color
+     * 
+     * */
+    protected SliceBreakpoint mergeAdjacentSets() {
         assert this.mJumped : "Not jumped states";
         SliceBreakpoint merged = new SliceBreakpoint(true);
         Color predColor = Color.NONE;
@@ -59,7 +71,7 @@ public class SliceBreakpoint {
                     predColor = currColor;
                 }else {
                     int otherIndex = merged.mOSets.size() - 1;
-                    ISet mergedSet = merged.mOSets.get(otherIndex);
+                    ISet mergedSet = merged.mOSets.get(otherIndex).clone();
                     mergedSet.or(set);
                     merged.mOSets.set(otherIndex, mergedSet);
                 }
@@ -81,10 +93,7 @@ public class SliceBreakpoint {
     }
     
     public boolean isFinal() {
-        if(this.mJumped) {
-            return mBreakpoint.isEmpty();
-        }
-        return false;
+        return (!this.mJumped && mOSets.isEmpty()) || (this.mJumped && mBreakpoint.isEmpty());
     }
     
     public Color getColor(int index) {
@@ -135,7 +144,12 @@ public class SliceBreakpoint {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("<" + mOSets + ", " + mTodos + ", " + mBreakpoint + ">");
+        if(mJumped) {
+            builder.append("<" + mOSets + ", " + mTodos + ", " + mBreakpoint + ">");
+        }else {
+            builder.append( mOSets + "" );
+        }
+        
         return builder.toString(); 
     }
     
@@ -144,38 +158,32 @@ public class SliceBreakpoint {
     }
     
     /**
-     * merge 2-colored sets preceded by 1-colored
+     * merge 2-colored set with its following 1-colored sets
      * **/
     protected SliceBreakpoint mergeAdjacentColoredSets() {
-//        SliceBreakpoint merged = new SliceBreakpoint(true);
-//        if(this.mJumped) {
-//            ArrayList<Color> newColors = new ArrayList<>();
-//            ArrayList<ISet> newOSets = new ArrayList<>();
-//            int index = 0;
-//            Color lastColor = Color.NONE;
-//            while(index < this.mOSets.size()) {
-//                Color color = this.mColors.get(index);
-//                // 1-colored set followed by 2-colored set
-//                if(lastColor == Color.ONE && color == Color.TWO) {
-//                    ISet jointSet = newOSets.get(index);
-//                    jointSet.or(this.mOSets.get(index)); // same object
-//                    newOSets.set(index, jointSet);
-//                    newColors.set(index, color);
-//                    lastColor = color;
-//                 }else {
-//                    newOSets.add(this.mOSets.get(index));
-//                    newColors.add(color);
-//                    lastColor = color;
-//                }
-//                index ++;
-//            }
-//            this.mOSets.clear();
-//            this.mColors.clear();
-//            this.mColors.addAll(newColors);
-//            this.mOSets.addAll(newOSets);
-        
-//        }
-        return null;
+        SliceBreakpoint merged = new SliceBreakpoint(true);
+        Color predColor = Color.NONE;
+        for (int index = 0; index < mOSets.size(); index++) {
+            Color currColor = getColor(index);
+            ISet set = mOSets.get(index);
+            if(predColor == Color.TWO && currColor == Color.ONE){
+                // merge 2-colored sets with the following 1-colored sets
+                int otherIndex = merged.mOSets.size() - 1;
+                // must clone this set, other wise may affect other states
+                ISet mergedSet = merged.getSet(otherIndex).clone();
+                mergedSet.or(set);
+                merged.mOSets.set(otherIndex, mergedSet);
+            }else {
+                int otherIndex = merged.addSet(set);
+                if(mTodos.get(index)) {
+                    merged.setTodo(otherIndex);
+                }else if(mBreakpoint.get(index)) {
+                    merged.setBreakpoint(otherIndex);
+                }
+                predColor = currColor;
+            }
+        }
+        return merged;
     }
     
 }
