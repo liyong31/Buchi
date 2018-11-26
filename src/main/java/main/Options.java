@@ -52,7 +52,8 @@ public class Options {
 	    NSBC,
 	    RETRO,
 	    RNSBC,
-	    ORDER
+	    ORDER,
+	    SLICEBK
 	}
 
 	   // whether to enable optimized version of NCSB

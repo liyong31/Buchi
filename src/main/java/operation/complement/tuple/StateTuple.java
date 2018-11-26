@@ -78,7 +78,6 @@ public class StateTuple extends State  {
             return super.getSuccessors(letter);
         }
         mVisitedLetters.set(letter);
-        ISet succs = UtilISet.newISet();
         IBuchi operand = mComplement.getOperand();
         OrderedSetsGenerator generator = new OrderedSetsGenerator(operand, mOSets, letter);
         ArrayList<ISet> nextOrdSets = generator.getResult().mNextOrdSets;
@@ -92,8 +91,10 @@ public class StateTuple extends State  {
             }
             nextState = mComplement.getOrAddState(osets);
             super.addSuccessor(letter, nextState.getId());
-            succs.set(nextState.getId());
             if(Options.mDebug) System.out.println("" + getId() + " " + toString() + " -> " + nextState.getId() + " " + osets + " : " + letter);
+        }
+        if(!mOSets.isColored() && mOSets.mOSets.isEmpty()) {
+            return super.getSuccessors(letter);
         }
         //2. every state compute colors
         {
@@ -112,11 +113,10 @@ public class StateTuple extends State  {
             }
             nextState = mComplement.getOrAddState(osets);
             super.addSuccessor(letter, nextState.getId());
-            succs.set(nextState.getId());
             if(Options.mDebug) System.out.println("" + getId() + " " + toString() + " -> " + nextState.getId() + " " + osets + " : " + letter);
         }
         
-        return succs;
+        return super.getSuccessors(letter);
     }
     
     private Color decideColor(ISet sjp, int jpred, ISet fset) {

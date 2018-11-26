@@ -38,6 +38,7 @@ import operation.complement.ncsb.ComplementNcsbOtf;
 import operation.complement.nsbc.ComplementNsbc;
 import operation.complement.nsbc.ComplementRankNsbc;
 import operation.complement.order.ComplementOrder;
+import operation.complement.order.ComplementSliceBreakpoint;
 import operation.complement.ramsey.ComplementRamsey;
 import operation.complement.rank.ComplementRankKV;
 import operation.complement.rank.ComplementRankTight;
@@ -128,6 +129,8 @@ public class Main {
             }else if(args[i].equals("-tight")) {
                 Options.mAlgo = Algorithm.TIGHT;
                 Options.mTightRank = true;
+            }else if(args[i].equals("-slicebk")) {
+                Options.mAlgo = Algorithm.SLICEBK;
             }else if(args[i].equals("-turnwise")) {
                 Options.mAlgo = Algorithm.TIGHT;
                 Options.mTightRank = true;
@@ -376,6 +379,9 @@ public class Main {
             break;
         case ORDER:
             buchiComplement = new ComplementOrder(buchi);
+            break;
+        case SLICEBK:
+            buchiComplement = new ComplementSliceBreakpoint(buchi);
             break;
         default:
             buchiComplement = new ComplementRankKV(buchi);
